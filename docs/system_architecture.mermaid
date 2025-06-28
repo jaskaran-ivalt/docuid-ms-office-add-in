@@ -1,0 +1,19 @@
+graph TD
+    subgraph "MS Office Host"
+        A["MS Word/Excel"] --> B{"DocuID Office Add-in (React.js)"}
+    end
+
+    subgraph "User's Device"
+        C["User"] -- "interacts with" --> A
+        C -- "Biometric Approval" --> F["iVALT App"]
+    end
+
+    subgraph "Cloud Services"
+        B -- "HTTPS API Calls" --> D["Docuid.net Backend"]
+        D -- "iVALT API" --> E["iVALT Service"]
+        D -- "Manages" --> G["Document Storage (e.g., S3)"]
+        E -- "Push Notification" --> F
+    end
+
+    %% style B fill:#f9f,stroke:#333,stroke-width:2px
+    %% style D fill:#ccf,stroke:#333,stroke-width:2px 
