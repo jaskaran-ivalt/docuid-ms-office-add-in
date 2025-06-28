@@ -1,0 +1,22 @@
+sequenceDiagram
+    participant User
+    participant OfficeAddIn as DocuID Add-in
+    participant Backend as Docuid.net
+    participant iVALT
+
+    User->>OfficeAddIn: Opens Add-in
+    OfficeAddIn->>User: Shows login screen (Mobile Number)
+    User->>OfficeAddIn: Enters mobile number and submits
+    OfficeAddIn->>Backend: POST /api/auth/login (mobileNumber)
+    Backend->>iVALT: Initiate biometric authentication
+    iVALT->>User: Sends push notification for verification
+    User->>iVALT: Approves via biometrics
+    iVALT->>Backend: Authentication successful callback
+    Backend->>OfficeAddIn: Returns success with session token
+    OfficeAddIn->>Backend: GET /api/documents (with token)
+    Backend->>OfficeAddIn: Returns list of documents
+    OfficeAddIn->>User: Displays document list
+    User->>OfficeAddIn: Clicks on a document to open
+    OfficeAddIn->>Backend: GET /api/documents/{docId} (with token)
+    Backend->>OfficeAddIn: Returns document content/URL
+    OfficeAddIn->>User: Opens document in Office App 
