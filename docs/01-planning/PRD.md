@@ -52,7 +52,7 @@ To build a Microsoft Office Add-in named **DocuID** that allows users to securel
 
 The user flow is detailed in the diagram below.
 
-[See User Flow Diagram](./user_flow.mermaid)
+[See User Flow Diagram](../04-diagrams/user_flow.mermaid)
 
 ---
 
@@ -60,7 +60,7 @@ The user flow is detailed in the diagram below.
 
 A high-level overview of the system architecture.
 
-[See System Architecture Diagram](./system_architecture.mermaid)
+[See System Architecture Diagram](../04-diagrams/system_architecture.mermaid)
 
 ---
 
@@ -96,9 +96,34 @@ A high-level overview of the system architecture.
 
 ## 6. Milestones & Timeline
 
-| Milestone | Description | ETA |
-| --- | --- | --- |
-| M1 | Project scaffolding with `yo office` & UI design | Week 1 |
-| M2 | Backend integration for login via `Docuid.net` | Week 2 |
-| M3 | Backend API for document fetching and access | Week 3 |
-| M4 | Full add-in integration and testing in Office apps | Week 4 | 
+| Milestone | Description | ETA | Status |
+| --- | --- | --- | --- |
+| M1 | Project scaffolding with `yo office` & UI design | Week 1 | ✅ **Complete** |
+| M2 | Backend integration for login via `Docuid.net` | Week 2 | 🔄 Ready to Start |
+| M3 | Backend API for document fetching and access | Week 3 | ⏳ Pending |
+| M4 | Full add-in integration and testing in Office apps | Week 4 | ⏳ Pending |
+| M5 | Final testing, optimization and deployment | Week 5 | ⏳ Pending |
+
+---
+
+## 7. Current Implementation Status
+
+### ✅ Phase 1 Complete (M1)
+- **React-based Office Add-in** with TypeScript
+- **Authentication UI** with phone number input and validation
+- **Document Management UI** with list display and search capabilities
+- **Office.js Integration** for document insertion into Word
+- **Mock Services** for development and testing
+- **Comprehensive Documentation** including architecture, security, and deployment guides
+
+### 🔄 Ready for Phase 2 (M2)
+- **API Client Setup** for docuid.net integration
+- **Real Authentication Flow** replacing mock implementation
+- **Production Error Handling** for network and API failures
+- **Security Enhancements** for production deployment
+
+For detailed technical specifications, see:
+- [Technical Architecture](../02-technical/ARCHITECTURE.md)
+- [API Documentation](../02-technical/API_DOCUMENTATION.md)
+- [Security Documentation](../02-technical/SECURITY.md)
+- [Development Guide](../03-development/DEVELOPMENT_GUIDE.md) 
