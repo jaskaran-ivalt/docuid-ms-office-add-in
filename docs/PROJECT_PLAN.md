@@ -39,7 +39,6 @@ Build a Microsoft Office Add-in named DocuID that allows users to securely authe
   - [ ] Configure webpack and build processes
   - [ ] Set up development and production environments
   - [ ] Configure ESLint and Prettier
-  - [ ] Set up testing framework (Jest + React Testing Library)
 
 ### 1.3 UI/UX Design & Planning
 **Estimated Time:** 2-3 days
