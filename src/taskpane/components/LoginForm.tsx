@@ -8,6 +8,7 @@ import {
   Stack,
 } from "@fluentui/react";
 import { LockClosed24Regular, ShieldLock24Regular } from "@fluentui/react-icons";
+import countriesData from "@/data/countries.json";
 
 interface LoginFormProps {
   onLogin: (phoneNumber: string) => Promise<void>;
@@ -27,12 +28,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
 
   const isValidPhone = phoneNumber.length >= 10;
 
-  const countryOptions: IDropdownOption[] = [
-    { key: "+1", text: "🇺🇸 +1" },
-    { key: "+44", text: "🇬🇧 +44" },
-    { key: "+91", text: "🇮🇳 +91" },
-    { key: "+49", text: "🇩🇪 +49" },
-  ];
+  const countryOptions: IDropdownOption[] = countriesData;
 
   return (
     <Stack verticalAlign="center" horizontalAlign="center" style={{ minHeight: 400 }}>

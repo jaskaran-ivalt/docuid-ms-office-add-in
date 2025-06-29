@@ -9,21 +9,14 @@
     "outDir": "lib",
     "sourceMap": true,
     "target": "es5",
-    "lib": [
-      "es2015",
-      "dom"
-    ],
+    "resolveJsonModule": true,
+    "lib": ["es2015", "dom"],
     "paths": {
       "@/*": ["./src/*"]
     }
   },
-  "exclude": [
-    "node_modules",
-    "dist",
-    "lib",
-    "lib-amd"
-  ],
-  "ts-node": { 
-    "files": true 
+  "exclude": ["node_modules", "dist", "lib", "lib-amd"],
+  "ts-node": {
+    "files": true
   }
 }
