@@ -26,6 +26,9 @@ module.exports = async (env, options) => {
     },
     resolve: {
       extensions: [".ts", ".tsx", ".js", ".jsx", ".html"],
+      alias: {
+        "@": require("path").resolve(__dirname, "src"),
+      },
     },
     module: {
       rules: [
