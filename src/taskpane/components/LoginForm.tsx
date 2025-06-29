@@ -1,4 +1,13 @@
 import React, { useState } from "react";
+import {
+  TextField,
+  PrimaryButton,
+  Spinner,
+  Dropdown,
+  IDropdownOption,
+  Stack,
+} from "@fluentui/react";
+import { LockClosed24Regular, ShieldLock24Regular } from "@fluentui/react-icons";
 
 interface LoginFormProps {
   onLogin: (phoneNumber: string) => Promise<void>;
@@ -18,57 +27,61 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
 
   const isValidPhone = phoneNumber.length >= 10;
 
+  const countryOptions: IDropdownOption[] = [
+    { key: "+1", text: "🇺🇸 +1" },
+    { key: "+44", text: "🇬🇧 +44" },
+    { key: "+91", text: "🇮🇳 +91" },
+    { key: "+49", text: "🇩🇪 +49" },
+  ];
+
   return (
-    <div className="login-container">
-      <div className="login-card">
-        <div className="login-header">
+    <Stack verticalAlign="center" horizontalAlign="center" style={{ minHeight: 400 }}>
+      <Stack
+        tokens={{ childrenGap: 24 }}
+        style={{ width: 340, padding: 32, boxShadow: "0 2px 8px #eee", borderRadius: 8 }}
+      >
+        <Stack tokens={{ childrenGap: 8 }}>
           <h2>Welcome to DocuID</h2>
           <p>Secure access to your documents using biometric authentication</p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="login-form">
-          <div className="form-group">
+        </Stack>
+        <form onSubmit={handleSubmit}>
+          <Stack tokens={{ childrenGap: 12 }}>
             <label htmlFor="phone">Mobile Number</label>
-            <div className="phone-input-group">
-              <select
-                value={countryCode}
-                onChange={(e) => setCountryCode(e.target.value)}
-                className="country-select"
+            <Stack horizontal tokens={{ childrenGap: 8 }}>
+              <Dropdown
+                options={countryOptions}
+                selectedKey={countryCode}
+                onChange={(_, o) => setCountryCode(o?.key as string)}
                 disabled={isLoading}
-              >
-                <option value="+1">🇺🇸 +1</option>
-                <option value="+44">🇬🇧 +44</option>
-                <option value="+91">🇮🇳 +91</option>
-                <option value="+49">🇩🇪 +49</option>
-              </select>
-              <input
+                styles={{ dropdown: { width: 90 } }}
+              />
+              <TextField
                 id="phone"
                 type="tel"
                 value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ""))}
+                onChange={(_, v) => setPhoneNumber((v || "").replace(/\D/g, ""))}
                 placeholder="Enter your mobile number"
-                className="phone-input"
                 disabled={isLoading}
                 maxLength={15}
+                styles={{ root: { flexGrow: 1 } }}
               />
-            </div>
-          </div>
-
-          <button type="submit" className="login-btn" disabled={!isValidPhone || isLoading}>
-            {isLoading ? (
-              <>
-                <span className="spinner"></span>
-                Authenticating...
-              </>
-            ) : (
-              <>🔐 Login with Biometrics</>
-            )}
-          </button>
+            </Stack>
+            <PrimaryButton
+              type="submit"
+              disabled={!isValidPhone || isLoading}
+              text={isLoading ? "Authenticating..." : "Login with Biometrics"}
+              iconProps={{ iconName: undefined }}
+              style={{ width: "100%" }}
+            >
+              {isLoading ? <Spinner size={1} /> : <LockClosed24Regular />}
+            </PrimaryButton>
+          </Stack>
         </form>
-
-        <div className="login-info">
+        <Stack tokens={{ childrenGap: 8 }}>
           <p>
-            <strong>🛡️ Secure Process:</strong>
+            <strong>
+              <ShieldLock24Regular /> Secure Process:
+            </strong>
             <br />
             1. Enter your registered mobile number
             <br />
@@ -76,9 +89,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
             <br />
             3. Access your documents securely
           </p>
-        </div>
-      </div>
-    </div>
+        </Stack>
+      </Stack>
+    </Stack>
   );
 };
 
