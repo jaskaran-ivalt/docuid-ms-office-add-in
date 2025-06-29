@@ -1,4 +1,6 @@
 import React from "react";
+import { DefaultButton, Stack } from "@fluentui/react";
+import { Phone24Regular } from "@fluentui/react-icons";
 
 interface HeaderProps {
   user: { phone: string } | null;
@@ -7,22 +9,27 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ user, onLogout }) => {
   return (
-    <header className="header">
-      <div className="header-content">
-        <div className="header-brand">
-          <h1 className="brand-title">DocuID</h1>
-          <span className="brand-subtitle">Secure Document Access</span>
-        </div>
-        {user && (
-          <div className="header-user">
-            <span className="user-info">📱 {user.phone}</span>
-            <button onClick={onLogout} className="logout-btn">
-              Logout
-            </button>
-          </div>
-        )}
-      </div>
-    </header>
+    <Stack
+      as="header"
+      horizontal
+      verticalAlign="center"
+      horizontalAlign="space-between"
+      style={{ padding: 16, boxShadow: "0 2px 8px #eee", marginBottom: 16 }}
+    >
+      <Stack>
+        <h1 style={{ margin: 0 }}>DocuID</h1>
+        <span>Secure Document Access</span>
+      </Stack>
+      {user && (
+        <Stack horizontal verticalAlign="center" tokens={{ childrenGap: 8 }}>
+          <span>
+            <Phone24Regular style={{ marginRight: 4 }} />
+            {user.phone}
+          </span>
+          <DefaultButton onClick={onLogout} text="Logout" />
+        </Stack>
+      )}
+    </Stack>
   );
 };
 

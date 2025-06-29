@@ -1,4 +1,11 @@
 import React, { useState } from "react";
+import { TextField, Spinner, DefaultButton, Stack } from "@fluentui/react";
+import {
+  DocumentPdf24Regular,
+  Document24Regular,
+  Search24Regular,
+  Folder24Regular,
+} from "@fluentui/react-icons";
 
 interface Document {
   id: string;
@@ -24,89 +31,84 @@ const DocumentList: React.FC<DocumentListProps> = ({ documents, onDocumentOpen, 
   const getFileIcon = (type: string) => {
     switch (type.toLowerCase()) {
       case "pdf":
-        return "📄";
-      case "docx":
-      case "doc":
-        return "📝";
-      case "xlsx":
-      case "xls":
-        return "📊";
-      case "pptx":
-      case "ppt":
-        return "📋";
+        return <DocumentPdf24Regular />;
       default:
-        return "📄";
+        return <Document24Regular />;
     }
   };
 
   if (isLoading) {
     return (
-      <div className="documents-loading">
-        <div className="spinner-large"></div>
-        <p>Loading your documents...</p>
-      </div>
+      <Stack verticalAlign="center" horizontalAlign="center" style={{ height: 300 }}>
+        <Spinner size={3} label="Loading your documents..." />
+      </Stack>
     );
   }
 
   return (
-    <div className="documents-container">
-      <div className="documents-header">
+    <Stack tokens={{ childrenGap: 24 }}>
+      <Stack horizontal horizontalAlign="space-between" verticalAlign="center">
         <h2>Your Documents</h2>
-        <div className="search-container">
-          <input
-            type="text"
+        <Stack horizontal verticalAlign="center" tokens={{ childrenGap: 8 }}>
+          <TextField
             placeholder="Search documents..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="search-input"
+            onChange={(_, v) => setSearchTerm(v || "")}
+            styles={{ root: { width: 220 } }}
+            borderless
+            underlined
+            iconProps={{ iconName: undefined }}
           />
-          <span className="search-icon">🔍</span>
-        </div>
-      </div>
-
+          <Search24Regular />
+        </Stack>
+      </Stack>
       {filteredDocuments.length === 0 ? (
-        <div className="no-documents">
+        <Stack verticalAlign="center" horizontalAlign="center" style={{ minHeight: 200 }}>
           {documents.length === 0 ? (
             <>
-              <div className="no-docs-icon">📁</div>
+              <Folder24Regular style={{ fontSize: 48, marginBottom: 8 }} />
               <h3>No Documents Available</h3>
               <p>You don't have any documents available at the moment.</p>
             </>
           ) : (
             <>
-              <div className="no-docs-icon">🔍</div>
+              <Search24Regular style={{ fontSize: 48, marginBottom: 8 }} />
               <h3>No Documents Found</h3>
               <p>No documents match your search criteria.</p>
             </>
           )}
-        </div>
+        </Stack>
       ) : (
-        <div className="documents-list">
+        <Stack tokens={{ childrenGap: 12 }}>
           {filteredDocuments.map((document) => (
-            <div key={document.id} className="document-item">
-              <div className="document-icon">{getFileIcon(document.type)}</div>
-              <div className="document-info">
-                <h3 className="document-title">{document.title}</h3>
-                <div className="document-meta">
-                  <span className="document-type">{document.type.toUpperCase()}</span>
-                  <span className="document-separator">•</span>
-                  <span className="document-size">{document.size}</span>
-                  <span className="document-separator">•</span>
-                  <span className="document-date">{document.dateModified}</span>
-                </div>
-              </div>
-              <button
+            <Stack
+              key={document.id}
+              horizontal
+              verticalAlign="center"
+              tokens={{ childrenGap: 16 }}
+              style={{ padding: 12, border: "1px solid #eee", borderRadius: 6 }}
+            >
+              <div>{getFileIcon(document.type)}</div>
+              <Stack grow>
+                <h3 style={{ margin: 0 }}>{document.title}</h3>
+                <Stack horizontal tokens={{ childrenGap: 8 }}>
+                  <span>{document.type.toUpperCase()}</span>
+                  <span>•</span>
+                  <span>{document.size}</span>
+                  <span>•</span>
+                  <span>{document.dateModified}</span>
+                </Stack>
+              </Stack>
+              <DefaultButton
                 onClick={() => onDocumentOpen(document)}
-                className="document-open-btn"
                 disabled={isLoading}
-              >
-                Open
-              </button>
-            </div>
+                text="Open"
+              />
+            </Stack>
           ))}
-        </div>
+        </Stack>
       )}
-    </div>
+    </Stack>
   );
 };
 

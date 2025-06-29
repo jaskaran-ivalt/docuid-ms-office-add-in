@@ -4,6 +4,7 @@ import DocumentList from "@/taskpane/components/DocumentList";
 import Header from "@/taskpane/components/Header";
 import { AuthService } from "@/taskpane/services/AuthService";
 import { DocumentService } from "@/taskpane/services/DocumentService";
+import { DocuIdThemeProvider } from "./components/DesignSystem";
 
 interface Document {
   id: string;
@@ -76,30 +77,32 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="app-container">
-      <Header user={user} onLogout={handleLogout} />
+    <DocuIdThemeProvider>
+      <div className="app-container">
+        <Header user={user} onLogout={handleLogout} />
 
-      <main className="main-content">
-        {error && (
-          <div className="error-message">
-            {error}
-            <button onClick={() => setError("")} className="error-close">
-              ×
-            </button>
-          </div>
-        )}
+        <main className="main-content">
+          {error && (
+            <div className="error-message">
+              {error}
+              <button onClick={() => setError("")} className="error-close">
+                ×
+              </button>
+            </div>
+          )}
 
-        {!isAuthenticated ? (
-          <LoginForm onLogin={handleLogin} isLoading={isLoading} />
-        ) : (
-          <DocumentList
-            documents={documents}
-            onDocumentOpen={handleDocumentOpen}
-            isLoading={isLoading}
-          />
-        )}
-      </main>
-    </div>
+          {!isAuthenticated ? (
+            <LoginForm onLogin={handleLogin} isLoading={isLoading} />
+          ) : (
+            <DocumentList
+              documents={documents}
+              onDocumentOpen={handleDocumentOpen}
+              isLoading={isLoading}
+            />
+          )}
+        </main>
+      </div>
+    </DocuIdThemeProvider>
   );
 };
 
