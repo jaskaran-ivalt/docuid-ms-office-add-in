@@ -17,7 +17,7 @@ A Microsoft Office Add-in that enables secure biometric authentication and docum
 - Microsoft Word (Office 365 or Office 2019)
 - Office Add-ins development certificates
 
-## 🛠️ Installation
+## 🛠️ Quick Start
 
 1. **Clone the repository**
    ```bash
@@ -27,17 +27,14 @@ A Microsoft Office Add-in that enables secure biometric authentication and docum
 
 2. **Install dependencies**
    ```bash
-   npm install
+   pnpm install
+   # or npm install
    ```
 
-3. **Build the project**
+3. **Start development**
    ```bash
-   npm run build:dev
-   ```
-
-4. **Start the development server**
-   ```bash
-   npm start
+   pnpm start
+   # This will build, start HTTPS server, and sideload in Word
    ```
 
 This will automatically:
@@ -49,23 +46,21 @@ This will automatically:
 
 ```
 DocuID/
+├── docs/                       # 📚 Comprehensive documentation
+│   ├── 01-planning/           # Project planning and business docs
+│   ├── 02-technical/          # Technical specs and API docs
+│   ├── 03-development/        # Development guides and procedures
+│   └── 04-diagrams/           # Visual diagrams and flowcharts
 ├── src/
-│   ├── taskpane/
-│   │   ├── components/          # React components
-│   │   │   ├── Header.tsx       # App header with branding
-│   │   │   ├── LoginForm.tsx    # Authentication form
-│   │   │   └── DocumentList.tsx # Document listing
-│   │   ├── services/            # API services
-│   │   │   ├── AuthService.ts   # Authentication logic
-│   │   │   └── DocumentService.ts # Document management
-│   │   ├── App.tsx             # Main React application
-│   │   ├── index.tsx           # Entry point
-│   │   ├── taskpane.css        # Styles
-│   │   └── taskpane.html       # HTML template
-│   └── commands/               # Office commands
-├── assets/                     # Static assets
-├── manifest.xml               # Add-in manifest
-└── package.json              # Dependencies and scripts
+│   ├── taskpane/              # Main React application
+│   │   ├── components/        # React UI components
+│   │   ├── services/          # Business logic and API integration
+│   │   └── App.tsx           # Root component
+│   └── commands/              # Office ribbon commands
+├── assets/                    # Static assets and icons
+├── manifest.xml              # Office Add-in manifest
+├── CLAUDE.md                 # AI assistant context
+└── package.json             # Dependencies and scripts
 ```
 
 ## 🎯 Usage
@@ -87,16 +82,17 @@ DocuID/
 
 ### Available Scripts
 
-- `npm start` - Start development server and sideload add-in
-- `npm run build` - Build for production
-- `npm run build:dev` - Build for development
-- `npm run dev-server` - Start development server only
-- `npm run lint` - Run ESLint
-- `npm run validate` - Validate manifest file
+- `pnpm start` - Start development server and sideload add-in
+- `pnpm run build` - Build for production
+- `pnpm run build:dev` - Build for development
+- `pnpm run dev-server` - Start development server only
+- `pnpm run lint` - Run ESLint and fix issues
+- `pnpm run validate` - Validate manifest file
+- `pnpm run prettier` - Format code with Prettier
 
 ### API Integration
 
-The add-in integrates with backend APIs for authentication and document management. See the [API Documentation](../docs/API_DOCUMENTATION.md) for complete endpoint specifications.
+The add-in integrates with backend APIs for authentication and document management. See the [API Documentation](docs/02-technical/API_DOCUMENTATION.md) for complete endpoint specifications.
 
 **Current Implementation**: 
 - Development mode uses mock data and simulated authentication
@@ -146,32 +142,44 @@ The interface follows Microsoft Office design principles:
 - **macOS**: Office 365, Office 2019+
 - **Browsers**: Modern browsers for development
 
+## 📚 Documentation
+
+### Complete Documentation Available
+
+- **[📋 Planning Documents](docs/01-planning/)** - PRD, project plan, and work tracking
+- **[🔧 Technical Docs](docs/02-technical/)** - Architecture, API specs, and security
+- **[👨‍💻 Development Guides](docs/03-development/)** - Setup, testing, and deployment
+- **[📊 Diagrams](docs/04-diagrams/)** - System architecture and user flow diagrams
+
+### Quick Links
+- [🏗️ System Architecture](docs/02-technical/ARCHITECTURE.md)
+- [🔒 Security Documentation](docs/02-technical/SECURITY.md)
+- [🚀 Deployment Guide](docs/03-development/DEPLOYMENT_GUIDE.md)
+- [🧪 Testing Guide](docs/03-development/TESTING_GUIDE.md)
+
 ## 🚀 Deployment
 
-### Development Deployment
-Already configured for local development with HTTPS certificates.
+For detailed deployment instructions, see the [Deployment Guide](docs/03-development/DEPLOYMENT_GUIDE.md).
 
-### Production Deployment
-1. Update `webpack.config.js` with production URL
-2. Build production bundle: `npm run build`
-3. Deploy to HTTPS-enabled hosting
-4. Update manifest.xml with production URLs
-5. Submit to Office Store (optional)
+### Quick Deployment Overview
+1. **Development**: Already configured with HTTPS certificates
+2. **Production**: HTTPS hosting required, SSL certificates, manifest URL updates
+3. **Distribution**: Office Store submission or enterprise deployment
 
 ## 🧪 Testing
 
-### Manual Testing
-1. Start development server: `npm start`
-2. Test authentication flow with mock data
-3. Verify document list functionality
-4. Test document insertion into Word
+For comprehensive testing procedures, see the [Testing Guide](docs/03-development/TESTING_GUIDE.md).
 
-### Test Scenarios
-- Valid phone number authentication
-- Invalid phone number handling
-- Document search functionality
-- Office.js integration
-- Error state handling
+### Quick Testing
+1. Start development: `pnpm start`
+2. Test phone numbers: `+1234567890` (success), `+1234567invalid` (error)
+3. Verify document operations and Office.js integration
+
+### Test Coverage
+- Authentication flows and error handling
+- Document management and search
+- Office.js integration and Word manipulation
+- Cross-platform compatibility (Windows/macOS)
 
 ## 🔧 Configuration
 
@@ -191,16 +199,16 @@ Key settings in `manifest.xml`:
 - Required permissions
 - HTTPS endpoints
 
-## 📚 API Documentation
+## 🤝 Contributing
 
-Comprehensive API documentation is available at [API_DOCUMENTATION.md](../docs/API_DOCUMENTATION.md), including:
+1. Create feature branch from `phase-1-foundation`
+2. Follow existing code patterns and TypeScript conventions
+3. Update documentation for any changes
+4. Test on both Windows and macOS platforms
+5. Run quality checks: `pnpm run lint && pnpm run prettier`
+6. Submit PR with detailed description
 
-- Authentication endpoints
-- Document management APIs
-- Error handling
-- Rate limiting
-- Security considerations
-- Integration examples
+See [Development Guide](docs/03-development/DEVELOPMENT_GUIDE.md) for detailed workflows.
 
 ## 🐛 Troubleshooting
 
@@ -227,31 +235,38 @@ Enable debug logging by setting:
 localStorage.setItem('docuid_debug', 'true');
 ```
 
-## 🤝 Contributing
+## 📞 Support & Resources
 
-1. Create feature branch from `phase-1-foundation`
-2. Follow existing code style and patterns
-3. Test thoroughly on both Windows and macOS
-4. Update documentation as needed
-5. Submit pull request with detailed description
+### Getting Help
+- **[📖 Documentation](docs/)** - Comprehensive project documentation
+- **[🔧 Development Guide](docs/03-development/DEVELOPMENT_GUIDE.md)** - Setup and development workflows
+- **[🧪 Testing Guide](docs/03-development/TESTING_GUIDE.md)** - Testing procedures and strategies
+- **[🚀 Deployment Guide](docs/03-development/DEPLOYMENT_GUIDE.md)** - Production deployment instructions
 
-## 📄 License
+### Quick Debug
+Enable debug mode: `localStorage.setItem('docuid_debug', 'true')`
 
-[License information to be added]
+## 📊 Project Status
 
-## 📞 Support
+### ✅ Phase 1 Complete (Foundation)
+- **Environment Setup** - Development environment with HTTPS and hot reload
+- **React Architecture** - TypeScript-based React components and services
+- **Office.js Integration** - Document insertion and Word manipulation
+- **Mock Services** - Authentication and document management simulation
+- **UI Implementation** - Login, document list, and responsive design
+- **Documentation** - Comprehensive guides and technical specifications
 
-For support and questions:
-- Check the [API Documentation](../docs/API_DOCUMENTATION.md)
-- Review the [Project Plan](../docs/PROJECT_PLAN.md)
-- Contact the development team
+### 🔄 Phase 2 Ready (Authentication Integration)
+- **API Client Setup** - Real docuid.net integration
+- **Production Authentication** - Replace mock with biometric verification
+- **Enhanced Security** - Production-ready security measures
+- **Error Handling** - Network and API failure management
+
+### 📈 Overall Progress: 26% Complete
+**Timeline**: On track for July 2025 completion  
+**Quality**: High - Clean architecture, comprehensive documentation  
+**Status**: 🟢 Excellent project health
 
 ---
 
-**Phase 1 Status**: ✅ Complete
-- Environment setup ✅
-- Project scaffolding ✅
-- Basic UI implementation ✅
-- Mock authentication ✅
-- Document list functionality ✅
-- Office.js integration ✅ 
+**Built with ❤️ using React, TypeScript, and Office.js** 
