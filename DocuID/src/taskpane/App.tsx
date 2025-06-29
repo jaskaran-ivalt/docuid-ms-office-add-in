@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import LoginForm from "./components/LoginForm";
-import DocumentList from "./components/DocumentList";
-import Header from "./components/Header";
-import { AuthService } from "./services/AuthService";
-import { DocumentService } from "./services/DocumentService";
+import LoginForm from "@/taskpane/components/LoginForm";
+import DocumentList from "@/taskpane/components/DocumentList";
+import Header from "@/taskpane/components/Header";
+import { AuthService } from "@/taskpane/services/AuthService";
+import { DocumentService } from "@/taskpane/services/DocumentService";
 
 interface Document {
   id: string;
