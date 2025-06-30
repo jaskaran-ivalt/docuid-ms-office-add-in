@@ -1,0 +1,4 @@
+onlyBuiltDependencies:
+  - '@microsoft/teamsapp-cli'
+  - core-js
+  - keytar
