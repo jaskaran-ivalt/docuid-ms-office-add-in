@@ -22,7 +22,7 @@ const App: React.FC = () => {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [user, setUser] = useState<{ phone: string } | null>(null);
   const [error, setError] = useState<string>("");
-  const [currentPage, setCurrentPage] = useState<'documents' | 'profile'>('documents');
+  const [currentPage, setCurrentPage] = useState<"documents" | "profile">("documents");
 
   useEffect(() => {
     // Check if user is already authenticated
@@ -84,7 +84,7 @@ const App: React.FC = () => {
       setIsLoading(true);
       await DocumentService.closeDocument(documentId);
       // Remove the document from the list
-      setDocuments(prev => prev.filter(doc => doc.id !== documentId));
+      setDocuments((prev) => prev.filter((doc) => doc.id !== documentId));
     } catch (err) {
       setError("Failed to close document");
     } finally {
@@ -93,19 +93,19 @@ const App: React.FC = () => {
   };
 
   const handleNavigateToProfile = () => {
-    setCurrentPage('profile');
+    setCurrentPage("profile");
   };
 
   const handleNavigateToDocuments = () => {
-    setCurrentPage('documents');
+    setCurrentPage("documents");
   };
 
   return (
     <DocuIdThemeProvider>
       <div className="app-container">
-        <Header 
-          user={user} 
-          onLogout={handleLogout} 
+        <Header
+          user={user}
+          onLogout={handleLogout}
           onNavigateToProfile={isAuthenticated ? handleNavigateToProfile : undefined}
         />
 
@@ -121,7 +121,7 @@ const App: React.FC = () => {
 
           {!isAuthenticated ? (
             <LoginForm onLogin={handleLogin} isLoading={isLoading} />
-          ) : currentPage === 'profile' ? (
+          ) : currentPage === "profile" ? (
             <ProfilePage onBack={handleNavigateToDocuments} />
           ) : (
             <DocumentList

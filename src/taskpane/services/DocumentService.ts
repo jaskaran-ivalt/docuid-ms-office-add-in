@@ -105,8 +105,8 @@ export class DocumentService {
   static async closeDocument(documentId: string): Promise<void> {
     try {
       // Simulate API call to close document
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       // In a real implementation, you would call the API to close the document
       console.log(`Closing document: ${documentId}`);
     } catch (error) {
@@ -164,7 +164,7 @@ Key Highlights:
 
 Future Outlook
 Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.`,
-        type: "report"
+        type: "report",
       },
       "2": {
         title: "Project Proposal",
@@ -201,7 +201,7 @@ Phase 3: Deployment and Training
 Timeline: 6 months
 Budget: $500,000
 ROI: Expected 200% return within 2 years`,
-        type: "proposal"
+        type: "proposal",
       },
       "3": {
         title: "Budget Analysis",
@@ -228,7 +228,7 @@ Key Metrics
 
 Financial Projections
 Based on current trends and market analysis, we project continued growth in all revenue streams with improved efficiency in operational costs.`,
-        type: "financial"
+        type: "financial",
       },
       "4": {
         title: "Presentation Slides",
@@ -265,7 +265,7 @@ Slide 6: Action Items
 • Immediate: Q1 planning
 • Short-term: Q2 execution
 • Long-term: Annual strategy`,
-        type: "presentation"
+        type: "presentation",
       },
       "5": {
         title: "Contract Agreement",
@@ -302,8 +302,8 @@ This agreement shall be governed by and construed in accordance with the laws of
 SIGNATURES:
 Party A: _________________ Date: _________
 Party B: _________________ Date: _________`,
-        type: "legal"
-      }
+        type: "legal",
+      },
     };
 
     const content = mockContent[documentId as keyof typeof mockContent];
@@ -312,7 +312,7 @@ Party B: _________________ Date: _________`,
       content: content?.content || "Document content not available.",
       contentType: "text/plain",
       fileName: content?.title || `document_${documentId}.txt`,
-      documentType: content?.type || "general"
+      documentType: content?.type || "general",
     };
   }
 
@@ -338,13 +338,13 @@ Party B: _________________ Date: _________`,
       context.document.body.insertParagraph("", Word.InsertLocation.end);
 
       // Format content based on document type
-      const contentLines = documentContent.content.split('\n');
+      const contentLines = documentContent.content.split("\n");
       let currentParagraph: Word.Paragraph;
 
       for (let i = 0; i < contentLines.length; i++) {
         const line = contentLines[i].trim();
-        
-        if (line === '') {
+
+        if (line === "") {
           // Empty line - add spacing
           context.document.body.insertParagraph("", Word.InsertLocation.end);
           continue;
@@ -352,11 +352,8 @@ Party B: _________________ Date: _________`,
 
         // Check if line is a heading (all caps or contains specific patterns)
         const isHeading = this.isHeading(line, documentContent.documentType);
-        
-        currentParagraph = context.document.body.insertParagraph(
-          line,
-          Word.InsertLocation.end
-        );
+
+        currentParagraph = context.document.body.insertParagraph(line, Word.InsertLocation.end);
 
         if (isHeading) {
           // Format as heading
@@ -364,11 +361,11 @@ Party B: _________________ Date: _________`,
           currentParagraph.font.size = 16;
           currentParagraph.font.bold = true;
           currentParagraph.font.color = "#2b579a";
-        } else if (line.startsWith('•') || line.startsWith('-')) {
+        } else if (line.startsWith("•") || line.startsWith("-")) {
           // Format as bullet point
           currentParagraph.styleBuiltIn = Word.BuiltInStyleName.listParagraph;
           currentParagraph.font.size = 12;
-        } else if (line.includes(':') && line.length < 50) {
+        } else if (line.includes(":") && line.length < 50) {
           // Format as subheading
           currentParagraph.styleBuiltIn = Word.BuiltInStyleName.heading2;
           currentParagraph.font.size = 14;
@@ -407,7 +404,7 @@ Party B: _________________ Date: _________`,
       /^[A-Z][a-z]+ [A-Z][a-z]+$/, // Title Case
     ];
 
-    return headingPatterns.some(pattern => pattern.test(line.trim()));
+    return headingPatterns.some((pattern) => pattern.test(line.trim()));
   }
 
   /**

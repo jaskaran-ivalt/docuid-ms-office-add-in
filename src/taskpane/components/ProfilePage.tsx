@@ -67,7 +67,8 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
     position: "Senior Software Engineer",
     location: "San Francisco, CA",
     joinDate: "January 2023",
-    avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
+    avatar:
+      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
     preferences: {
       notifications: true,
       language: "en",
@@ -98,14 +99,14 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
   ];
 
   const handleInputChange = (field: keyof UserProfile, value: any) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
   };
 
-  const handlePreferenceChange = (field: keyof UserProfile['preferences'], value: any) => {
-    setFormData(prev => ({
+  const handlePreferenceChange = (field: keyof UserProfile["preferences"], value: any) => {
+    setFormData((prev) => ({
       ...prev,
       preferences: {
         ...prev.preferences,
@@ -121,12 +122,12 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
 
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
       setProfile(formData);
       setSuccess("Profile updated successfully!");
       setIsEditing(false);
-      
+
       setTimeout(() => setSuccess(""), 3000);
     } catch (err) {
       setError("Failed to update profile. Please try again.");
@@ -144,7 +145,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
   const getInitials = (name: string) => {
     return name
       .split(" ")
-      .map(n => n[0])
+      .map((n) => n[0])
       .join("")
       .toUpperCase();
   };
@@ -158,10 +159,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
         </button>
         <h1 className="profile-title">Profile Settings</h1>
         {!isEditing && (
-          <button 
-            className="edit-button"
-            onClick={() => setIsEditing(true)}
-          >
+          <button className="edit-button" onClick={() => setIsEditing(true)}>
             <Edit size={16} />
             Edit
           </button>
@@ -170,8 +168,8 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
 
       {/* Messages */}
       {error && (
-        <MessageBar 
-          messageBarType={MessageBarType.error} 
+        <MessageBar
+          messageBarType={MessageBarType.error}
           onDismiss={() => setError("")}
           className="profile-message"
         >
@@ -180,8 +178,8 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
       )}
 
       {success && (
-        <MessageBar 
-          messageBarType={MessageBarType.success} 
+        <MessageBar
+          messageBarType={MessageBarType.success}
           onDismiss={() => setSuccess("")}
           className="profile-message"
         >
@@ -197,9 +195,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
               {profile.avatar ? (
                 <img src={profile.avatar} alt={profile.name} />
               ) : (
-                <div className="avatar-placeholder">
-                  {getInitials(profile.name)}
-                </div>
+                <div className="avatar-placeholder">{getInitials(profile.name)}</div>
               )}
             </div>
             <div className="profile-info">
@@ -231,23 +227,23 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
             <User size={18} />
             Personal Information
           </h3>
-          
+
           <div className="form-grid">
             <div className="form-group">
               <Label className="form-label">Full Name</Label>
               <TextField
                 value={formData.name}
-                onChange={(_, value) => handleInputChange('name', value)}
+                onChange={(_, value) => handleInputChange("name", value)}
                 disabled={!isEditing}
                 styles={{
                   field: {
-                    fontSize: '14px',
-                    border: '1px solid #d1d1d1',
-                    borderRadius: '6px',
-                    height: '40px',
+                    fontSize: "14px",
+                    border: "1px solid #d1d1d1",
+                    borderRadius: "6px",
+                    height: "40px",
                   },
                   fieldGroup: {
-                    border: 'none',
+                    border: "none",
                   },
                 }}
               />
@@ -257,17 +253,17 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
               <Label className="form-label">Email Address</Label>
               <TextField
                 value={formData.email}
-                onChange={(_, value) => handleInputChange('email', value)}
+                onChange={(_, value) => handleInputChange("email", value)}
                 disabled={!isEditing}
                 styles={{
                   field: {
-                    fontSize: '14px',
-                    border: '1px solid #d1d1d1',
-                    borderRadius: '6px',
-                    height: '40px',
+                    fontSize: "14px",
+                    border: "1px solid #d1d1d1",
+                    borderRadius: "6px",
+                    height: "40px",
                   },
                   fieldGroup: {
-                    border: 'none',
+                    border: "none",
                   },
                 }}
               />
@@ -277,17 +273,17 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
               <Label className="form-label">Phone Number</Label>
               <TextField
                 value={formData.phone}
-                onChange={(_, value) => handleInputChange('phone', value)}
+                onChange={(_, value) => handleInputChange("phone", value)}
                 disabled={!isEditing}
                 styles={{
                   field: {
-                    fontSize: '14px',
-                    border: '1px solid #d1d1d1',
-                    borderRadius: '6px',
-                    height: '40px',
+                    fontSize: "14px",
+                    border: "1px solid #d1d1d1",
+                    borderRadius: "6px",
+                    height: "40px",
                   },
                   fieldGroup: {
-                    border: 'none',
+                    border: "none",
                   },
                 }}
               />
@@ -297,17 +293,17 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
               <Label className="form-label">Location</Label>
               <TextField
                 value={formData.location}
-                onChange={(_, value) => handleInputChange('location', value)}
+                onChange={(_, value) => handleInputChange("location", value)}
                 disabled={!isEditing}
                 styles={{
                   field: {
-                    fontSize: '14px',
-                    border: '1px solid #d1d1d1',
-                    borderRadius: '6px',
-                    height: '40px',
+                    fontSize: "14px",
+                    border: "1px solid #d1d1d1",
+                    borderRadius: "6px",
+                    height: "40px",
                   },
                   fieldGroup: {
-                    border: 'none',
+                    border: "none",
                   },
                 }}
               />
@@ -317,17 +313,17 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
               <Label className="form-label">Company</Label>
               <TextField
                 value={formData.company}
-                onChange={(_, value) => handleInputChange('company', value)}
+                onChange={(_, value) => handleInputChange("company", value)}
                 disabled={!isEditing}
                 styles={{
                   field: {
-                    fontSize: '14px',
-                    border: '1px solid #d1d1d1',
-                    borderRadius: '6px',
-                    height: '40px',
+                    fontSize: "14px",
+                    border: "1px solid #d1d1d1",
+                    borderRadius: "6px",
+                    height: "40px",
                   },
                   fieldGroup: {
-                    border: 'none',
+                    border: "none",
                   },
                 }}
               />
@@ -337,17 +333,17 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
               <Label className="form-label">Position</Label>
               <TextField
                 value={formData.position}
-                onChange={(_, value) => handleInputChange('position', value)}
+                onChange={(_, value) => handleInputChange("position", value)}
                 disabled={!isEditing}
                 styles={{
                   field: {
-                    fontSize: '14px',
-                    border: '1px solid #d1d1d1',
-                    borderRadius: '6px',
-                    height: '40px',
+                    fontSize: "14px",
+                    border: "1px solid #d1d1d1",
+                    borderRadius: "6px",
+                    height: "40px",
                   },
                   fieldGroup: {
-                    border: 'none',
+                    border: "none",
                   },
                 }}
               />
@@ -361,7 +357,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
             <Shield size={18} />
             Preferences
           </h3>
-          
+
           <div className="preferences-grid">
             <div className="preference-item">
               <div className="preference-header">
@@ -372,7 +368,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
                 checked={formData.preferences.notifications}
                 onText="On"
                 offText="Off"
-                onChange={(_, checked) => handlePreferenceChange('notifications', checked)}
+                onChange={(_, checked) => handlePreferenceChange("notifications", checked)}
                 disabled={!isEditing}
               />
             </div>
@@ -385,7 +381,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
               <ChoiceGroup
                 selectedKey={formData.preferences.language}
                 options={languageOptions}
-                onChange={(_, option) => option && handlePreferenceChange('language', option.key)}
+                onChange={(_, option) => option && handlePreferenceChange("language", option.key)}
                 disabled={!isEditing}
               />
             </div>
@@ -398,7 +394,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
               <ChoiceGroup
                 selectedKey={formData.preferences.theme}
                 options={themeOptions}
-                onChange={(_, option) => option && handlePreferenceChange('theme', option.key)}
+                onChange={(_, option) => option && handlePreferenceChange("theme", option.key)}
                 disabled={!isEditing}
               />
             </div>
@@ -411,7 +407,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
               <ChoiceGroup
                 selectedKey={formData.preferences.privacy}
                 options={privacyOptions}
-                onChange={(_, option) => option && handlePreferenceChange('privacy', option.key)}
+                onChange={(_, option) => option && handlePreferenceChange("privacy", option.key)}
                 disabled={!isEditing}
               />
             </div>
@@ -424,7 +420,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
             <Calendar size={18} />
             Account Information
           </h3>
-          
+
           <div className="account-info">
             <div className="info-item">
               <span className="info-label">Member Since:</span>
@@ -451,60 +447,58 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
               iconProps={isLoading ? undefined : { iconName: undefined }}
               styles={{
                 root: {
-                  height: '44px',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  borderRadius: '6px',
-                  border: 'none',
-                  background: isLoading 
-                    ? '#f3f2f1' 
-                    : 'linear-gradient(135deg, #0078d4 0%, #106ebe 100%)',
-                  color: isLoading ? '#605e5c' : 'white',
-                  cursor: isLoading ? 'not-allowed' : 'pointer',
-                  transition: 'all 0.2s ease',
-                  minWidth: '120px',
+                  height: "44px",
+                  fontSize: "14px",
+                  fontWeight: "600",
+                  borderRadius: "6px",
+                  border: "none",
+                  background: isLoading
+                    ? "#f3f2f1"
+                    : "linear-gradient(135deg, #0078d4 0%, #106ebe 100%)",
+                  color: isLoading ? "#605e5c" : "white",
+                  cursor: isLoading ? "not-allowed" : "pointer",
+                  transition: "all 0.2s ease",
+                  minWidth: "120px",
                 },
                 rootHovered: {
-                  background: isLoading 
-                    ? '#f3f2f1' 
-                    : 'linear-gradient(135deg, #106ebe 0%, #005a9e 100%)',
-                  transform: isLoading ? 'none' : 'translateY(-1px)',
-                  boxShadow: isLoading 
-                    ? 'none' 
-                    : '0 4px 12px rgba(0, 120, 212, 0.3)',
+                  background: isLoading
+                    ? "#f3f2f1"
+                    : "linear-gradient(135deg, #106ebe 0%, #005a9e 100%)",
+                  transform: isLoading ? "none" : "translateY(-1px)",
+                  boxShadow: isLoading ? "none" : "0 4px 12px rgba(0, 120, 212, 0.3)",
                 },
                 rootPressed: {
-                  transform: 'translateY(0)',
+                  transform: "translateY(0)",
                 },
               }}
             >
               {isLoading && <Spinner size={1} style={{ marginRight: 8 }} />}
             </PrimaryButton>
-            <DefaultButton 
-              text="Cancel" 
-              onClick={handleCancel} 
+            <DefaultButton
+              text="Cancel"
+              onClick={handleCancel}
               disabled={isLoading}
               styles={{
                 root: {
-                  height: '44px',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  borderRadius: '6px',
-                  border: '1px solid #d1d1d1',
-                  background: 'white',
-                  color: '#323130',
-                  transition: 'all 0.2s ease',
-                  minWidth: '80px',
+                  height: "44px",
+                  fontSize: "14px",
+                  fontWeight: "500",
+                  borderRadius: "6px",
+                  border: "1px solid #d1d1d1",
+                  background: "white",
+                  color: "#323130",
+                  transition: "all 0.2s ease",
+                  minWidth: "80px",
                 },
                 rootHovered: {
-                  background: '#f8f9fa',
-                  borderColor: '#0078d4',
-                  color: '#0078d4',
-                  transform: 'translateY(-1px)',
-                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+                  background: "#f8f9fa",
+                  borderColor: "#0078d4",
+                  color: "#0078d4",
+                  transform: "translateY(-1px)",
+                  boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
                 },
                 rootPressed: {
-                  transform: 'translateY(0)',
+                  transform: "translateY(0)",
                 },
               }}
             />
@@ -515,4 +509,4 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
   );
 };
 
-export default ProfilePage; 
+export default ProfilePage;
