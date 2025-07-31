@@ -1,14 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { DefaultButton, Stack } from "@fluentui/react";
-import { 
-  Phone, 
-  User, 
-  Settings, 
-  LogOut, 
-  ChevronDown,
-  Search,
-  Crown
-} from "lucide-react";
+import { Phone, User, Settings, LogOut, ChevronDown, Search, Crown } from "lucide-react";
 import "./Header.css";
 
 interface HeaderProps {
@@ -29,9 +21,9 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile }) 
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
@@ -42,16 +34,16 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile }) 
   // Generate initials from name
   const getInitials = (name: string) => {
     return name
-      .split(' ')
-      .map(word => word.charAt(0))
-      .join('')
+      .split(" ")
+      .map((word) => word.charAt(0))
+      .join("")
       .toUpperCase();
   };
 
   // Truncate email for display
   const truncateEmail = (email: string) => {
     if (email.length <= 20) return email;
-    const [localPart, domain] = email.split('@');
+    const [localPart, domain] = email.split("@");
     if (localPart.length <= 12) {
       return `${localPart}@${domain.substring(0, 8)}...`;
     }
@@ -63,7 +55,7 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile }) 
     name: "Jaskaran Singh",
     email: "jaskaran@ivalt.com",
     phone: user?.phone || "+91 98765 43210",
-    plan: "PRO"
+    plan: "PRO",
   };
 
   return (
@@ -79,25 +71,23 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile }) 
             {/* <span className="brand-subtitle">Secure Document Access</span> */}
           </div>
         </div>
-        
+
         {user && (
           <div className="header-user-section">
             {/* Search Icon */}
             {/* <div className="search-icon-wrapper">
               <Search size={18} />
             </div> */}
-            
+
             {/* User Profile Dropdown */}
             <div className="user-profile-dropdown" ref={dropdownRef}>
-              <button 
-                className="user-profile-trigger" 
+              <button
+                className="user-profile-trigger"
                 onClick={toggleDropdown}
                 aria-expanded={isDropdownOpen}
               >
                 <div className="user-avatar">
-                  <div className="avatar-initials">
-                    {getInitials(dummyUser.name)}
-                  </div>
+                  <div className="avatar-initials">{getInitials(dummyUser.name)}</div>
                 </div>
                 <div className="user-info">
                   <div className="user-name">{dummyUser.name}</div>
@@ -109,9 +99,9 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile }) 
                   <Crown size={12} />
                   <span>{dummyUser.plan}</span>
                 </div> */}
-                <ChevronDown 
-                  size={16} 
-                  className={`dropdown-chevron ${isDropdownOpen ? 'rotated' : ''}`}
+                <ChevronDown
+                  size={16}
+                  className={`dropdown-chevron ${isDropdownOpen ? "rotated" : ""}`}
                 />
               </button>
 
@@ -121,9 +111,7 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile }) 
                   {/* User Info Section */}
                   <div className="dropdown-user-info">
                     <div className="dropdown-avatar">
-                      <div className="avatar-initials">
-                        {getInitials(dummyUser.name)}
-                      </div>
+                      <div className="avatar-initials">{getInitials(dummyUser.name)}</div>
                     </div>
                     <div className="dropdown-user-details">
                       <div className="dropdown-user-name">{dummyUser.name}</div>

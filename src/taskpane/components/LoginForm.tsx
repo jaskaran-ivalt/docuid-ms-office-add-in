@@ -1,9 +1,5 @@
 import React, { useState } from "react";
-import {
-  PrimaryButton,
-  Spinner,
-  Stack,
-} from "@fluentui/react";
+import { PrimaryButton, Spinner, Stack } from "@fluentui/react";
 import { Lock, Shield } from "lucide-react";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
@@ -32,11 +28,16 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
         {/* Header Section */}
         <div className="login-header">
           <div className="flex items-center justify-center">
-            <img src="assets/logo-transparent-bg.png" alt="DocuID Logo" style={{width: '140px', objectFit: 'contain' }} />
+            <img
+              src="assets/logo-transparent-bg.png"
+              alt="DocuID Logo"
+              style={{ width: "140px", objectFit: "contain" }}
+            />
           </div>
           <h1 className="login-title">DocuID™ Security Platform</h1>
           <p className="login-subtitle">
-          Secure your digital assets with our advanced file identity and verification system powered by iVALT technology
+            Secure your digital assets with our advanced file identity and verification system
+            powered by iVALT technology
           </p>
         </div>
 
@@ -71,9 +72,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
               fontWeight: "300",
               borderRadius: "6px",
               border: "none",
-              background: isValidPhone && !isLoading 
-                ? "linear-gradient(135deg, #0078d4 0%, #106ebe 100%)" 
-                : "#f3f2f1",
+              background:
+                isValidPhone && !isLoading
+                  ? "linear-gradient(135deg, #0078d4 0%, #106ebe 100%)"
+                  : "#f3f2f1",
               color: isValidPhone && !isLoading ? "white" : "#605e5c",
               cursor: isValidPhone && !isLoading ? "pointer" : "not-allowed",
               transition: "all 0.2s ease",
@@ -81,7 +83,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
               alignItems: "center",
               justifyContent: "center",
               gap: "8px",
-              marginTop: "8px"
+              marginTop: "8px",
             }}
             onMouseEnter={(e) => {
               if (isValidPhone && !isLoading) {
@@ -96,11 +98,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
               target.style.boxShadow = "none";
             }}
           >
-            {isLoading ? (
-              <Spinner size={1} />
-            ) : (
-              null
-            )}
+            {isLoading ? <Spinner size={1} /> : null}
           </PrimaryButton>
         </form>
 

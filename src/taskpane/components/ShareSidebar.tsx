@@ -39,7 +39,13 @@ interface ShareData {
   message?: string;
 }
 
-const ShareSidebar: React.FC<ShareSidebarProps> = ({ isOpen, onDismiss, document, onShare, onCloseDocument }) => {
+const ShareSidebar: React.FC<ShareSidebarProps> = ({
+  isOpen,
+  onDismiss,
+  document,
+  onShare,
+  onCloseDocument,
+}) => {
   const [email, setEmail] = useState("");
   const [mobile, setMobile] = useState("");
   const [message, setMessage] = useState("");
@@ -129,16 +135,16 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({ isOpen, onDismiss, document
 
   const getDocumentIcon = (type: string) => {
     switch (type.toLowerCase()) {
-      case 'pdf':
+      case "pdf":
         return <FileText size={20} color="#dc3545" />;
-      case 'doc':
-      case 'docx':
+      case "doc":
+      case "docx":
         return <FileText size={20} color="#0d6efd" />;
-      case 'xls':
-      case 'xlsx':
+      case "xls":
+      case "xlsx":
         return <FileText size={20} color="#198754" />;
-      case 'ppt':
-      case 'pptx':
+      case "ppt":
+      case "pptx":
         return <FileText size={20} color="#fd7e14" />;
       default:
         return <FileText size={20} color="#6c757d" />;
@@ -166,31 +172,28 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({ isOpen, onDismiss, document
       )}
       styles={{
         main: {
-          backgroundColor: '#f8f9fa',
+          backgroundColor: "#f8f9fa",
         },
         content: {
-          padding: '24px',
+          padding: "24px",
         },
         header: {
-          backgroundColor: '#ffffff',
-          borderBottom: '1px solid #e9ecef',
-          padding: '20px 24px',
+          backgroundColor: "#ffffff",
+          borderBottom: "1px solid #e9ecef",
+          padding: "20px 24px",
         },
         headerText: {
-          fontSize: '20px',
-          fontWeight: '600',
-          color: '#323130',
+          fontSize: "20px",
+          fontWeight: "600",
+          color: "#323130",
         },
       }}
     >
       {document && (
         <div className="share-sidebar-content">
-
           {/* Document Info Card */}
           <div className="document-info-card">
-            <div className="document-icon-wrapper">
-              {getDocumentIcon(document.type)}
-            </div>
+            <div className="document-icon-wrapper">{getDocumentIcon(document.type)}</div>
             <div className="document-details">
               <h3 className="document-title">{document.title}</h3>
               <div className="document-meta">
@@ -231,14 +234,14 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({ isOpen, onDismiss, document
                   disabled={isLoading}
                   styles={{
                     field: {
-                      paddingLeft: '40px',
-                      fontSize: '14px',
-                      border: '1px solid #d1d1d1',
-                      borderRadius: '6px',
-                      height: '40px',
+                      paddingLeft: "40px",
+                      fontSize: "14px",
+                      border: "1px solid #d1d1d1",
+                      borderRadius: "6px",
+                      height: "40px",
                     },
                     fieldGroup: {
-                      border: 'none',
+                      border: "none",
                     },
                   }}
                 />
@@ -272,14 +275,14 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({ isOpen, onDismiss, document
                 disabled={isLoading}
                 styles={{
                   field: {
-                    fontSize: '14px',
-                    border: '1px solid #d1d1d1',
-                    borderRadius: '6px',
-                    padding: '12px',
-                    resize: 'none',
+                    fontSize: "14px",
+                    border: "1px solid #d1d1d1",
+                    borderRadius: "6px",
+                    padding: "12px",
+                    resize: "none",
                   },
                   fieldGroup: {
-                    border: 'none',
+                    border: "none",
                   },
                 }}
               />
@@ -293,8 +296,8 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({ isOpen, onDismiss, document
               onDismiss={() => setError("")}
               styles={{
                 root: {
-                  marginBottom: '16px',
-                  borderRadius: '6px',
+                  marginBottom: "16px",
+                  borderRadius: "6px",
                 },
               }}
             >
@@ -308,8 +311,8 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({ isOpen, onDismiss, document
               onDismiss={() => setSuccess("")}
               styles={{
                 root: {
-                  marginBottom: '16px',
-                  borderRadius: '6px',
+                  marginBottom: "16px",
+                  borderRadius: "6px",
                 },
               }}
             >
@@ -326,30 +329,31 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({ isOpen, onDismiss, document
               iconProps={isLoading ? undefined : { iconName: undefined }}
               styles={{
                 root: {
-                  height: '44px',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  borderRadius: '6px',
-                  border: 'none',
-                  background: (!email && !mobile) || isLoading
-                    ? '#f3f2f1'
-                    : 'linear-gradient(135deg, #0078d4 0%, #106ebe 100%)',
-                  color: (!email && !mobile) || isLoading ? '#605e5c' : 'white',
-                  cursor: (!email && !mobile) || isLoading ? 'not-allowed' : 'pointer',
-                  transition: 'all 0.2s ease',
+                  height: "44px",
+                  fontSize: "14px",
+                  fontWeight: "600",
+                  borderRadius: "6px",
+                  border: "none",
+                  background:
+                    (!email && !mobile) || isLoading
+                      ? "#f3f2f1"
+                      : "linear-gradient(135deg, #0078d4 0%, #106ebe 100%)",
+                  color: (!email && !mobile) || isLoading ? "#605e5c" : "white",
+                  cursor: (!email && !mobile) || isLoading ? "not-allowed" : "pointer",
+                  transition: "all 0.2s ease",
                   flex: 1,
                 },
                 rootHovered: {
-                  background: (!email && !mobile) || isLoading
-                    ? '#f3f2f1'
-                    : 'linear-gradient(135deg, #106ebe 0%, #005a9e 100%)',
-                  transform: (!email && !mobile) || isLoading ? 'none' : 'translateY(-1px)',
-                  boxShadow: (!email && !mobile) || isLoading
-                    ? 'none'
-                    : '0 4px 12px rgba(0, 120, 212, 0.3)',
+                  background:
+                    (!email && !mobile) || isLoading
+                      ? "#f3f2f1"
+                      : "linear-gradient(135deg, #106ebe 0%, #005a9e 100%)",
+                  transform: (!email && !mobile) || isLoading ? "none" : "translateY(-1px)",
+                  boxShadow:
+                    (!email && !mobile) || isLoading ? "none" : "0 4px 12px rgba(0, 120, 212, 0.3)",
                 },
                 rootPressed: {
-                  transform: 'translateY(0)',
+                  transform: "translateY(0)",
                 },
               }}
             >
@@ -361,25 +365,25 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({ isOpen, onDismiss, document
               disabled={isLoading}
               styles={{
                 root: {
-                  height: '44px',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  borderRadius: '6px',
-                  border: '1px solid #d1d1d1',
-                  background: 'white',
-                  color: '#323130',
-                  transition: 'all 0.2s ease',
-                  minWidth: '80px',
+                  height: "44px",
+                  fontSize: "14px",
+                  fontWeight: "500",
+                  borderRadius: "6px",
+                  border: "1px solid #d1d1d1",
+                  background: "white",
+                  color: "#323130",
+                  transition: "all 0.2s ease",
+                  minWidth: "80px",
                 },
                 rootHovered: {
-                  background: '#f8f9fa',
-                  borderColor: '#0078d4',
-                  color: '#0078d4',
-                  transform: 'translateY(-1px)',
-                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+                  background: "#f8f9fa",
+                  borderColor: "#0078d4",
+                  color: "#0078d4",
+                  transform: "translateY(-1px)",
+                  boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
                 },
                 rootPressed: {
-                  transform: 'translateY(0)',
+                  transform: "translateY(0)",
                 },
               }}
             />
