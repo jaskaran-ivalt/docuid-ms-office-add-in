@@ -31,9 +31,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
       <div className="login-card">
         {/* Header Section */}
         <div className="login-header">
-          <h1 className="login-title">Welcome to DocuID</h1>
+          <div className="flex items-center justify-center">
+            <img src="assets/logo-transparent-bg.png" alt="DocuID Logo" style={{width: '140px', objectFit: 'contain' }} />
+          </div>
+          <h1 className="login-title">DocuID™ Security Platform</h1>
           <p className="login-subtitle">
-            Secure access to your documents using biometric authentication
+          Secure your digital assets with our advanced file identity and verification system powered by iVALT technology
           </p>
         </div>
 
@@ -63,9 +66,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
             className="login-button"
             style={{
               width: "100%",
-              height: "48px",
+              height: "40px",
               fontSize: "16px",
-              fontWeight: "500",
+              fontWeight: "300",
               borderRadius: "6px",
               border: "none",
               background: isValidPhone && !isLoading 
@@ -96,7 +99,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
             {isLoading ? (
               <Spinner size={1} />
             ) : (
-              <Lock size={18} style={{ marginRight: "4px" }} />
+              null
             )}
           </PrimaryButton>
         </form>
@@ -108,7 +111,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
             <h3 className="secure-process-title">Secure Process:</h3>
           </div>
           <ol className="secure-process-steps">
-            <li>Enter your registered mobile number</li>
+            <li>Enter your iVALT registered mobile number</li>
             <li>Complete biometric verification on your device</li>
             <li>Access your documents securely</li>
           </ol>

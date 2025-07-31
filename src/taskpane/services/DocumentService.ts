@@ -80,7 +80,7 @@ export class DocumentService {
             size: "1.2 MB",
           },
         ]);
-      }, 6000);
+      }, 10000);
     });
   }
 

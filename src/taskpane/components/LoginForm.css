@@ -27,18 +27,18 @@
 }
 
 .login-title {
-  margin: 0 0 12px 0;
-  font-size: 28px;
+  margin-top: 16px;
+  font-size: 20px;
   font-weight: 700;
   color: #323130;
   letter-spacing: -0.5px;
-  line-height: 1.2;
+  line-height: 1;
 }
 
 .login-subtitle {
   margin: 0;
   color: #605e5c;
-  font-size: 15px;
+  font-size: 12px;
   line-height: 1.5;
   font-weight: 400;
 }

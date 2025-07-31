@@ -58,10 +58,10 @@ const DocumentList: React.FC<DocumentListProps> = ({
   const getFileIcon = (type: string) => {
     switch (type.toLowerCase()) {
       case "pdf":
-        return <img src="./assets/icons/pdf.png" alt="PDF" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />;
+        return <img src="assets/pdf.png" alt="PDF" style={{marginTop: '10px', width: '40px', height: '40px', objectFit: 'contain' }} />;
       case "docx":
       case "doc":
-        return <img src="./assets/icons/docx.png" alt="Word Document" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />;
+        return <img src="assets/docx.png" alt="Word Document" style={{marginTop: '10px', width: '40px', height: '40px', objectFit: 'contain' }} />;
       case "xlsx":
       case "xls":
         return <FileSpreadsheet size={24} style={{ color: '#217346' }} />;
