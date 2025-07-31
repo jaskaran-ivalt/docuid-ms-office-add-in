@@ -5,6 +5,10 @@
   align-items: center;
   min-height: 400px;
   padding: 20px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .login-card {
