@@ -11,7 +11,7 @@ import {
   Spinner,
   Label,
 } from "@fluentui/react";
-import { Share, Mail, Phone } from "lucide-react";
+import { Share, Mail, Phone, FileText, Calendar, HardDrive } from "lucide-react";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 
@@ -51,7 +51,6 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({ isOpen, onDismiss, document
   };
 
   const validateMobile = (mobile: string): boolean => {
-    // react-phone-number-input already validates and formats the number
     return mobile && mobile.length > 0;
   };
 
@@ -61,7 +60,6 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({ isOpen, onDismiss, document
     setError("");
     setSuccess("");
 
-    // Validation
     if (!email && !mobile) {
       setError("Please enter either an email address or mobile number.");
       return;
@@ -90,7 +88,6 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({ isOpen, onDismiss, document
       await onShare(shareData);
       setSuccess("Document shared successfully!");
       
-      // Reset form after successful share
       setTimeout(() => {
         setEmail("");
         setMobile("");
@@ -114,6 +111,24 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({ isOpen, onDismiss, document
     onDismiss();
   };
 
+  const getDocumentIcon = (type: string) => {
+    switch (type.toLowerCase()) {
+      case 'pdf':
+        return <FileText size={20} color="#dc3545" />;
+      case 'doc':
+      case 'docx':
+        return <FileText size={20} color="#0d6efd" />;
+      case 'xls':
+      case 'xlsx':
+        return <FileText size={20} color="#198754" />;
+      case 'ppt':
+      case 'pptx':
+        return <FileText size={20} color="#fd7e14" />;
+      default:
+        return <FileText size={20} color="#6c757d" />;
+    }
+  };
+
   return (
     <Panel
       isOpen={isOpen}
@@ -121,104 +136,216 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({ isOpen, onDismiss, document
       type={PanelType.medium}
       headerText="Share Document"
       closeButtonAriaLabel="Close"
+      styles={{
+        main: {
+          backgroundColor: '#f8f9fa',
+        },
+        content: {
+          padding: '24px',
+        },
+        header: {
+          backgroundColor: '#ffffff',
+          borderBottom: '1px solid #e9ecef',
+          padding: '20px 24px',
+        },
+        headerText: {
+          fontSize: '20px',
+          fontWeight: '600',
+          color: '#323130',
+        },
+      }}
     >
       {document && (
-        <Stack tokens={{ childrenGap: 20 }}>
-          {/* Document Info */}
-          <Stack
-            horizontal
-            verticalAlign="center"
-            tokens={{ childrenGap: 12 }}
-            style={{
-              padding: 16,
-              backgroundColor: "#f8f9fa",
-              borderRadius: 6,
-              border: "1px solid #e1e5e9",
-            }}
-          >
-            <Share size={24} style={{ color: "#0078d4" }} />
-            <Stack>
-              <h3 style={{ margin: 0, fontSize: 16 }}>{document.title}</h3>
-              <span style={{ fontSize: 14, color: "#666" }}>
-                {document.type.toUpperCase()} • {document.size}
-              </span>
-            </Stack>
-          </Stack>
+        <div className="share-sidebar-content">
+          {/* Document Info Card */}
+          <div className="document-info-card">
+            <div className="document-icon-wrapper">
+              {getDocumentIcon(document.type)}
+            </div>
+            <div className="document-details">
+              <h3 className="document-title">{document.title}</h3>
+              <div className="document-meta">
+                <span className="document-type-badge">{document.type.toUpperCase()}</span>
+                <span className="document-separator">•</span>
+                <span className="document-size">{document.size}</span>
+                <span className="document-separator">•</span>
+                <span className="document-date">
+                  <Calendar size={12} />
+                  {document.dateModified}
+                </span>
+              </div>
+            </div>
+          </div>
 
           {/* Share Form */}
-          <Stack tokens={{ childrenGap: 16 }}>
-            <h4 style={{ margin: 0 }}>Share with:</h4>
+          <div className="share-form">
+            <h4 className="share-section-title">Share with:</h4>
 
-            <TextField
-              label="Email Address"
-              placeholder="Enter email address"
-              value={email}
-              onChange={(_, value) => setEmail(value || "")}
-              iconProps={{ iconName: undefined }}
-              prefix={<Mail size={16} />}
-              disabled={isLoading}
-            />
-
-            <div style={{ textAlign: "center", color: "#666", fontSize: 14 }}>OR</div>
-
-            <Stack tokens={{ childrenGap: 4 }}>
-              <Label>Mobile Number</Label>
-              <div style={{ position: "relative" }}>
-                <PhoneInput
-                  placeholder="Enter mobile number"
-                  value={mobile}
-                  onChange={(value) => setMobile(value || "")}
-                  defaultCountry="US"
+            <div className="form-group">
+              <Label className="form-label">Email Address</Label>
+              <div className="input-wrapper">
+                <Mail size={16} className="input-icon" />
+                <TextField
+                  placeholder="Enter email address"
+                  value={email}
+                  onChange={(_, value) => setEmail(value || "")}
                   disabled={isLoading}
-                  style={{
-                    width: "100%",
-                    padding: "8px 12px",
-                    border: "1px solid #d1d1d1",
-                    borderRadius: "2px",
-                    fontSize: "14px",
-                    fontFamily: "Segoe UI, sans-serif",
+                  styles={{
+                    field: {
+                      paddingLeft: '40px',
+                      fontSize: '14px',
+                      border: '1px solid #d1d1d1',
+                      borderRadius: '6px',
+                      height: '40px',
+                    },
+                    fieldGroup: {
+                      border: 'none',
+                    },
                   }}
                 />
               </div>
-            </Stack>
+            </div>
 
-            <TextField
-              label="Message (Optional)"
-              placeholder="Add a message..."
-              value={message}
-              onChange={(_, value) => setMessage(value || "")}
-              multiline
-              rows={3}
-              disabled={isLoading}
-            />
-          </Stack>
+            <div className="divider">
+              <span className="divider-text">OR</span>
+            </div>
+
+            <div className="form-group">
+              <Label className="form-label">Mobile Number</Label>
+              <PhoneInput
+                placeholder="Enter mobile number"
+                value={mobile}
+                onChange={(value) => setMobile(value || "")}
+                defaultCountry="US"
+                disabled={isLoading}
+                className="phone-input-field"
+              />
+            </div>
+
+            <div className="form-group">
+              <Label className="form-label">Message (Optional)</Label>
+              <TextField
+                placeholder="Add a personal message..."
+                value={message}
+                onChange={(_, value) => setMessage(value || "")}
+                multiline
+                rows={3}
+                disabled={isLoading}
+                styles={{
+                  field: {
+                    fontSize: '14px',
+                    border: '1px solid #d1d1d1',
+                    borderRadius: '6px',
+                    padding: '12px',
+                    resize: 'none',
+                  },
+                  fieldGroup: {
+                    border: 'none',
+                  },
+                }}
+              />
+            </div>
+          </div>
 
           {/* Messages */}
           {error && (
-            <MessageBar messageBarType={MessageBarType.error} onDismiss={() => setError("")}>
+            <MessageBar 
+              messageBarType={MessageBarType.error} 
+              onDismiss={() => setError("")}
+              styles={{
+                root: {
+                  marginBottom: '16px',
+                  borderRadius: '6px',
+                },
+              }}
+            >
               {error}
             </MessageBar>
           )}
 
           {success && (
-            <MessageBar messageBarType={MessageBarType.success} onDismiss={() => setSuccess("")}>
+            <MessageBar 
+              messageBarType={MessageBarType.success} 
+              onDismiss={() => setSuccess("")}
+              styles={{
+                root: {
+                  marginBottom: '16px',
+                  borderRadius: '6px',
+                },
+              }}
+            >
               {success}
             </MessageBar>
           )}
 
-          {/* Actions */}
-          <Stack horizontal tokens={{ childrenGap: 12 }} style={{ marginTop: 20 }}>
+          {/* Action Buttons */}
+          <div className="action-buttons">
             <PrimaryButton
-              text={isLoading ? "Sharing..." : "Share"}
+              text={isLoading ? "Sharing..." : "Share Document"}
               onClick={handleShare}
               disabled={isLoading || (!email && !mobile)}
               iconProps={isLoading ? undefined : { iconName: undefined }}
+              styles={{
+                root: {
+                  height: '44px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  borderRadius: '6px',
+                  border: 'none',
+                  background: (!email && !mobile) || isLoading 
+                    ? '#f3f2f1' 
+                    : 'linear-gradient(135deg, #0078d4 0%, #106ebe 100%)',
+                  color: (!email && !mobile) || isLoading ? '#605e5c' : 'white',
+                  cursor: (!email && !mobile) || isLoading ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.2s ease',
+                  flex: 1,
+                },
+                rootHovered: {
+                  background: (!email && !mobile) || isLoading 
+                    ? '#f3f2f1' 
+                    : 'linear-gradient(135deg, #106ebe 0%, #005a9e 100%)',
+                  transform: (!email && !mobile) || isLoading ? 'none' : 'translateY(-1px)',
+                  boxShadow: (!email && !mobile) || isLoading 
+                    ? 'none' 
+                    : '0 4px 12px rgba(0, 120, 212, 0.3)',
+                },
+                rootPressed: {
+                  transform: 'translateY(0)',
+                },
+              }}
             >
               {isLoading && <Spinner size={1} style={{ marginRight: 8 }} />}
             </PrimaryButton>
-            <DefaultButton text="Cancel" onClick={handleDismiss} disabled={isLoading} />
-          </Stack>
-        </Stack>
+            <DefaultButton 
+              text="Cancel" 
+              onClick={handleDismiss} 
+              disabled={isLoading}
+              styles={{
+                root: {
+                  height: '44px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  borderRadius: '6px',
+                  border: '1px solid #d1d1d1',
+                  background: 'white',
+                  color: '#323130',
+                  transition: 'all 0.2s ease',
+                  minWidth: '80px',
+                },
+                rootHovered: {
+                  background: '#f8f9fa',
+                  borderColor: '#0078d4',
+                  color: '#0078d4',
+                  transform: 'translateY(-1px)',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+                },
+                rootPressed: {
+                  transform: 'translateY(0)',
+                },
+              }}
+            />
+          </div>
+        </div>
       )}
     </Panel>
   );
