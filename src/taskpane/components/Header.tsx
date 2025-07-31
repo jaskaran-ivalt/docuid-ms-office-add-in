@@ -9,27 +9,25 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ user, onLogout }) => {
   return (
-    <Stack
-      as="header"
-      horizontal
-      verticalAlign="center"
-      horizontalAlign="space-between"
-      style={{ padding: 16, boxShadow: "0 2px 8px #eee", marginBottom: 16 }}
-    >
-      <Stack>
-        <h1 style={{ margin: 0 }}>DocuID</h1>
-        <span>Secure Document Access</span>
-      </Stack>
-      {user && (
-        <Stack horizontal verticalAlign="center" tokens={{ childrenGap: 8 }}>
-          <span>
-            <Phone24Regular style={{ marginRight: 4 }} />
-            {user.phone}
-          </span>
-          <DefaultButton onClick={onLogout} text="Logout" />
-        </Stack>
-      )}
-    </Stack>
+    <div className="header">
+      <div className="header-content">
+        <div className="header-brand">
+          <h1 className="brand-title">DocuID</h1>
+          <span className="brand-subtitle">Secure Document Access</span>
+        </div>
+        {user && (
+          <div className="header-user">
+            <div className="user-info">
+              <Phone24Regular style={{ marginRight: 8, verticalAlign: 'middle' }} />
+              <span>{user.phone}</span>
+            </div>
+            <button className="logout-btn" onClick={onLogout}>
+              Logout
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 
