@@ -1,47 +1,70 @@
 /* Documents Styles */
 .documents-container {
   background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f0f0f0;
   overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.documents-container:hover {
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.12);
+  transform: translateY(-1px);
 }
 
 .documents-header {
-  padding: 24px 24px 16px;
+  padding: 28px 24px 20px;
   border-bottom: 1px solid #e1e1e1;
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
 }
 
 .documents-header h2 {
-  margin: 0 0 16px 0;
-  font-size: 20px;
-  font-weight: 600;
+  margin: 0 0 20px 0;
+  font-size: 22px;
+  font-weight: 700;
   color: #323130;
+  letter-spacing: -0.5px;
 }
 
 .search-container {
   position: relative;
-}
-
-.search-input {
-  width: 100%;
-  padding: 10px 12px 10px 36px;
-  border: 1px solid #d1d1d1;
-  border-radius: 4px;
-  font-size: 14px;
-  outline: none;
-}
-
-.search-input:focus {
-  border-color: #0078d4;
-  box-shadow: 0 0 0 1px #0078d4;
+  display: flex;
+  align-items: center;
 }
 
 .search-icon {
   position: absolute;
-  left: 12px;
+  left: 8px;
   top: 50%;
   transform: translateY(-50%);
   color: #605e5c;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Override Fluent UI TextField styles for better search experience */
+.search-container .ms-TextField {
+  width: 100%;
+}
+
+.search-container .ms-TextField-field {
+  padding-left: 36px !important;
+  border: 1px solid #d1d1d1 !important;
+  border-radius: 6px !important;
+  background-color: #fafafa !important;
+  transition: all 0.2s ease;
+}
+
+.search-container .ms-TextField-field:focus {
+  border-color: #0078d4 !important;
+  box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.2) !important;
+  background-color: white !important;
+}
+
+.search-container .ms-TextField-field:hover {
+  border-color: #0078d4 !important;
+  background-color: white !important;
 }
 
 /* Loading States */
