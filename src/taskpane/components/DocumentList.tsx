@@ -6,6 +6,7 @@ import {
   Search24Regular,
   Folder24Regular,
 } from "@fluentui/react-icons";
+import ShareSidebar from "./ShareSidebar";
 
 interface Document {
   id: string;
@@ -15,14 +16,29 @@ interface Document {
   size: string;
 }
 
+interface ShareData {
+  documentId: string;
+  email?: string;
+  mobile?: string;
+  message?: string;
+}
+
 interface DocumentListProps {
   documents: Document[];
   onDocumentOpen: (document: Document) => Promise<void>;
+  onDocumentShare?: (shareData: ShareData) => Promise<void>;
   isLoading: boolean;
 }
 
-const DocumentList: React.FC<DocumentListProps> = ({ documents, onDocumentOpen, isLoading }) => {
+const DocumentList: React.FC<DocumentListProps> = ({ 
+  documents, 
+  onDocumentOpen, 
+  onDocumentShare,
+  isLoading 
+}) => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [isShareSidebarOpen, setIsShareSidebarOpen] = useState(false);
+  const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
 
   const filteredDocuments = documents.filter((doc) =>
     doc.title.toLowerCase().includes(searchTerm.toLowerCase())
@@ -104,10 +120,37 @@ const DocumentList: React.FC<DocumentListProps> = ({ documents, onDocumentOpen, 
                 disabled={isLoading}
                 text="Open"
               />
+              <DefaultButton
+                onClick={() => {
+                  setSelectedDocument(document);
+                  setIsShareSidebarOpen(true);
+                }}
+                disabled={isLoading}
+                text="Share"
+              />
             </Stack>
           ))}
         </Stack>
       )}
+      
+      <ShareSidebar
+        isOpen={isShareSidebarOpen}
+        onDismiss={() => {
+          setIsShareSidebarOpen(false);
+          setSelectedDocument(null);
+        }}
+        document={selectedDocument}
+        onShare={async (shareData) => {
+          if (onDocumentShare) {
+            await onDocumentShare(shareData);
+          } else {
+            // Default implementation - you can customize this
+            console.log('Sharing document:', shareData);
+            // Simulate API call
+            await new Promise(resolve => setTimeout(resolve, 1000));
+          }
+        }}
+      />
     </Stack>
   );
 };
