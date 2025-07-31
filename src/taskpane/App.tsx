@@ -77,6 +77,19 @@ const App: React.FC = () => {
     }
   };
 
+  const handleDocumentClose = async (documentId: string) => {
+    try {
+      setIsLoading(true);
+      await DocumentService.closeDocument(documentId);
+      // Remove the document from the list
+      setDocuments(prev => prev.filter(doc => doc.id !== documentId));
+    } catch (err) {
+      setError("Failed to close document");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <DocuIdThemeProvider>
       <div className="app-container">
@@ -98,6 +111,7 @@ const App: React.FC = () => {
             <DocumentList
               documents={documents}
               onDocumentOpen={handleDocumentOpen}
+              onCloseDocument={handleDocumentClose}
               isLoading={isLoading}
             />
           )}

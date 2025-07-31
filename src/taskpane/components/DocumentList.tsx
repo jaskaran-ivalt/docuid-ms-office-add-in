@@ -34,6 +34,7 @@ interface DocumentListProps {
   documents: Document[];
   onDocumentOpen: (document: Document) => Promise<void>;
   onDocumentShare?: (shareData: ShareData) => Promise<void>;
+  onCloseDocument?: (documentId: string) => Promise<void>;
   isLoading: boolean;
 }
 
@@ -41,6 +42,7 @@ const DocumentList: React.FC<DocumentListProps> = ({
   documents, 
   onDocumentOpen, 
   onDocumentShare,
+  onCloseDocument,
   isLoading 
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -253,6 +255,7 @@ const DocumentList: React.FC<DocumentListProps> = ({
             await new Promise(resolve => setTimeout(resolve, 1000));
           }
         }}
+        onCloseDocument={onCloseDocument}
       />
     </div>
   );
