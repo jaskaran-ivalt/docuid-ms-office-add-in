@@ -60,7 +60,7 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout }) => {
   // Dummy user data based on the image
   const dummyUser = {
     name: "Jaskaran Singh",
-    email: "jaskaran.singh@ivalt.com",
+    email: "jaskaran@ivalt.com",
     phone: user?.phone || "+91 98765 43210",
     plan: "PRO"
   };
