@@ -69,8 +69,8 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout }) => {
     <div className="header">
       <div className="header-content">
         <div className="header-brand">
-          <h1 className="brand-title">DocuID</h1>
-          <span className="brand-subtitle">Secure Document Access</span>
+          <h1 className="text-2xl font-bold">DocuID</h1>
+          <span className="text-sm text-gray-500">Secure Document Access</span>
         </div>
         
         {user && (
