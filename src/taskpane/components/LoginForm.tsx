@@ -1,14 +1,12 @@
 import React, { useState } from "react";
 import {
-  TextField,
   PrimaryButton,
   Spinner,
-  Dropdown,
-  IDropdownOption,
   Stack,
 } from "@fluentui/react";
 import { LockClosed24Regular, ShieldLock24Regular } from "@fluentui/react-icons";
-import countriesData from "@/data/countries.json";
+import PhoneInput from "react-phone-number-input";
+import "react-phone-number-input/style.css";
 
 interface LoginFormProps {
   onLogin: (phoneNumber: string) => Promise<void>;
@@ -16,19 +14,16 @@ interface LoginFormProps {
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [countryCode, setCountryCode] = useState("+1");
+  const [phoneNumber, setPhoneNumber] = useState<string>("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (phoneNumber.trim()) {
-      await onLogin(`${countryCode}${phoneNumber}`);
+    if (phoneNumber && phoneNumber.length >= 10) {
+      await onLogin(phoneNumber);
     }
   };
 
-  const isValidPhone = phoneNumber.length >= 10;
-
-  const countryOptions: IDropdownOption[] = countriesData;
+  const isValidPhone = phoneNumber && phoneNumber.length >= 10;
 
   return (
     <Stack verticalAlign="center" horizontalAlign="center" style={{ minHeight: 400 }}>
@@ -43,25 +38,15 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
         <form onSubmit={handleSubmit}>
           <Stack tokens={{ childrenGap: 12 }}>
             <label htmlFor="phone">Mobile Number</label>
-            <Stack horizontal tokens={{ childrenGap: 8 }}>
-              <Dropdown
-                options={countryOptions}
-                selectedKey={countryCode}
-                onChange={(_, o) => setCountryCode(o?.key as string)}
-                disabled={isLoading}
-                styles={{ dropdown: { width: 90 } }}
-              />
-              <TextField
-                id="phone"
-                type="tel"
-                value={phoneNumber}
-                onChange={(_, v) => setPhoneNumber((v || "").replace(/\D/g, ""))}
-                placeholder="Enter your mobile number"
-                disabled={isLoading}
-                maxLength={15}
-                styles={{ root: { flexGrow: 1 } }}
-              />
-            </Stack>
+            <PhoneInput
+              id="phone"
+              international
+              defaultCountry="IN"
+              value={phoneNumber}
+              onChange={(value) => setPhoneNumber(value || "")}
+              placeholder="Enter your mobile number"
+              disabled={isLoading}
+            />
             <PrimaryButton
               type="submit"
               disabled={!isValidPhone || isLoading}
