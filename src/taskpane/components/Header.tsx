@@ -1,6 +1,14 @@
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { DefaultButton, Stack } from "@fluentui/react";
-import { Phone } from "lucide-react";
+import { 
+  Phone, 
+  User, 
+  Settings, 
+  LogOut, 
+  ChevronDown,
+  Search,
+  Crown
+} from "lucide-react";
 
 interface HeaderProps {
   user: { phone: string } | null;
@@ -8,6 +16,44 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ user, onLogout }) => {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  // Generate initials from name
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(word => word.charAt(0))
+      .join('')
+      .toUpperCase();
+  };
+
+  // Dummy user data based on the image
+  const dummyUser = {
+    name: "Jaskaran Singh",
+    email: "jaskaransingh4704@gmail.com",
+    phone: user?.phone || "+91 98765 43210",
+    plan: "FREE"
+  };
+
   return (
     <div className="header">
       <div className="header-content">
@@ -15,15 +61,78 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout }) => {
           <h1 className="brand-title">DocuID</h1>
           <span className="brand-subtitle">Secure Document Access</span>
         </div>
+        
         {user && (
-          <div className="header-user">
-            <div className="user-info">
-              <Phone size={16} style={{ marginRight: 8, verticalAlign: 'middle' }} />
-              <span>{user.phone}</span>
+          <div className="header-user-section">
+            {/* Search Icon */}
+            <div className="search-icon-wrapper">
+              <Search size={18} />
             </div>
-            <button className="logout-btn" onClick={onLogout}>
-              Logout
-            </button>
+            
+            {/* User Profile Dropdown */}
+            <div className="user-profile-dropdown" ref={dropdownRef}>
+              <button 
+                className="user-profile-trigger" 
+                onClick={toggleDropdown}
+                aria-expanded={isDropdownOpen}
+              >
+                <div className="user-avatar">
+                  <div className="avatar-initials">
+                    {getInitials(dummyUser.name)}
+                  </div>
+                </div>
+                <div className="user-info">
+                  <div className="user-name">{dummyUser.name}</div>
+                  <div className="user-email">{dummyUser.email}</div>
+                </div>
+                <div className="plan-badge">
+                  <Crown size={12} />
+                  <span>{dummyUser.plan}</span>
+                </div>
+                <ChevronDown 
+                  size={16} 
+                  className={`dropdown-chevron ${isDropdownOpen ? 'rotated' : ''}`}
+                />
+              </button>
+
+              {/* Dropdown Menu */}
+              {isDropdownOpen && (
+                <div className="dropdown-menu">
+                  {/* User Info Section */}
+                  <div className="dropdown-user-info">
+                    <div className="dropdown-avatar">
+                      <div className="avatar-initials">
+                        {getInitials(dummyUser.name)}
+                      </div>
+                    </div>
+                    <div className="dropdown-user-details">
+                      <div className="dropdown-user-name">{dummyUser.name}</div>
+                      <div className="dropdown-user-email">{dummyUser.email}</div>
+                    </div>
+                    <div className="dropdown-plan-badge">
+                      <Crown size={12} />
+                      <span>{dummyUser.plan}</span>
+                    </div>
+                  </div>
+
+                  {/* Menu Items */}
+                  <div className="dropdown-menu-items">
+                    {/* <button className="dropdown-menu-item">
+                      <User size={16} />
+                      <span>Dashboard</span>
+                    </button>
+                    <button className="dropdown-menu-item">
+                      <Settings size={16} />
+                      <span>Account Settings</span>
+                    </button> */}
+                    <button className="dropdown-menu-item logout-item" onClick={onLogout}>
+                      <LogOut size={16} />
+                      <span>Logout</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>
