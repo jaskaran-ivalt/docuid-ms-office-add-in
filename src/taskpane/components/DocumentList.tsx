@@ -7,6 +7,10 @@ import {
   File,
   FileSpreadsheet,
   Presentation,
+  Loader2,
+  Database,
+  Shield,
+  CheckCircle,
 } from "lucide-react";
 import ShareSidebar from "./ShareSidebar";
 
@@ -64,10 +68,92 @@ const DocumentList: React.FC<DocumentListProps> = ({
     }
   };
 
+  // Skeleton loading component
+  const DocumentSkeleton = () => (
+    <div className="document-skeleton">
+      <div className="skeleton-icon"></div>
+      <div className="skeleton-content">
+        <div className="skeleton-title"></div>
+        <div className="skeleton-meta">
+          <div className="skeleton-badge"></div>
+          <div className="skeleton-text"></div>
+          <div className="skeleton-text"></div>
+        </div>
+      </div>
+      <div className="skeleton-actions">
+        <div className="skeleton-button"></div>
+        <div className="skeleton-button"></div>
+      </div>
+    </div>
+  );
+
   if (isLoading) {
     return (
-      <div className="documents-loading">
-        <Spinner size={3} label="Loading your documents..." />
+      <div className="documents-loading-container">
+        {/* Loading Header */}
+        <div className="loading-header">
+          <div className="loading-title">
+            <Database size={20} className="loading-icon" />
+            <h2>Loading Your Documents</h2>
+          </div>
+          <div className="loading-subtitle">
+            Securely fetching your documents from DocuID
+          </div>
+        </div>
+
+        {/* Progress Indicator */}
+        <div className="loading-progress">
+          <div className="progress-bar">
+            <div className="progress-fill"></div>
+          </div>
+          <div className="progress-steps">
+            <div className="progress-step completed">
+              <CheckCircle size={16} />
+              <span>Authentication Verified</span>
+            </div>
+            <div className="progress-step active">
+              <Loader2 size={16} className="spinning" />
+              <span>Fetching Documents</span>
+            </div>
+            <div className="progress-step">
+              <Shield size={16} />
+              <span>Security Check</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Skeleton Loading */}
+        <div className="documents-container loading">
+          <div className="documents-header">
+            <h2>Your Documents</h2>
+            <div className="search-container">
+              <Search size={16} className="search-icon" />
+              <div className="skeleton-search"></div>
+            </div>
+          </div>
+          
+          <div className="documents-list">
+            {[1, 2, 3, 4, 5].map((index) => (
+              <DocumentSkeleton key={index} />
+            ))}
+          </div>
+        </div>
+
+        {/* Loading Tips */}
+        <div className="loading-tips">
+          <div className="tip-item">
+            <Shield size={16} />
+            <span>Your documents are encrypted and secure</span>
+          </div>
+          <div className="tip-item">
+            <FileText size={16} />
+            <span>All file types are supported</span>
+          </div>
+          <div className="tip-item">
+            <Search size={16} />
+            <span>You can search and filter documents</span>
+          </div>
+        </div>
       </div>
     );
   }
