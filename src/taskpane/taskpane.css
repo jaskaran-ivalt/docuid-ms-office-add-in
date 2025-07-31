@@ -128,48 +128,130 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 400px;
+  padding: 20px;
 }
 
 .login-card {
   background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  padding: 32px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 40px;
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
+  border: 1px solid #f0f0f0;
 }
 
 .login-header {
   text-align: center;
+  margin-bottom: 32px;
+}
+
+.login-title {
+  margin: 0 0 12px 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: #323130;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+}
+
+.login-subtitle {
+  margin: 0;
+  color: #605e5c;
+  font-size: 15px;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+.login-form {
+  margin-bottom: 32px;
+}
+
+.form-group {
   margin-bottom: 24px;
 }
 
-.login-header h2 {
-  margin: 0 0 8px 0;
-  font-size: 24px;
+.form-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #323130;
+  font-size: 14px;
+  letter-spacing: 0.2px;
+}
+
+.phone-input-field {
+  width: 100%;
+}
+
+.login-button {
+  width: 100%;
+  height: 48px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.login-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 120, 212, 0.25);
+}
+
+.login-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.secure-process {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 24px;
+}
+
+.secure-process-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.shield-icon {
+  color: #0078d4;
+  flex-shrink: 0;
+}
+
+.secure-process-title {
+  margin: 0;
+  font-size: 16px;
   font-weight: 600;
   color: #323130;
 }
 
-.login-header p {
+.secure-process-steps {
   margin: 0;
+  padding-left: 20px;
   color: #605e5c;
   font-size: 14px;
+  line-height: 1.6;
 }
 
-.login-form {
-  margin-bottom: 24px;
+.secure-process-steps li {
+  margin-bottom: 8px;
 }
 
-.form-group {
-  margin-bottom: 20px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 6px;
-  font-weight: 500;
-  color: #323130;
+.secure-process-steps li:last-child {
+  margin-bottom: 0;
 }
 
 .phone-input-group {
