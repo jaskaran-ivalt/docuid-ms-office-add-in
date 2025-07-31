@@ -93,7 +93,7 @@ export class DocumentService {
             size: "1.2 MB",
           },
         ]);
-      }, 1000);
+      }, 6000);
     });
   }
 

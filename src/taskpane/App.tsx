@@ -5,6 +5,7 @@ import Header from "@/taskpane/components/Header";
 import { AuthService } from "@/taskpane/services/AuthService";
 import { DocumentService } from "@/taskpane/services/DocumentService";
 import { DocuIdThemeProvider } from "./components/DesignSystem";
+import "./App.css";
 
 interface Document {
   id: string;

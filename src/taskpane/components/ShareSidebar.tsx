@@ -14,6 +14,7 @@ import {
 import { Share, Mail, Phone, FileText, Calendar, HardDrive } from "lucide-react";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
+import "./ShareSidebar.css";
 
 interface Document {
   id: string;

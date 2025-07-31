@@ -3,7 +3,7 @@
  * See LICENSE in the project root for license information.
  */
 
-/* DocuID Taskpane Styles - Global Styles Only */
+/* DocuID Taskpane Styles */
 
 /* Global Styles */
 * {
@@ -93,4 +93,4 @@ body {
   .main-content {
     padding: 16px;
   }
-}
+} 
