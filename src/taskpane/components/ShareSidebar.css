@@ -5,6 +5,45 @@
   gap: 24px;
 }
 
+/* Panel Header Styles */
+.panel-header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.panel-header-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #323130;
+}
+
+.panel-close-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: #f8f9fa;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #605e5c;
+}
+
+.panel-close-btn:hover {
+  background: #e9ecef;
+  color: #323130;
+  transform: scale(1.1);
+}
+
+.panel-close-btn:active {
+  transform: scale(0.95);
+}
+
 .document-info-card {
   background: white;
   border-radius: 8px;
@@ -14,6 +53,36 @@
   display: flex;
   align-items: flex-start;
   gap: 16px;
+  position: relative;
+}
+
+.close-document-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid #e9ecef;
+  background: #f8f9fa;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #605e5c;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.close-document-btn:hover {
+  background: #e9ecef;
+  color: #323130;
+  border-color: #d1d1d1;
+  transform: translateY(-1px);
+}
+
+.close-document-btn:active {
+  transform: translateY(0);
 }
 
 .document-icon-wrapper {

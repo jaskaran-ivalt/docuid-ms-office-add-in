@@ -11,7 +11,7 @@ import {
   Spinner,
   Label,
 } from "@fluentui/react";
-import { Share, Mail, Phone, FileText, Calendar, HardDrive } from "lucide-react";
+import { Share, Mail, Phone, FileText, Calendar, HardDrive, X } from "lucide-react";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import "./ShareSidebar.css";
@@ -29,6 +29,7 @@ interface ShareSidebarProps {
   onDismiss: () => void;
   document: Document | null;
   onShare: (shareData: ShareData) => Promise<void>;
+  onCloseDocument?: (documentId: string) => Promise<void>;
 }
 
 interface ShareData {
@@ -38,7 +39,7 @@ interface ShareData {
   message?: string;
 }
 
-const ShareSidebar: React.FC<ShareSidebarProps> = ({ isOpen, onDismiss, document, onShare }) => {
+const ShareSidebar: React.FC<ShareSidebarProps> = ({ isOpen, onDismiss, document, onShare, onCloseDocument }) => {
   const [email, setEmail] = useState("");
   const [mobile, setMobile] = useState("");
   const [message, setMessage] = useState("");
@@ -88,7 +89,7 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({ isOpen, onDismiss, document
 
       await onShare(shareData);
       setSuccess("Document shared successfully!");
-      
+
       setTimeout(() => {
         setEmail("");
         setMobile("");
@@ -110,6 +111,20 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({ isOpen, onDismiss, document
     setError("");
     setSuccess("");
     onDismiss();
+  };
+
+  const handleCloseDocument = async () => {
+    if (!document || !onCloseDocument) return;
+
+    try {
+      await onCloseDocument(document.id);
+      setSuccess("Document closed successfully!");
+      setTimeout(() => {
+        onDismiss();
+      }, 1500);
+    } catch (err) {
+      setError("Failed to close document. Please try again.");
+    }
   };
 
   const getDocumentIcon = (type: string) => {
@@ -137,6 +152,18 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({ isOpen, onDismiss, document
       type={PanelType.medium}
       headerText="Share Document"
       closeButtonAriaLabel="Close"
+      onRenderHeader={() => (
+        <div className="panel-header-content flex justify-between items-center px-2 py-4">
+          <h2 className="panel-header-title">Share Document</h2>
+          <button
+            className="panel-close-btn"
+            onClick={handleDismiss}
+            aria-label="Close share sidebar"
+          >
+            <X size={18} />
+          </button>
+        </div>
+      )}
       styles={{
         main: {
           backgroundColor: '#f8f9fa',
@@ -158,6 +185,7 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({ isOpen, onDismiss, document
     >
       {document && (
         <div className="share-sidebar-content">
+
           {/* Document Info Card */}
           <div className="document-info-card">
             <div className="document-icon-wrapper">
@@ -176,6 +204,16 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({ isOpen, onDismiss, document
                 </span>
               </div>
             </div>
+            {/* {onCloseDocument && (
+               <button 
+                 className="close-document-btn"
+                 onClick={handleCloseDocument}
+                 title="Close this document"
+               >
+                 <X size={16} />
+                 <span>Close</span>
+               </button>
+             )} */}
           </div>
 
           {/* Share Form */}
@@ -250,8 +288,8 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({ isOpen, onDismiss, document
 
           {/* Messages */}
           {error && (
-            <MessageBar 
-              messageBarType={MessageBarType.error} 
+            <MessageBar
+              messageBarType={MessageBarType.error}
               onDismiss={() => setError("")}
               styles={{
                 root: {
@@ -265,8 +303,8 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({ isOpen, onDismiss, document
           )}
 
           {success && (
-            <MessageBar 
-              messageBarType={MessageBarType.success} 
+            <MessageBar
+              messageBarType={MessageBarType.success}
               onDismiss={() => setSuccess("")}
               styles={{
                 root: {
@@ -293,8 +331,8 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({ isOpen, onDismiss, document
                   fontWeight: '600',
                   borderRadius: '6px',
                   border: 'none',
-                  background: (!email && !mobile) || isLoading 
-                    ? '#f3f2f1' 
+                  background: (!email && !mobile) || isLoading
+                    ? '#f3f2f1'
                     : 'linear-gradient(135deg, #0078d4 0%, #106ebe 100%)',
                   color: (!email && !mobile) || isLoading ? '#605e5c' : 'white',
                   cursor: (!email && !mobile) || isLoading ? 'not-allowed' : 'pointer',
@@ -302,12 +340,12 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({ isOpen, onDismiss, document
                   flex: 1,
                 },
                 rootHovered: {
-                  background: (!email && !mobile) || isLoading 
-                    ? '#f3f2f1' 
+                  background: (!email && !mobile) || isLoading
+                    ? '#f3f2f1'
                     : 'linear-gradient(135deg, #106ebe 0%, #005a9e 100%)',
                   transform: (!email && !mobile) || isLoading ? 'none' : 'translateY(-1px)',
-                  boxShadow: (!email && !mobile) || isLoading 
-                    ? 'none' 
+                  boxShadow: (!email && !mobile) || isLoading
+                    ? 'none'
                     : '0 4px 12px rgba(0, 120, 212, 0.3)',
                 },
                 rootPressed: {
@@ -317,9 +355,9 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({ isOpen, onDismiss, document
             >
               {isLoading && <Spinner size={1} style={{ marginRight: 8 }} />}
             </PrimaryButton>
-            <DefaultButton 
-              text="Cancel" 
-              onClick={handleDismiss} 
+            <DefaultButton
+              text="Cancel"
+              onClick={handleDismiss}
               disabled={isLoading}
               styles={{
                 root: {

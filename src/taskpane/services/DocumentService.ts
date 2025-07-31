@@ -100,6 +100,21 @@ export class DocumentService {
   }
 
   /**
+   * Close a document
+   */
+  static async closeDocument(documentId: string): Promise<void> {
+    try {
+      // Simulate API call to close document
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // In a real implementation, you would call the API to close the document
+      console.log(`Closing document: ${documentId}`);
+    } catch (error) {
+      throw new Error("Failed to close document");
+    }
+  }
+
+  /**
    * Get document content from API
    */
   private static async getDocumentContent(documentId: string): Promise<DocumentContent> {
