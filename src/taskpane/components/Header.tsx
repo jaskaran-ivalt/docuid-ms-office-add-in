@@ -1,6 +1,6 @@
 import React from "react";
 import { DefaultButton, Stack } from "@fluentui/react";
-import { Phone24Regular } from "@fluentui/react-icons";
+import { Phone } from "lucide-react";
 
 interface HeaderProps {
   user: { phone: string } | null;
@@ -18,7 +18,7 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout }) => {
         {user && (
           <div className="header-user">
             <div className="user-info">
-              <Phone24Regular style={{ marginRight: 8, verticalAlign: 'middle' }} />
+              <Phone size={16} style={{ marginRight: 8, verticalAlign: 'middle' }} />
               <span>{user.phone}</span>
             </div>
             <button className="logout-btn" onClick={onLogout}>

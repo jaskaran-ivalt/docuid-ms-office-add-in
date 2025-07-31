@@ -4,7 +4,7 @@ import {
   Spinner,
   Stack,
 } from "@fluentui/react";
-import { LockClosed24Regular, ShieldLock24Regular } from "@fluentui/react-icons";
+import { Lock, Shield } from "lucide-react";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 
@@ -54,14 +54,14 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
               iconProps={{ iconName: undefined }}
               style={{ width: "100%" }}
             >
-              {isLoading ? <Spinner size={1} /> : <LockClosed24Regular />}
+              {isLoading ? <Spinner size={1} /> : <Lock size={16} />}
             </PrimaryButton>
           </Stack>
         </form>
         <Stack tokens={{ childrenGap: 8 }}>
           <p>
             <strong>
-              <ShieldLock24Regular /> Secure Process:
+              <Shield size={16} style={{ marginRight: 4, verticalAlign: 'middle' }} /> Secure Process:
             </strong>
             <br />
             1. Enter your registered mobile number
