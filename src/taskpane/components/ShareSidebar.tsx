@@ -11,7 +11,7 @@ import {
   Spinner,
   Label,
 } from "@fluentui/react";
-import { Share24Regular, Mail24Regular, Phone24Regular } from "@fluentui/react-icons";
+import { Share, Mail, Phone } from "lucide-react";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 
@@ -136,7 +136,7 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({ isOpen, onDismiss, document
               border: "1px solid #e1e5e9",
             }}
           >
-            <Share24Regular style={{ fontSize: 24, color: "#0078d4" }} />
+            <Share size={24} style={{ color: "#0078d4" }} />
             <Stack>
               <h3 style={{ margin: 0, fontSize: 16 }}>{document.title}</h3>
               <span style={{ fontSize: 14, color: "#666" }}>
@@ -155,7 +155,7 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({ isOpen, onDismiss, document
               value={email}
               onChange={(_, value) => setEmail(value || "")}
               iconProps={{ iconName: undefined }}
-              prefix={<Mail24Regular style={{ fontSize: 16 }} />}
+              prefix={<Mail size={16} />}
               disabled={isLoading}
             />
 

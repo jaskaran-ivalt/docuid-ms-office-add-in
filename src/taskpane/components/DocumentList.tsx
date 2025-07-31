@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { TextField, Spinner, DefaultButton, Stack } from "@fluentui/react";
 import {
-  DocumentPdf24Regular,
-  Document24Regular,
-  Search24Regular,
-  Folder24Regular,
-} from "@fluentui/react-icons";
+  FileText,
+  Search,
+  Folder,
+  File,
+  FileSpreadsheet,
+  Presentation,
+} from "lucide-react";
 import ShareSidebar from "./ShareSidebar";
 
 interface Document {
@@ -47,90 +49,104 @@ const DocumentList: React.FC<DocumentListProps> = ({
   const getFileIcon = (type: string) => {
     switch (type.toLowerCase()) {
       case "pdf":
-        return <DocumentPdf24Regular />;
+        return <FileText size={24} style={{ color: '#d13438' }} />;
+      case "docx":
+      case "doc":
+        return <File size={24} style={{ color: '#2b579a' }} />;
+      case "xlsx":
+      case "xls":
+        return <FileSpreadsheet size={24} style={{ color: '#217346' }} />;
+      case "pptx":
+      case "ppt":
+        return <Presentation size={24} style={{ color: '#d24726' }} />;
       default:
-        return <Document24Regular />;
+        return <File size={24} style={{ color: '#605e5c' }} />;
     }
   };
 
   if (isLoading) {
     return (
-      <Stack verticalAlign="center" horizontalAlign="center" style={{ height: 300 }}>
+      <div className="documents-loading">
         <Spinner size={3} label="Loading your documents..." />
-      </Stack>
+      </div>
     );
   }
 
   return (
-    <Stack tokens={{ childrenGap: 24 }}>
-      <Stack horizontal horizontalAlign="space-between" verticalAlign="center">
+    <div className="documents-container">
+      <div className="documents-header">
         <h2>Your Documents</h2>
-        <Stack horizontal verticalAlign="center" tokens={{ childrenGap: 8 }}>
+        <div className="search-container">
+          <Search size={16} className="search-icon" />
           <TextField
             placeholder="Search documents..."
             value={searchTerm}
             onChange={(_, v) => setSearchTerm(v || "")}
-            styles={{ root: { width: 220 } }}
+            styles={{ 
+              root: { width: 220 },
+              field: { paddingLeft: 36 }
+            }}
             borderless
             underlined
-            iconProps={{ iconName: undefined }}
           />
-          <Search24Regular />
-        </Stack>
-      </Stack>
+        </div>
+      </div>
+      
       {filteredDocuments.length === 0 ? (
-        <Stack verticalAlign="center" horizontalAlign="center" style={{ minHeight: 200 }}>
+        <div className="no-documents">
           {documents.length === 0 ? (
             <>
-              <Folder24Regular style={{ fontSize: 48, marginBottom: 8 }} />
+              <Folder size={48} className="no-docs-icon" />
               <h3>No Documents Available</h3>
               <p>You don't have any documents available at the moment.</p>
             </>
           ) : (
             <>
-              <Search24Regular style={{ fontSize: 48, marginBottom: 8 }} />
+              <Search size={48} className="no-docs-icon" />
               <h3>No Documents Found</h3>
               <p>No documents match your search criteria.</p>
             </>
           )}
-        </Stack>
+        </div>
       ) : (
-        <Stack tokens={{ childrenGap: 12 }}>
+        <div className="documents-list">
           {filteredDocuments.map((document) => (
-            <Stack
-              key={document.id}
-              horizontal
-              verticalAlign="center"
-              tokens={{ childrenGap: 16 }}
-              style={{ padding: 12, border: "1px solid #eee", borderRadius: 6 }}
-            >
-              <div>{getFileIcon(document.type)}</div>
-              <Stack grow>
-                <h3 style={{ margin: 0 }}>{document.title}</h3>
-                <Stack horizontal tokens={{ childrenGap: 8 }}>
-                  <span>{document.type.toUpperCase()}</span>
-                  <span>•</span>
+            <div key={document.id} className="document-item">
+              <div className="document-icon">
+                {getFileIcon(document.type)}
+              </div>
+              <div className="document-info">
+                <h3 className="document-title">{document.title}</h3>
+                <div className="document-meta">
+                  <span className="document-type">{document.type.toUpperCase()}</span>
+                  <span className="document-separator">•</span>
                   <span>{document.size}</span>
-                  <span>•</span>
+                  <span className="document-separator">•</span>
                   <span>{document.dateModified}</span>
-                </Stack>
-              </Stack>
-              <DefaultButton
-                onClick={() => onDocumentOpen(document)}
-                disabled={isLoading}
-                text="Open"
-              />
-              <DefaultButton
-                onClick={() => {
-                  setSelectedDocument(document);
-                  setIsShareSidebarOpen(true);
-                }}
-                disabled={isLoading}
-                text="Share"
-              />
-            </Stack>
+                </div>
+              </div>
+              <div className="document-actions">
+                <button 
+                  className="document-open-btn"
+                  onClick={() => onDocumentOpen(document)}
+                  disabled={isLoading}
+                >
+                  Open
+                </button>
+                <button 
+                  className="document-share-btn"
+                  onClick={() => {
+                    setSelectedDocument(document);
+                    setIsShareSidebarOpen(true);
+                  }}
+                  disabled={isLoading}
+                >
+                  Share
+                </button>
+              </div>
+            </div>
           ))}
-        </Stack>
+        </div>
       )}
       
       <ShareSidebar
@@ -151,7 +167,7 @@ const DocumentList: React.FC<DocumentListProps> = ({
           }
         }}
       />
-    </Stack>
+    </div>
   );
 };
 
