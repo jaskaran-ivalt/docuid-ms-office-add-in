@@ -13,6 +13,7 @@ import {
   CheckCircle,
 } from "lucide-react";
 import ShareSidebar from "./ShareSidebar";
+import "./DocumentList.css";
 
 interface Document {
   id: string;

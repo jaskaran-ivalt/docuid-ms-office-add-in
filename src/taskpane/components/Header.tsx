@@ -9,6 +9,7 @@ import {
   Search,
   Crown
 } from "lucide-react";
+import "./Header.css";
 
 interface HeaderProps {
   user: { phone: string } | null;
@@ -46,10 +47,20 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout }) => {
       .toUpperCase();
   };
 
+  // Truncate email for display
+  const truncateEmail = (email: string) => {
+    if (email.length <= 20) return email;
+    const [localPart, domain] = email.split('@');
+    if (localPart.length <= 12) {
+      return `${localPart}@${domain.substring(0, 8)}...`;
+    }
+    return `${localPart.substring(0, 12)}...@${domain.substring(0, 8)}...`;
+  };
+
   // Dummy user data based on the image
   const dummyUser = {
     name: "Jaskaran Singh",
-    email: "jaskaransingh4704@gmail.com",
+    email: "jaskaran.singh@ivalt.com",
     phone: user?.phone || "+91 98765 43210",
     plan: "FREE"
   };
@@ -83,12 +94,14 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout }) => {
                 </div>
                 <div className="user-info">
                   <div className="user-name">{dummyUser.name}</div>
-                  <div className="user-email">{dummyUser.email}</div>
+                  <div className="user-email" title={dummyUser.email}>
+                    {truncateEmail(dummyUser.email)}
+                  </div>
                 </div>
-                <div className="plan-badge">
+                {/* <div className="plan-badge">
                   <Crown size={12} />
                   <span>{dummyUser.plan}</span>
-                </div>
+                </div> */}
                 <ChevronDown 
                   size={16} 
                   className={`dropdown-chevron ${isDropdownOpen ? 'rotated' : ''}`}

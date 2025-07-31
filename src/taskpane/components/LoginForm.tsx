@@ -7,6 +7,7 @@ import {
 import { Lock, Shield } from "lucide-react";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
+import "./LoginForm.css";
 
 interface LoginFormProps {
   onLogin: (phoneNumber: string) => Promise<void>;
