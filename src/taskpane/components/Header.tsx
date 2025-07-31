@@ -70,8 +70,13 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile }) 
     <div className="header">
       <div className="header-content">
         <div className="header-brand">
-          <h1 className="brand-title">DocuID</h1>
-          <span className="brand-subtitle">Secure Document Access</span>
+          <div className="brand-logo">
+            <img src="./assets/logo-filled.png" alt="DocuID Logo" />
+          </div>
+          <div className="brand-text">
+            <h1 className="brand-title">DocuID</h1>
+            <span className="brand-subtitle">Secure Document Access</span>
+          </div>
         </div>
         
         {user && (

@@ -15,6 +15,8 @@ import {
 import ShareSidebar from "./ShareSidebar";
 import "./DocumentList.css";
 
+
+
 interface Document {
   id: string;
   title: string;
@@ -56,10 +58,10 @@ const DocumentList: React.FC<DocumentListProps> = ({
   const getFileIcon = (type: string) => {
     switch (type.toLowerCase()) {
       case "pdf":
-        return <FileText size={24} style={{ color: '#d13438' }} />;
+        return <img src="./assets/icons/pdf.png" alt="PDF" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />;
       case "docx":
       case "doc":
-        return <File size={24} style={{ color: '#2b579a' }} />;
+        return <img src="./assets/icons/docx.png" alt="Word Document" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />;
       case "xlsx":
       case "xls":
         return <FileSpreadsheet size={24} style={{ color: '#217346' }} />;
