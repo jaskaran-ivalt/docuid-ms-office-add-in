@@ -77,9 +77,9 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile }) 
         {user && (
           <div className="header-user-section">
             {/* Search Icon */}
-            <div className="search-icon-wrapper">
+            {/* <div className="search-icon-wrapper">
               <Search size={18} />
-            </div>
+            </div> */}
             
             {/* User Profile Dropdown */}
             <div className="user-profile-dropdown" ref={dropdownRef}>
