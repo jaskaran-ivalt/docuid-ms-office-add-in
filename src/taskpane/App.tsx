@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import LoginForm from "@/taskpane/components/LoginForm";
 import DocumentList from "@/taskpane/components/DocumentList";
 import Header from "@/taskpane/components/Header";
+import ProfilePage from "@/taskpane/components/ProfilePage";
 import { AuthService } from "@/taskpane/services/AuthService";
 import { DocumentService } from "@/taskpane/services/DocumentService";
 import { DocuIdThemeProvider } from "./components/DesignSystem";
@@ -21,6 +22,7 @@ const App: React.FC = () => {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [user, setUser] = useState<{ phone: string } | null>(null);
   const [error, setError] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState<'documents' | 'profile'>('documents');
 
   useEffect(() => {
     // Check if user is already authenticated
@@ -90,10 +92,22 @@ const App: React.FC = () => {
     }
   };
 
+  const handleNavigateToProfile = () => {
+    setCurrentPage('profile');
+  };
+
+  const handleNavigateToDocuments = () => {
+    setCurrentPage('documents');
+  };
+
   return (
     <DocuIdThemeProvider>
       <div className="app-container">
-        <Header user={user} onLogout={handleLogout} />
+        <Header 
+          user={user} 
+          onLogout={handleLogout} 
+          onNavigateToProfile={isAuthenticated ? handleNavigateToProfile : undefined}
+        />
 
         <main className="main-content">
           {error && (
@@ -107,6 +121,8 @@ const App: React.FC = () => {
 
           {!isAuthenticated ? (
             <LoginForm onLogin={handleLogin} isLoading={isLoading} />
+          ) : currentPage === 'profile' ? (
+            <ProfilePage onBack={handleNavigateToDocuments} />
           ) : (
             <DocumentList
               documents={documents}

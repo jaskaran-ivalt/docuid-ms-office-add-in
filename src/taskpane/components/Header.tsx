@@ -14,9 +14,10 @@ import "./Header.css";
 interface HeaderProps {
   user: { phone: string } | null;
   onLogout: () => void;
+  onNavigateToProfile?: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ user, onLogout }) => {
+const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -130,14 +131,22 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout }) => {
 
                   {/* Menu Items */}
                   <div className="dropdown-menu-items">
-                    {/* <button className="dropdown-menu-item">
-                      <User size={16} />
-                      <span>Dashboard</span>
-                    </button>
+                    {/* {onNavigateToProfile && (
+                      <button 
+                        className="dropdown-menu-item" 
+                        onClick={() => {
+                          onNavigateToProfile();
+                          setIsDropdownOpen(false);
+                        }}
+                      >
+                        <User size={16} />
+                        <span>Profile</span>
+                      </button>
+                    )} */}
                     <button className="dropdown-menu-item">
                       <Settings size={16} />
-                      <span>Account Settings</span>
-                    </button> */}
+                      <span>Settings</span>
+                    </button>
                     <button className="dropdown-menu-item logout-item" onClick={onLogout}>
                       <LogOut size={16} />
                       <span>Logout</span>
