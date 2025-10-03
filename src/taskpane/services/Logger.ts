@@ -191,6 +191,7 @@ export class Logger {
    */
   public logApiRequest(context: string, method: string, url: string, data?: any): void {
     this.debug(context, `API Request: ${method} ${url}`, data);
+    console.log('🚀 API Request: ', method, url, data);
   }
 
   /**

@@ -104,6 +104,18 @@ module.exports = async (env, options) => {
             : await getHttpsOptions(),
       },
       port: process.env.npm_package_config_dev_server_port || 3000,
+      proxy: [
+        {
+          context: ['/api/docuid'],
+          target: 'https://api.docuid.net',
+          changeOrigin: true,
+          secure: true,
+          pathRewrite: {
+            '^/api/docuid': '/api'
+          },
+          logLevel: 'debug'
+        }
+      ]
     },
   };
 

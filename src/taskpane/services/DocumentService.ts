@@ -21,7 +21,10 @@ interface DocumentContent {
 }
 
 export class DocumentService {
-  private static readonly API_BASE_URL = "https://api.docuid.net"; // Replace with actual API URL
+  // Use proxy in development, direct API in production
+  private static readonly API_BASE_URL = process.env.NODE_ENV === 'development'
+    ? '' // Use relative URLs for webpack proxy
+    : "https://api.docuid.net";
 
   /**
    * Get user's documents from the API
@@ -447,7 +450,7 @@ Party B: _________________ Date: _________`,
       throw new Error("Not authenticated");
     }
 
-    const response = await axios.get(`${this.API_BASE_URL}/api/documents/${documentId}/download`, {
+    const response = await axios.get(`${this.API_BASE_URL}/api/docuid/documents/${documentId}/download`, {
       headers: {
         Authorization: `Bearer ${sessionToken}`,
       },

@@ -35,7 +35,10 @@ interface StoredAuth {
 
 export class AuthService {
   private static readonly STORAGE_KEY = "docuid_auth";
-  private static readonly API_BASE_URL = "https://api.docuid.net"; // Replace with actual API URL
+  // Use proxy in development, direct API in production
+  private static readonly API_BASE_URL = process.env.NODE_ENV === 'development'
+    ? '' // Use relative URLs for webpack proxy
+    : "https://api.docuid.net";
 
   /**
    * Authenticate user with phone number via biometric verification
@@ -44,15 +47,20 @@ export class AuthService {
     const authLogger = logger.createContextLogger('AuthService.login');
 
     try {
-      authLogger.info('Starting biometric authentication', { phoneNumber: phoneNumber.substring(0, 3) + '***' + phoneNumber.substring(phoneNumber.length - 3) });
+      authLogger.info('Starting biometric authentication', {
+        phoneNumber: phoneNumber.substring(0, 3) + '***' + phoneNumber.substring(phoneNumber.length - 3),
+        originalFormat: phoneNumber,
+        hasPlus: phoneNumber.startsWith('+')
+      });
 
       // Initiate biometric authentication request
       authLogger.debug('Requesting biometric authentication');
       await this.requestBiometricAuth(phoneNumber);
 
       // Poll for authentication result
-      authLogger.debug('Polling for authentication result');
+      authLogger.debug('Starting polling for authentication result');
       const authResult = await this.pollAuthResult(phoneNumber);
+      authLogger.debug('Polling completed', { hasResult: !!authResult });
 
       // Store authentication data
       const authData: StoredAuth = {
@@ -84,12 +92,12 @@ export class AuthService {
     try {
       const startTime = Date.now();
 
-      apiLogger.logApiRequest('POST', '/api/biometric/auth-request', {
+      apiLogger.logApiRequest('POST', '/api/docuid/biometric/auth-request', {
         mobile: phoneNumber.substring(0, 3) + '***',
         requestFrom: "DocuID"
       });
 
-      const response = await axios.post(`${this.API_BASE_URL}/api/biometric/auth-request`, {
+      const response = await axios.post(`${this.API_BASE_URL}/api/docuid/biometric/auth-request`, {
         mobile: phoneNumber,
         requestFrom: "DocuID"
       }, {
@@ -100,7 +108,7 @@ export class AuthService {
       });
 
       const responseTime = Date.now() - startTime;
-      apiLogger.logApiResponse('POST', '/api/biometric/auth-request', response.status, responseTime);
+      apiLogger.logApiResponse('POST', '/api/docuid/biometric/auth-request', response.status, responseTime);
 
       if (!response.data.success) {
         apiLogger.warn('Biometric auth request returned unsuccessful response', response.data);
@@ -111,7 +119,7 @@ export class AuthService {
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const responseTime = Date.now() - (error.config?.metadata?.startTime || Date.now());
-        apiLogger.logApiResponse('POST', '/api/biometric/auth-request', error.response?.status || 0, responseTime);
+        apiLogger.logApiResponse('POST', '/api/docuid/biometric/auth-request', error.response?.status || 0, responseTime);
 
         if (error.response?.status === 404) {
           apiLogger.warn('Phone number not registered with iVALT', { status: 404 });
@@ -136,18 +144,20 @@ export class AuthService {
     const maxAttempts = 60; // 60 attempts = ~2 minutes (with 2s intervals)
     const pollInterval = 2000; // 2 seconds
 
+    console.log('🚀 POLLING: Starting authentication polling');
     pollLogger.info(`Starting authentication polling for ${maxAttempts} attempts (${maxAttempts * pollInterval / 1000}s timeout)`);
 
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      pollLogger.debug(`Polling attempt ${attempt + 1}/${maxAttempts}`);
       try {
         const startTime = Date.now();
 
-        pollLogger.logApiRequest('POST', '/api/biometric/auth-result', {
+        pollLogger.logApiRequest('POST', '/api/docuid/biometric/auth-result', {
           mobile: phoneNumber.substring(0, 3) + '***',
           attempt: attempt + 1
         });
 
-        const response = await axios.post(`${this.API_BASE_URL}/api/biometric/auth-result`, {
+        const response = await axios.post(`${this.API_BASE_URL}/api/docuid/biometric/auth-result`, {
           mobile: phoneNumber
         }, {
           headers: {
@@ -157,7 +167,12 @@ export class AuthService {
         });
 
         const responseTime = Date.now() - startTime;
-        pollLogger.logApiResponse('POST', '/api/biometric/auth-result', response.status, responseTime);
+        pollLogger.logApiResponse('POST', '/api/docuid/biometric/auth-result', response.status, responseTime);
+        pollLogger.debug(`API Response details: ${response.status}`, {
+          statusText: response.statusText,
+          hasData: !!response.data,
+          dataKeys: response.data ? Object.keys(response.data) : []
+        });
 
         // Success - user authenticated
         if (response.status === 200 && response.data.data?.details) {
@@ -177,7 +192,12 @@ export class AuthService {
           const errorDetail = error.response?.data?.error?.detail;
           const responseTime = Date.now() - (error.config?.metadata?.startTime || Date.now());
 
-          pollLogger.logApiResponse('POST', '/api/biometric/auth-result', status || 0, responseTime);
+          pollLogger.logApiResponse('POST', '/api/docuid/biometric/auth-result', status || 0, responseTime);
+          pollLogger.debug(`API Error details: ${status}`, {
+            errorDetail,
+            fullResponse: error.response?.data,
+            statusText: error.response?.statusText
+          });
 
           if (status === 401 && errorDetail?.includes("Denied")) {
             pollLogger.warn(`Authentication denied by user after ${attempt + 1} attempts`);
@@ -196,13 +216,25 @@ export class AuthService {
             continue;
           }
 
-          // Other errors
-          pollLogger.error(`Polling failed with unexpected error`, undefined, {
+          // Handle other status codes - might indicate pending state
+          if (status === 422 && !errorDetail?.includes("pending")) {
+            // If it's 422 but not explicitly pending, treat as error
+            pollLogger.error(`Polling failed with unexpected 422 error`, undefined, {
+              status,
+              errorDetail,
+              attempt: attempt + 1
+            });
+            throw new Error(errorDetail || "Authentication failed");
+          }
+
+          // For other unexpected errors, log but continue polling
+          pollLogger.warn(`Unexpected response during polling, continuing...`, {
             status,
             errorDetail,
             attempt: attempt + 1
           });
-          throw new Error(errorDetail || "Authentication failed");
+          await new Promise(resolve => setTimeout(resolve, pollInterval));
+          continue;
         }
 
         pollLogger.error(`Polling error on attempt ${attempt + 1}`, error instanceof Error ? error : new Error(String(error)));

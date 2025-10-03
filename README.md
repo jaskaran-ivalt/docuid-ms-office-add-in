@@ -55,6 +55,16 @@ REACT_APP_DOCUID_API_KEY=your_api_key_here
 
 **Note**: The API key is required for biometric authentication. Contact iVALT support to obtain your API key.
 
+### Development Proxy Setup
+
+The application uses webpack proxy to bypass CORS restrictions during development:
+
+- **Proxy Path**: `/api/docuid/*` → `https://api.docuid.net/api/*`
+- **Purpose**: Allows API calls from `localhost:3000` to work with the production API
+- **Automatic**: No additional configuration needed - works out of the box
+
+The proxy automatically forwards all API requests in development, eliminating CORS issues while maintaining the same API interface.
+
 ## 🐛 Debugging & Logging
 
 ### Debug Panel
