@@ -3,9 +3,11 @@ import LoginForm from "@/taskpane/components/LoginForm";
 import DocumentList from "@/taskpane/components/DocumentList";
 import Header from "@/taskpane/components/Header";
 import ProfilePage from "@/taskpane/components/ProfilePage";
+import DebugPanel from "@/taskpane/components/DebugPanel";
 import { AuthService } from "@/taskpane/services/AuthService";
 import { DocumentService } from "@/taskpane/services/DocumentService";
 import { DocuIdThemeProvider } from "./components/DesignSystem";
+import { logger } from "@/taskpane/services/Logger";
 import "./App.css";
 
 interface Document {
@@ -20,29 +22,54 @@ const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [documents, setDocuments] = useState<Document[]>([]);
-  const [user, setUser] = useState<{ phone: string } | null>(null);
+  const [user, setUser] = useState<{ phone: string; name?: string; email?: string } | null>(null);
   const [error, setError] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<"documents" | "profile">("documents");
+  const [debugPanelOpen, setDebugPanelOpen] = useState(false);
 
   useEffect(() => {
     // Check if user is already authenticated
     const savedAuth = AuthService.getStoredAuth();
+    const savedUser = AuthService.getStoredUser();
     if (savedAuth) {
       setIsAuthenticated(true);
-      setUser({ phone: savedAuth.phone });
+      setUser({
+        phone: savedAuth.phone,
+        name: savedUser?.name,
+        email: savedUser?.email
+      });
       loadDocuments();
     }
-  }, []);
+
+    // Add keyboard shortcut for debug panel (Ctrl+Shift+D)
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.ctrlKey && event.shiftKey && event.key === 'D') {
+        event.preventDefault();
+        setDebugPanelOpen(prev => !prev);
+        logger.createContextLogger('App').info('Debug panel toggled', { open: !debugPanelOpen });
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [debugPanelOpen]);
 
   const handleLogin = async (phoneNumber: string) => {
     setIsLoading(true);
     setError("");
 
     try {
-      // Simulate API call to docuid.net
       await AuthService.login(phoneNumber);
       setIsAuthenticated(true);
-      setUser({ phone: phoneNumber });
+
+      // Get user data from stored auth
+      const savedUser = AuthService.getStoredUser();
+      setUser({
+        phone: phoneNumber,
+        name: savedUser?.name,
+        email: savedUser?.email
+      });
+
       await loadDocuments();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");
@@ -107,6 +134,7 @@ const App: React.FC = () => {
           user={user}
           onLogout={handleLogout}
           onNavigateToProfile={isAuthenticated ? handleNavigateToProfile : undefined}
+          onToggleDebug={() => setDebugPanelOpen(prev => !prev)}
         />
 
         <main className="main-content">
@@ -132,6 +160,11 @@ const App: React.FC = () => {
             />
           )}
         </main>
+
+        <DebugPanel
+          isOpen={debugPanelOpen}
+          onClose={() => setDebugPanelOpen(false)}
+        />
       </div>
     </DocuIdThemeProvider>
   );

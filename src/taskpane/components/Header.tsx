@@ -1,15 +1,16 @@
 import React, { useState, useRef, useEffect } from "react";
 import { DefaultButton, Stack } from "@fluentui/react";
-import { Phone, User, Settings, LogOut, ChevronDown, Search, Crown } from "lucide-react";
+import { Phone, User, Settings, LogOut, ChevronDown, Search, Crown, Bug } from "lucide-react";
 import "./Header.css";
 
 interface HeaderProps {
   user: { phone: string } | null;
   onLogout: () => void;
   onNavigateToProfile?: () => void;
+  onToggleDebug?: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile }) => {
+const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile, onToggleDebug }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -74,6 +75,35 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile }) 
 
         {user && (
           <div className="header-user-section">
+            {/* Debug Button */}
+            {onToggleDebug && (
+              <button
+                className="debug-button"
+                onClick={onToggleDebug}
+                title="Toggle Debug Panel (Ctrl+Shift+D)"
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: '8px',
+                  borderRadius: '4px',
+                  color: '#666',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginRight: '8px'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#f0f0f0';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                }}
+              >
+                <Bug size={16} />
+              </button>
+            )}
+
             {/* Search Icon */}
             {/* <div className="search-icon-wrapper">
               <Search size={18} />

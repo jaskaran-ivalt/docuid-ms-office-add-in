@@ -1,5 +1,6 @@
 import axios from "axios";
 import { AuthService } from "./AuthService";
+import { logger } from "./Logger";
 
 /* global Word, Office */
 
@@ -88,13 +89,25 @@ export class DocumentService {
    * Open a document in Word
    */
   static async openDocument(documentId: string): Promise<void> {
+    const docLogger = logger.createContextLogger('DocumentService');
+
     try {
+      docLogger.info(`Opening document: ${documentId}`);
+
       // Get document content
+      docLogger.debug(`Fetching content for document: ${documentId}`);
       const documentContent = await this.getDocumentContent(documentId);
 
       // Insert into Word using Office.js
+      docLogger.debug(`Inserting document into Word: ${documentContent.fileName}`);
       await this.insertIntoWord(documentContent);
+
+      docLogger.info(`Successfully opened document: ${documentId}`, {
+        fileName: documentContent.fileName,
+        contentType: documentContent.contentType
+      });
     } catch (error) {
+      docLogger.error(`Failed to open document: ${documentId}`, error instanceof Error ? error : new Error(String(error)));
       throw new Error("Failed to open document in Word");
     }
   }
@@ -103,13 +116,18 @@ export class DocumentService {
    * Close a document
    */
   static async closeDocument(documentId: string): Promise<void> {
+    const docLogger = logger.createContextLogger('DocumentService');
+
     try {
+      docLogger.info(`Closing document: ${documentId}`);
+
       // Simulate API call to close document
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // In a real implementation, you would call the API to close the document
-      console.log(`Closing document: ${documentId}`);
+      docLogger.info(`Document closed successfully: ${documentId}`);
     } catch (error) {
+      docLogger.error(`Failed to close document: ${documentId}`, error instanceof Error ? error : new Error(String(error)));
       throw new Error("Failed to close document");
     }
   }
@@ -320,11 +338,18 @@ Party B: _________________ Date: _________`,
    * Insert document content into Word
    */
   private static async insertIntoWord(documentContent: DocumentContent): Promise<void> {
+    const officeLogger = logger.createContextLogger('DocumentService.Office');
+
     return Word.run(async (context) => {
+      officeLogger.debug('Starting Word.run context for document insertion', {
+        fileName: documentContent.fileName,
+        contentLength: documentContent.content.length
+      });
       // Clear existing content (optional)
       // context.document.body.clear();
 
       // Insert document title with proper formatting
+      officeLogger.debug('Inserting document title');
       const titleParagraph = context.document.body.insertParagraph(
         documentContent.fileName,
         Word.InsertLocation.start
@@ -379,6 +404,7 @@ Party B: _________________ Date: _________`,
       }
 
       // Insert footer with timestamp
+      officeLogger.debug('Inserting document footer');
       context.document.body.insertParagraph("", Word.InsertLocation.end);
       const footerParagraph = context.document.body.insertParagraph(
         `---\nDocument inserted via DocuID on ${new Date().toLocaleString()}`,
@@ -389,7 +415,12 @@ Party B: _________________ Date: _________`,
       footerParagraph.alignment = Word.Alignment.centered;
       footerParagraph.styleBuiltIn = Word.BuiltInStyleName.footer;
 
+      officeLogger.debug('Synchronizing Word context changes');
       await context.sync();
+      officeLogger.logOfficeOperation('Document insertion', true);
+    }).catch((error) => {
+      officeLogger.logOfficeOperation('Document insertion', false, error);
+      throw error;
     });
   }
 

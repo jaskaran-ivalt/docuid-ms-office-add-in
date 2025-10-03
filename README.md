@@ -16,6 +16,7 @@ A Microsoft Office Add-in that enables secure biometric authentication and docum
 - Node.js (LTS version)
 - Microsoft Word (Office 365 or Office 2019)
 - Office Add-ins development certificates
+- DocuID API key (contact iVALT for access)
 
 ## 🛠️ Quick Start
 
@@ -41,6 +42,89 @@ This will automatically:
 - Start the HTTPS development server on port 3000
 - Launch Microsoft Word
 - Sideload the add-in for testing
+
+## ⚙️ Configuration
+
+### API Key Setup
+
+Create a `.env` file in the project root with your DocuID API key:
+
+```bash
+REACT_APP_DOCUID_API_KEY=your_api_key_here
+```
+
+**Note**: The API key is required for biometric authentication. Contact iVALT support to obtain your API key.
+
+## 🐛 Debugging & Logging
+
+### Debug Panel
+
+The app includes a comprehensive debug panel for monitoring application behavior:
+
+- **Toggle Debug Panel**: Press `Ctrl+Shift+D` or click the bug icon (🐛) in the header
+- **Real-time Logs**: View structured logs with timestamps, contexts, and data
+- **Log Filtering**: Filter by message content or context (AuthService, DocumentService, etc.)
+- **Log Levels**: Control verbosity (DEBUG, INFO, WARN, ERROR)
+- **Console Output**: Toggle console logging on/off
+- **Export Logs**: Download logs as JSON for analysis
+
+### Log Levels & Contexts
+
+| Context | Description | Key Events Logged |
+|---------|-------------|-------------------|
+| `AuthService` | Authentication operations | Login attempts, API calls, token management |
+| `AuthService.API` | Biometric API interactions | Request/response times, HTTP status codes |
+| `AuthService.Poll` | Authentication polling | Polling attempts, timeouts, success/failure |
+| `AuthService.Storage` | Local storage operations | Token storage, expiration checks |
+| `DocumentService` | Document operations | Open/close actions, Word integration |
+| `DocumentService.Office` | Office.js operations | Word API calls, success/failure |
+| `App` | Main application events | Component lifecycle, state changes |
+
+### Viewing Logs
+
+#### Browser Console
+```javascript
+// Enable debug logging
+localStorage.setItem('docuid_log_level', '0'); // 0=DEBUG, 1=INFO, 2=WARN, 3=ERROR
+
+// Disable console output
+localStorage.setItem('docuid_console_logging', 'false');
+
+// Clear settings
+localStorage.removeItem('docuid_log_level');
+localStorage.removeItem('docuid_console_logging');
+```
+
+#### Programmatic Access
+```typescript
+import { logger } from './services/Logger';
+
+// Get recent logs
+const logs = logger.getLogHistory();
+
+// Export all logs
+const logData = logger.exportLogs();
+
+// Create contextual logger
+const authLogger = logger.createContextLogger('MyComponent');
+authLogger.info('Operation completed', { userId: '123' });
+```
+
+### Troubleshooting
+
+#### Common Issues
+
+1. **No logs appearing**: Check that console output is enabled and log level is appropriate
+2. **API timeout errors**: Check network connectivity and API key configuration
+3. **Authentication failures**: Review AuthService logs for detailed error information
+4. **Office.js errors**: Check DocumentService.Office logs for Word integration issues
+
+#### Performance Monitoring
+
+- API response times are logged automatically
+- Authentication polling duration is tracked
+- Document operation timing is recorded
+- Memory usage and error rates can be monitored via exported logs
 
 ## 🏗️ Project Structure
 
