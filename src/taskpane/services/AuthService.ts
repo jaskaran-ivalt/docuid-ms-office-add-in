@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Logger } from "./Logger";
 
 interface AuthResponse {
   success: boolean;
@@ -44,6 +45,7 @@ interface StoredAuth {
 
 export class AuthService {
   private static readonly STORAGE_KEY = "docuid_auth";
+  private static readonly logger = Logger.getInstance().createContextLogger('AuthService');
   // Use proxy in development, direct API in production
   private static readonly API_BASE_URL = process.env.NODE_ENV === 'development'
     ? '' // Use relative URLs for webpack proxy
@@ -54,20 +56,20 @@ export class AuthService {
    */
   static async login(phoneNumber: string): Promise<void> {
     try {
-      console.log('Starting biometric authentication', {
+      this.logger.info('Starting biometric authentication', {
         phoneNumber: phoneNumber.substring(0, 3) + '***' + phoneNumber.substring(phoneNumber.length - 3),
         originalFormat: phoneNumber,
         hasPlus: phoneNumber.startsWith('+')
       });
 
       // Initiate biometric authentication request
-      console.log('Requesting biometric authentication');
+      this.logger.debug('Requesting biometric authentication');
       await this.requestBiometricAuth(phoneNumber);
 
       // Poll for authentication result
-      console.log('Starting polling for authentication result');
+      this.logger.debug('Starting polling for authentication result');
       const authResult = await this.pollAuthResult(phoneNumber);
-      console.log('Polling completed', { hasResult: !!authResult });
+      this.logger.debug('Polling completed', { hasResult: !!authResult });
 
       // Store authentication data
       const authData: StoredAuth = {
@@ -81,14 +83,13 @@ export class AuthService {
 
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(authData));
 
-      console.log('LOGIN_SUCCESS', {
-        userId: authResult.user?.id?.toString(),
+      this.logger.logAuthEvent('LOGIN_SUCCESS', authResult.user?.id?.toString(), {
         phone: phoneNumber.substring(0, 3) + '***',
         userName: authResult.user?.name
       });
 
     } catch (error) {
-      console.error('Authentication failed', error);
+      this.logger.error('Authentication failed', error as Error);
       throw error;
     }
   }
@@ -100,7 +101,7 @@ export class AuthService {
     try {
       const startTime = Date.now();
 
-      console.log('API Request: POST /api/docuid/biometric/auth-request', {
+      this.logger.logApiRequest('POST', '/api/docuid/biometric/auth-request', {
         mobile: phoneNumber.substring(0, 3) + '***',
         requestFrom: "DocuID"
       });
@@ -116,33 +117,33 @@ export class AuthService {
       });
 
       const responseTime = Date.now() - startTime;
-      console.log(`API Response: POST /api/docuid/biometric/auth-request - ${response.status} (${responseTime}ms)`);
+      this.logger.logApiResponse('POST', '/api/docuid/biometric/auth-request', response.status, responseTime);
 
-      console.log(response.data.data.status)
+      this.logger.debug('Auth request response status', { status: response.data.data.status });
 
       if (!response.data.data.status) {
-        console.warn('Biometric auth request returned unsuccessful response', response.data);
+        this.logger.warn('Biometric auth request returned unsuccessful response', response.data);
         throw new Error("Failed to initiate biometric authentication");
       }
 
-      console.log('Biometric authentication request sent successfully');
+      this.logger.info('Biometric authentication request sent successfully');
     } catch (error) {
       let startTime = Date.now();
       if (axios.isAxiosError(error)) {
         const responseTime = Date.now() - startTime;
-        console.log(`API Response: POST /api/docuid/biometric/auth-request - ${error.response?.status || 0} (${responseTime}ms)`);
+        this.logger.logApiResponse('POST', '/api/docuid/biometric/auth-request', error.response?.status || 0, responseTime);
 
         if (error.response?.status === 404) {
-          console.warn('Phone number not registered with iVALT', { status: 404 });
+          this.logger.warn('Phone number not registered with iVALT', { status: 404 });
           throw new Error("Phone number not found. Please register with iVALT first.");
         }
-        console.error('Biometric auth request failed', {
+        this.logger.error('Biometric auth request failed', undefined, {
           status: error.response?.status,
           data: error.response?.data
         });
         throw new Error(error.response?.data?.error?.detail || "Failed to initiate authentication");
       }
-      console.error('Biometric auth request error', error);
+      this.logger.error('Biometric auth request error', error as Error);
       throw error;
     }
   }
@@ -154,19 +155,17 @@ export class AuthService {
     const maxAttempts = 60; // 60 attempts = ~2 minutes (with 2s intervals)
     const pollInterval = 2000; // 2 seconds
 
-    console.log('🚀 POLLING: Starting authentication polling');
-    console.log(`Starting authentication polling for ${maxAttempts} attempts (${maxAttempts * pollInterval / 1000}s timeout)`);
+    this.logger.info('Starting authentication polling', {
+      maxAttempts,
+      timeoutSeconds: maxAttempts * pollInterval / 1000
+    });
 
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
-      console.log(`Polling attempt ${attempt + 1}/${maxAttempts}`);
+      this.logger.debug(`Polling attempt ${attempt + 1}/${maxAttempts}`);
       const startTime = Date.now();
       try {
 
-        console.log('API Request: POST /api/docuid/biometric/auth-result', {
-          mobile: phoneNumber.substring(0, 3) + '***',
-          attempt: attempt + 1
-        });
-
+        this.logger.logApiRequest('pollAuthResult', 'POST', '/api/docuid/biometric/auth-result');
         const response = await axios.post(`${this.API_BASE_URL}/api/docuid/biometric/auth-result`, {
           mobile: phoneNumber
         }, {
@@ -177,8 +176,9 @@ export class AuthService {
         });
 
         const responseTime = Date.now() - startTime;
-        console.log(`API Response: POST /api/docuid/biometric/auth-result - ${response.status} (${responseTime}ms)`);
-        console.log(`API Response details: ${response.status}`, {
+        this.logger.logApiResponse('POST', '/api/docuid/biometric/auth-result', response.status, responseTime);
+        this.logger.debug('API Response details', {
+          status: response.status,
           statusText: response.statusText,
           hasData: !!response.data,
           dataKeys: response.data ? Object.keys(response.data) : []
@@ -186,7 +186,7 @@ export class AuthService {
 
         // Success - user authenticated
         if (response.status === 200 && response.data.data?.details) {
-          console.log(`Authentication successful after ${attempt + 1} attempts`, {
+          this.logger.info(`Authentication successful after ${attempt + 1} attempts`, {
             userId: response.data.data.details.id,
             userName: response.data.data.details.name
           });
@@ -209,43 +209,33 @@ export class AuthService {
           const errorDetail = error.response?.data?.error?.detail;
           const responseTime = Date.now() - startTime;
 
-          console.log(`API Response: POST /api/docuid/biometric/auth-result - ${status || 0} (${responseTime}ms)`);
-          console.log(`API Error details: ${status}`, {
+          this.logger.logApiResponse('POST', '/api/docuid/biometric/auth-result', status || 0, responseTime);
+          this.logger.debug('API Error details', {
+            status,
             errorDetail,
             fullResponse: error.response?.data,
             statusText: error.response?.statusText
           });
 
           if (status === 401 && errorDetail?.includes("Denied")) {
-            console.warn(`Authentication denied by user after ${attempt + 1} attempts`);
+            this.logger.warn(`Authentication denied by user after ${attempt + 1} attempts`);
             throw new Error("Biometric authentication was denied. Please try again.");
           }
 
           if (status === 404) {
-            console.warn('User not found during polling', { status: 404 });
+            this.logger.warn('User not found during polling', { status: 404 });
             throw new Error("User not found. Please check your phone number.");
           }
 
           if (status === 422 && errorDetail?.includes("pending")) {
             // Authentication still pending, continue polling
-            console.log(`Authentication pending, attempt ${attempt + 1}/${maxAttempts}`);
+            this.logger.debug(`Authentication pending, attempt ${attempt + 1}/${maxAttempts}`);
             await new Promise(resolve => setTimeout(resolve, pollInterval));
             continue;
           }
 
-          // Handle other status codes - might indicate pending state
-          // if (status === 422 && !errorDetail?.includes("pending")) {
-          //   // If it's 422 but not explicitly pending, treat as error
-          //   console.error(`Polling failed with unexpected 422 error`, {
-          //     status,
-          //     errorDetail,
-          //     attempt: attempt + 1
-          //   });
-          //   throw new Error(errorDetail || "Authentication failed");
-          // }
-
           // For other unexpected errors, log but continue polling
-          console.warn(`Unexpected response during polling, continuing...`, {
+          this.logger.warn(`Unexpected response during polling, continuing...`, {
             status,
             errorDetail,
             attempt: attempt + 1
@@ -254,12 +244,12 @@ export class AuthService {
           continue;
         }
 
-        console.error(`Polling error on attempt ${attempt + 1}`, error);
+        this.logger.error(`Polling error on attempt ${attempt + 1}`, error as Error);
         throw error;
       }
     }
 
-    console.error(`Authentication polling timed out after ${maxAttempts} attempts`);
+    this.logger.error(`Authentication polling timed out after ${maxAttempts} attempts`);
     throw new Error("Authentication timed out. Please try again.");
   }
 
@@ -278,7 +268,7 @@ export class AuthService {
     try {
       const stored = localStorage.getItem(this.STORAGE_KEY);
       if (!stored) {
-        console.log('No stored authentication data found');
+        this.logger.debug('No stored authentication data found');
         return null;
       }
 
@@ -286,19 +276,19 @@ export class AuthService {
 
       // Check if token is expired
       if (Date.now() > authData.expiresAt) {
-        console.log('Stored authentication token expired, logging out');
+        this.logger.info('Stored authentication token expired, logging out');
         this.logout();
         return null;
       }
 
-      console.log('Retrieved stored authentication data', {
+      this.logger.debug('Retrieved stored authentication data', {
         hasUser: !!authData.user,
         expiresIn: Math.round((authData.expiresAt - Date.now()) / 1000 / 60) + ' minutes'
       });
 
       return authData;
     } catch (error) {
-      console.error('Failed to retrieve stored authentication data', error);
+      this.logger.error('Failed to retrieve stored authentication data', error as Error);
       return null;
     }
   }
@@ -308,7 +298,7 @@ export class AuthService {
    */
   static isAuthenticated(): boolean {
     const isAuth = this.getStoredAuth() !== null;
-    console.log('Authentication check', { isAuthenticated: isAuth });
+    this.logger.debug('Authentication check', { isAuthenticated: isAuth });
     return isAuth;
   }
 
@@ -319,11 +309,14 @@ export class AuthService {
     const storedAuth = this.getStoredAuth();
 
     if (storedAuth) {
-      console.log('LOGOUT', { userId: storedAuth.user?.id?.toString() });
+      this.logger.logAuthEvent('LOGOUT', storedAuth.user?.id?.toString(), {
+        phone: storedAuth.phone?.substring(0, 3) + '***',
+        userName: storedAuth.user?.name
+      });
     }
 
     localStorage.removeItem(this.STORAGE_KEY);
-    console.log('User logged out successfully');
+    this.logger.info('User logged out successfully');
   }
 
   /**
