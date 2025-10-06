@@ -155,7 +155,7 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile, on
 
                   {/* Menu Items */}
                   <div className="dropdown-menu-items">
-                    {/* {onNavigateToProfile && (
+                    {onNavigateToProfile && (
                       <button 
                         className="dropdown-menu-item" 
                         onClick={() => {
@@ -166,7 +166,7 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile, on
                         <User size={16} />
                         <span>Profile</span>
                       </button>
-                    )} */}
+                    )}
                     <button className="dropdown-menu-item">
                       <Settings size={16} />
                       <span>Settings</span>
