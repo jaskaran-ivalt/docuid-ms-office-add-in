@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Stack,
   TextField,
@@ -26,7 +26,9 @@ import {
   Edit,
   X,
   Check,
+  Smartphone,
 } from "lucide-react";
+import { AuthService } from "../services/AuthService";
 import "./ProfilePage.css";
 
 interface ProfilePageProps {
@@ -38,11 +40,14 @@ interface UserProfile {
   name: string;
   email: string;
   phone: string;
-  company: string;
-  position: string;
-  location: string;
-  joinDate: string;
-  avatar: string;
+  mobile: string;
+  country_code: string;
+  address: string;
+  latitude?: number;
+  longitude?: number;
+  imei?: string;
+  message?: string;
+  timestamp?: string;
   preferences: {
     notifications: boolean;
     language: string;
@@ -56,28 +61,41 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [formData, setFormData] = useState<UserProfile | null>(null);
 
-  // Dummy user profile data
-  const [profile, setProfile] = useState<UserProfile>({
-    id: "user_001",
-    name: "Jaskaran Singh",
-    email: "jaskaran.singh@ivalt.com",
-    phone: "+1 (555) 123-4567",
-    company: "iVALT Technologies",
-    position: "Senior Software Engineer",
-    location: "San Francisco, CA",
-    joinDate: "January 2023",
-    avatar:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
-    preferences: {
-      notifications: true,
-      language: "en",
-      theme: "light",
-      privacy: "public",
-    },
-  });
+  // Load user data from AuthService on component mount
+  useEffect(() => {
+    const loadUserData = () => {
+      const storedAuth = AuthService.getStoredAuth();
+      if (storedAuth?.user) {
+        const userProfile: UserProfile = {
+          id: storedAuth.user.id.toString(),
+          name: storedAuth.user.name || "N/A",
+          email: storedAuth.user.email || "N/A",
+          phone: formatPhoneNumber(storedAuth.user.country_code || "", storedAuth.user.mobile || ""),
+          mobile: storedAuth.user.mobile || "N/A",
+          country_code: storedAuth.user.country_code || "N/A",
+          address: storedAuth.user.address || "N/A",
+          latitude: storedAuth.user.latitude,
+          longitude: storedAuth.user.longitude,
+          imei: storedAuth.user.imei || "N/A",
+          message: storedAuth.message || "N/A",
+          timestamp: storedAuth.timestamp || "N/A",
+          preferences: {
+            notifications: true,
+            language: "en",
+            theme: "light",
+            privacy: "public",
+          },
+        };
+        setProfile(userProfile);
+        setFormData(userProfile);
+      }
+    };
 
-  const [formData, setFormData] = useState<UserProfile>(profile);
+    loadUserData();
+  }, []);
 
   const languageOptions: IChoiceGroupOption[] = [
     { key: "en", text: "English" },
@@ -99,23 +117,71 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
   ];
 
   const handleInputChange = (field: keyof UserProfile, value: any) => {
+    if (!formData) return;
+    
+    // Sanitize input
+    const sanitizedValue = typeof value === 'string' ? sanitizeInput(value) : value;
+    
     setFormData((prev) => ({
-      ...prev,
-      [field]: value,
+      ...prev!,
+      [field]: sanitizedValue,
     }));
   };
 
+  const validateForm = (): { isValid: boolean; errors: string[] } => {
+    const errors: string[] = [];
+    
+    if (!formData) return { isValid: false, errors: ['Form data not available'] };
+    
+    // Validate required fields
+    if (!formData.name || formData.name.trim().length < 2) {
+      errors.push('Name must be at least 2 characters long');
+    }
+    
+    if (!formData.email || !validateEmail(formData.email)) {
+      errors.push('Please enter a valid email address');
+    }
+    
+    if (!formData.mobile || !validatePhone(formData.mobile)) {
+      errors.push('Please enter a valid mobile number (at least 10 digits)');
+    }
+    
+    if (!formData.country_code || formData.country_code.replace(/\D/g, '').length === 0) {
+      errors.push('Please enter a valid country code');
+    }
+    
+    if (!formData.address || formData.address.trim().length < 5) {
+      errors.push('Address must be at least 5 characters long');
+    }
+    
+    if (formData.imei && formData.imei !== "N/A" && !validateIMEI(formData.imei)) {
+      errors.push('IMEI must be 15 digits long');
+    }
+    
+    return { isValid: errors.length === 0, errors };
+  };
+
   const handlePreferenceChange = (field: keyof UserProfile["preferences"], value: any) => {
+    if (!formData) return;
     setFormData((prev) => ({
-      ...prev,
+      ...prev!,
       preferences: {
-        ...prev.preferences,
+        ...prev!.preferences,
         [field]: value,
       },
     }));
   };
 
   const handleSave = async () => {
+    if (!formData) return;
+    
+    // Validate form before saving
+    const validation = validateForm();
+    if (!validation.isValid) {
+      setError(`Validation failed: ${validation.errors.join(', ')}`);
+      return;
+    }
+    
     setIsLoading(true);
     setError("");
     setSuccess("");
@@ -124,7 +190,14 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
-      setProfile(formData);
+      // Update phone number format
+      const updatedFormData = {
+        ...formData,
+        phone: formatPhoneNumber(formData.country_code, formData.mobile)
+      };
+
+      setProfile(updatedFormData);
+      setFormData(updatedFormData);
       setSuccess("Profile updated successfully!");
       setIsEditing(false);
 
@@ -137,6 +210,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
   };
 
   const handleCancel = () => {
+    if (!profile) return;
     setFormData(profile);
     setIsEditing(false);
     setError("");
@@ -150,6 +224,72 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
       .toUpperCase();
   };
 
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validatePhone = (phone: string): boolean => {
+    const phoneRegex = /^\+?[\d\s\-\(\)]+$/;
+    return phoneRegex.test(phone) && phone.replace(/\D/g, '').length >= 10;
+  };
+
+  const validateIMEI = (imei: string): boolean => {
+    if (!imei || imei === "N/A") return true; // Optional field
+    const imeiRegex = /^\d{15}$/;
+    return imeiRegex.test(imei.replace(/\D/g, ''));
+  };
+
+  const formatPhoneNumber = (countryCode: string, mobile: string): string => {
+    if (!countryCode && !mobile) return "N/A";
+    const cleanCountryCode = countryCode?.replace(/\D/g, '') || '';
+    const cleanMobile = mobile?.replace(/\D/g, '') || '';
+    
+    if (cleanCountryCode && cleanMobile) {
+      return `+${cleanCountryCode} ${cleanMobile}`;
+    } else if (cleanMobile) {
+      return cleanMobile;
+    }
+    return "N/A";
+  };
+
+  const sanitizeInput = (value: string): string => {
+    return value.trim().replace(/[<>]/g, '');
+  };
+
+  const formatLocation = (latitude?: number, longitude?: number): string => {
+    if (latitude && longitude) {
+      return `Latitude ${latitude}, Longitude ${longitude}`;
+    }
+    return "Location not available";
+  };
+
+  const formatTimestamp = (timestamp?: string) => {
+    if (!timestamp || timestamp === "N/A") return "N/A";
+    try {
+      return new Date(timestamp).toLocaleString();
+    } catch {
+      return timestamp;
+    }
+  };
+
+  // Show loading state if profile is not loaded yet
+  if (!profile || !formData) {
+    return (
+      <div className="profile-page">
+        <div className="profile-header">
+          <button className="back-button" onClick={onBack}>
+            <X size={20} />
+          </button>
+          <h1 className="profile-title">Profile Settings</h1>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px' }}>
+          <Spinner size={3} label="Loading profile..." />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="profile-page">
       {/* Header */}
@@ -158,12 +298,14 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
           <X size={20} />
         </button>
         <h1 className="profile-title">Profile Settings</h1>
+        {/*
         {!isEditing && (
           <button className="edit-button" onClick={() => setIsEditing(true)}>
             <Edit size={16} />
             Edit
           </button>
-        )}
+        )} */}
+
       </div>
 
       {/* Messages */}
@@ -187,36 +329,33 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
         </MessageBar>
       )}
 
+      {/* Authentication Status Message */}
+      {profile.message && profile.message !== "N/A" && (
+        <MessageBar
+          messageBarType={MessageBarType.info}
+          className="profile-message"
+        >
+          <strong>Authentication Status:</strong> {profile.message}
+        </MessageBar>
+      )}
+
       <div className="profile-content">
         {/* Profile Card */}
         <div className="profile-card">
           <div className="profile-avatar-section">
             <div className="profile-avatar">
-              {profile.avatar ? (
-                <img src={profile.avatar} alt={profile.name} />
-              ) : (
-                <div className="avatar-placeholder">{getInitials(profile.name)}</div>
-              )}
+              <div className="avatar-placeholder">{getInitials(profile.name)}</div>
             </div>
             <div className="profile-info">
               <h2 className="profile-name">{profile.name}</h2>
-              <p className="profile-position">{profile.position}</p>
-              <p className="profile-company">{profile.company}</p>
-            </div>
-          </div>
-
-          <div className="profile-stats">
-            <div className="stat-item">
-              <span className="stat-value">156</span>
-              <span className="stat-label">Documents</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-value">23</span>
-              <span className="stat-label">Shared</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-value">12</span>
-              <span className="stat-label">Favorites</span>
+              <p className="profile-position">{profile.email}</p>
+              <p className="profile-company">{profile.phone}</p>
+              {profile.timestamp && profile.timestamp !== "N/A" && (
+                <p className="profile-timestamp">
+                  <Calendar size={14} style={{ marginRight: '4px' }} />
+                  Last Activity: {formatTimestamp(profile.timestamp)}
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -270,10 +409,10 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
             </div>
 
             <div className="form-group">
-              <Label className="form-label">Phone Number</Label>
+              <Label className="form-label">Mobile Number</Label>
               <TextField
-                value={formData.phone}
-                onChange={(_, value) => handleInputChange("phone", value)}
+                value={formData.mobile}
+                onChange={(_, value) => handleInputChange("mobile", value)}
                 disabled={!isEditing}
                 styles={{
                   field: {
@@ -281,6 +420,48 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
                     border: "1px solid #d1d1d1",
                     borderRadius: "6px",
                     height: "40px",
+                  },
+                  fieldGroup: {
+                    border: "none",
+                  },
+                }}
+              />
+            </div>
+
+            <div className="form-group">
+              <Label className="form-label">Country Code</Label>
+              <TextField
+                value={formData.country_code}
+                onChange={(_, value) => handleInputChange("country_code", value)}
+                disabled={!isEditing}
+                styles={{
+                  field: {
+                    fontSize: "14px",
+                    border: "1px solid #d1d1d1",
+                    borderRadius: "6px",
+                    height: "40px",
+                  },
+                  fieldGroup: {
+                    border: "none",
+                  },
+                }}
+              />
+            </div>
+
+            <div className="form-group">
+              <Label className="form-label">Address</Label>
+              <TextField
+                value={formData.address}
+                onChange={(_, value) => handleInputChange("address", value)}
+                disabled={!isEditing}
+                multiline
+                rows={2}
+                styles={{
+                  field: {
+                    fontSize: "14px",
+                    border: "1px solid #d1d1d1",
+                    borderRadius: "6px",
+                    minHeight: "60px",
                   },
                   fieldGroup: {
                     border: "none",
@@ -292,55 +473,15 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
             <div className="form-group">
               <Label className="form-label">Location</Label>
               <TextField
-                value={formData.location}
-                onChange={(_, value) => handleInputChange("location", value)}
-                disabled={!isEditing}
+                value={formatLocation(formData.latitude, formData.longitude)}
+                disabled={true}
                 styles={{
                   field: {
                     fontSize: "14px",
                     border: "1px solid #d1d1d1",
                     borderRadius: "6px",
                     height: "40px",
-                  },
-                  fieldGroup: {
-                    border: "none",
-                  },
-                }}
-              />
-            </div>
-
-            <div className="form-group">
-              <Label className="form-label">Company</Label>
-              <TextField
-                value={formData.company}
-                onChange={(_, value) => handleInputChange("company", value)}
-                disabled={!isEditing}
-                styles={{
-                  field: {
-                    fontSize: "14px",
-                    border: "1px solid #d1d1d1",
-                    borderRadius: "6px",
-                    height: "40px",
-                  },
-                  fieldGroup: {
-                    border: "none",
-                  },
-                }}
-              />
-            </div>
-
-            <div className="form-group">
-              <Label className="form-label">Position</Label>
-              <TextField
-                value={formData.position}
-                onChange={(_, value) => handleInputChange("position", value)}
-                disabled={!isEditing}
-                styles={{
-                  field: {
-                    fontSize: "14px",
-                    border: "1px solid #d1d1d1",
-                    borderRadius: "6px",
-                    height: "40px",
+                    backgroundColor: "#f8f9fa",
                   },
                   fieldGroup: {
                     border: "none",
@@ -351,7 +492,40 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
           </div>
         </div>
 
+        {/* Device Information */}
+                {/* 
+        <div className="profile-section">
+          <h3 className="section-title">
+            <Smartphone size={18} />
+            Device Information
+          </h3>
+
+          <div className="form-grid">
+            <div className="form-group">
+              <Label className="form-label">Device IMEI</Label>
+              <TextField
+                value={formData.imei || "N/A"}
+                disabled={true}
+                styles={{
+                  field: {
+                    fontSize: "14px",
+                    border: "1px solid #d1d1d1",
+                    borderRadius: "6px",
+                    height: "40px",
+                    backgroundColor: "#f8f9fa",
+                  },
+                  fieldGroup: {
+                    border: "none",
+                  },
+                }}
+              />
+            </div>
+          </div>
+        </div>
+ */}
+                
         {/* Preferences */}
+      {/*
         <div className="profile-section">
           <h3 className="section-title">
             <Shield size={18} />
@@ -413,7 +587,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
             </div>
           </div>
         </div>
-
+    */}
         {/* Account Information */}
         <div className="profile-section">
           <h3 className="section-title">
@@ -423,17 +597,23 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
 
           <div className="account-info">
             <div className="info-item">
-              <span className="info-label">Member Since:</span>
-              <span className="info-value">{profile.joinDate}</span>
-            </div>
-            <div className="info-item">
               <span className="info-label">User ID:</span>
               <span className="info-value">{profile.id}</span>
+            </div>
+            <div className="info-item">
+              <span className="info-label">Phone Number:</span>
+              <span className="info-value">{profile.phone}</span>
             </div>
             <div className="info-item">
               <span className="info-label">Account Status:</span>
               <span className="info-value status-active">Active</span>
             </div>
+            {profile.timestamp && profile.timestamp !== "N/A" && (
+              <div className="info-item">
+                <span className="info-label">Last Activity:</span>
+                <span className="info-value">{formatTimestamp(profile.timestamp)}</span>
+              </div>
+            )}
           </div>
         </div>
 

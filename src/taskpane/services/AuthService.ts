@@ -15,7 +15,12 @@ interface AuthResult {
     mobile: string;
     country_code: string;
     address: string;
+    latitude?: number;
+    longitude?: number;
+    imei?: string;
   };
+  message?: string;
+  timestamp?: string;
 }
 
 interface StoredAuth {
@@ -29,7 +34,12 @@ interface StoredAuth {
     mobile: string;
     country_code: string;
     address: string;
+    latitude?: number;
+    longitude?: number;
+    imei?: string;
   };
+  message?: string;
+  timestamp?: string;
 }
 
 export class AuthService {
@@ -65,6 +75,8 @@ export class AuthService {
         sessionToken: authResult.sessionToken || this.generateSessionToken(),
         expiresAt: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
         user: authResult.user,
+        message: authResult.message,
+        timestamp: authResult.timestamp,
       };
 
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(authData));
@@ -180,7 +192,14 @@ export class AuthService {
           });
           return {
             sessionToken: this.generateSessionToken(),
-            user: response.data.data.details
+            user: {
+              ...response.data.data.details,
+              latitude: response.data.data.details.latitude,
+              longitude: response.data.data.details.longitude,
+              imei: response.data.data.details.imei
+            },
+            message: response.data.message,
+            timestamp: new Date().toISOString()
           };
         }
 
