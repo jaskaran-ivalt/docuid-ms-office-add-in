@@ -107,7 +107,7 @@ module.exports = async (env, options) => {
       proxy: [
         {
           context: ['/api/docuid'],
-          target: 'https://api.docuid.net',
+          target: 'https://dev.docuid.net',
           changeOrigin: true,
           secure: true,
           pathRewrite: {
