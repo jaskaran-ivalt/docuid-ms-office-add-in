@@ -16,6 +16,11 @@ interface Document {
   type: string;
   dateModified: string;
   size: string;
+  // Extended fields from DocuID API
+  documentId?: number;
+  isPasswordProtected?: boolean;
+  isEncrypted?: boolean;
+  description?: string | null;
 }
 
 const App: React.FC = () => {
