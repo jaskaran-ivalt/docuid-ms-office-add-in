@@ -1,5 +1,6 @@
 import axios from "axios";
 import { AuthService } from "./AuthService";
+import { DocuIdApiService, DocuIdDocument, DocumentAccess } from "./DocuIdApiService";
 import { logger } from "./Logger";
 
 /* global Word, Office */
@@ -10,6 +11,11 @@ interface Document {
   type: string;
   dateModified: string;
   size: string;
+  // Extended fields from DocuID API
+  documentId?: number;
+  isPasswordProtected?: boolean;
+  isEncrypted?: boolean;
+  description?: string | null;
 }
 
 interface DocumentContent {
@@ -18,6 +24,7 @@ interface DocumentContent {
   contentType: string;
   fileName: string;
   documentType?: string;
+  binaryContent?: Blob;
 }
 
 export class DocumentService {
@@ -26,31 +33,69 @@ export class DocumentService {
     ? '' // Use relative URLs for webpack proxy
     : "https://api.docuid.net";
 
+  // Flag to use mock data during development when API is unavailable
+  private static readonly USE_MOCK_DATA = false;
+
   /**
-   * Get user's documents from the API
+   * Format file size for display
+   */
+  private static formatFileSize(bytes: number): string {
+    if (bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+  }
+
+  /**
+   * Extract file extension from filename
+   */
+  private static getFileExtension(fileName: string): string {
+    const ext = fileName.split('.').pop()?.toLowerCase() || '';
+    return ext;
+  }
+
+  /**
+   * Get user's Word documents from the DocuID API
    */
   static async getDocuments(): Promise<Document[]> {
-    try {
-      // For development, return mock data
-      return this.getMockDocuments();
+    const docLogger = logger.createContextLogger('DocumentService');
 
-      // Production implementation:
-      /*
-      const sessionToken = AuthService.getSessionToken();
-      if (!sessionToken) {
-        throw new Error('Not authenticated');
+    try {
+      // Use mock data if flag is set
+      if (this.USE_MOCK_DATA) {
+        docLogger.debug('Using mock documents');
+        return this.getMockDocuments();
       }
 
-      const response = await axios.get(`${this.API_BASE_URL}/api/documents`, {
-        headers: {
-          'Authorization': `Bearer ${sessionToken}`,
-          'Content-Type': 'application/json'
-        }
-      });
+      docLogger.info('Fetching Word documents from DocuID API');
 
-      return response.data.documents;
-      */
+      const apiDocs = await DocuIdApiService.getWordDocuments();
+
+      // Transform API response to Document interface
+      const documents: Document[] = apiDocs.map((doc: DocuIdDocument) => ({
+        id: doc.documentId.toString(),
+        title: doc.fileName,
+        type: this.getFileExtension(doc.fileName),
+        dateModified: new Date(doc.updatedAt).toLocaleDateString(),
+        size: this.formatFileSize(doc.fileSize),
+        documentId: doc.documentId,
+        isPasswordProtected: doc.isPasswordProtected,
+        description: doc.description,
+      }));
+
+      docLogger.info('Documents fetched successfully', { count: documents.length });
+      return documents;
     } catch (error) {
+      const docLogger = logger.createContextLogger('DocumentService');
+      docLogger.error('Failed to fetch documents', error as Error);
+      
+      // Fallback to mock data on error during development
+      if (process.env.NODE_ENV === 'development') {
+        docLogger.warn('Falling back to mock documents');
+        return this.getMockDocuments();
+      }
+      
       throw new Error("Failed to fetch documents");
     }
   }
@@ -139,25 +184,57 @@ export class DocumentService {
    * Get document content from API
    */
   private static async getDocumentContent(documentId: string): Promise<DocumentContent> {
-    // For development, return mock content
-    return this.getMockDocumentContent(documentId);
+    const docLogger = logger.createContextLogger('DocumentService');
 
-    // Production implementation:
-    /*
-    const sessionToken = AuthService.getSessionToken();
-    if (!sessionToken) {
-      throw new Error('Not authenticated');
+    // Use mock data if flag is set
+    if (this.USE_MOCK_DATA) {
+      return this.getMockDocumentContent(documentId);
     }
 
-    const response = await axios.get(`${this.API_BASE_URL}/api/documents/${documentId}`, {
-      headers: {
-        'Authorization': `Bearer ${sessionToken}`,
-        'Content-Type': 'application/json'
+    try {
+      const docId = parseInt(documentId);
+      if (isNaN(docId)) {
+        throw new Error('Invalid document ID');
       }
-    });
 
-    return response.data;
-    */
+      docLogger.info('Fetching document access info', { documentId });
+
+      // Get document access information
+      const accessInfo = await DocuIdApiService.getDocumentAccess(docId);
+
+      if (!accessInfo.access.url) {
+        throw new Error('Document access URL not available');
+      }
+
+      docLogger.debug('Downloading document content', {
+        documentId,
+        url: accessInfo.access.url,
+        fileType: accessInfo.fileType,
+      });
+
+      // Download the document content
+      const blobContent = await DocuIdApiService.downloadDocumentContent(accessInfo.access.url);
+
+      // For Word documents, we'll need to handle binary content differently
+      // For now, return the basic info with binary content attached
+      return {
+        id: documentId,
+        content: '', // Binary content is in binaryContent field
+        contentType: accessInfo.fileType,
+        fileName: accessInfo.fileName,
+        documentType: this.getFileExtension(accessInfo.fileName),
+        binaryContent: blobContent,
+      };
+    } catch (error) {
+      docLogger.error('Failed to get document content, falling back to mock', error as Error);
+
+      // Fallback to mock content during development
+      if (process.env.NODE_ENV === 'development') {
+        return this.getMockDocumentContent(documentId);
+      }
+
+      throw error;
+    }
   }
 
   /**
@@ -343,8 +420,88 @@ Party B: _________________ Date: _________`,
   private static async insertIntoWord(documentContent: DocumentContent): Promise<void> {
     const officeLogger = logger.createContextLogger('DocumentService.Office');
 
+    // Check if we have binary content (real Word document)
+    if (documentContent.binaryContent) {
+      return this.insertBinaryDocumentIntoWord(documentContent, officeLogger);
+    }
+
+    // Fall back to text-based insertion for mock content or plain text
+    return this.insertTextDocumentIntoWord(documentContent, officeLogger);
+  }
+
+  /**
+   * Insert binary Word document content using Office.js
+   */
+  private static async insertBinaryDocumentIntoWord(
+    documentContent: DocumentContent,
+    officeLogger: ReturnType<typeof logger.createContextLogger>
+  ): Promise<void> {
     return Word.run(async (context) => {
-      officeLogger.debug('Starting Word.run context for document insertion', {
+      officeLogger.debug('Starting Word.run context for binary document insertion', {
+        fileName: documentContent.fileName,
+        contentType: documentContent.contentType,
+      });
+
+      try {
+        // Convert blob to base64
+        const arrayBuffer = await documentContent.binaryContent!.arrayBuffer();
+        const base64String = this.arrayBufferToBase64(arrayBuffer);
+
+        officeLogger.debug('Converted document to base64', {
+          originalSize: arrayBuffer.byteLength,
+          base64Length: base64String.length,
+        });
+
+        // Insert the file into Word
+        // Using insertFileFromBase64 to insert the Word document content
+        context.document.body.insertFileFromBase64(
+          base64String,
+          Word.InsertLocation.end
+        );
+
+        await context.sync();
+        officeLogger.logOfficeOperation('Binary document insertion', true);
+      } catch (error) {
+        officeLogger.logOfficeOperation('Binary document insertion', false, error);
+        
+        // If binary insertion fails, try to fall back to text notification
+        officeLogger.warn('Binary insertion failed, inserting notification instead');
+        const errorParagraph = context.document.body.insertParagraph(
+          `[DocuID] Document "${documentContent.fileName}" loaded. Binary insertion not supported for this document type.`,
+          Word.InsertLocation.end
+        );
+        errorParagraph.font.color = "#666666";
+        errorParagraph.font.italic = true;
+        await context.sync();
+      }
+    }).catch((error) => {
+      officeLogger.logOfficeOperation('Document insertion', false, error);
+      throw error;
+    });
+  }
+
+  /**
+   * Convert ArrayBuffer to base64 string
+   */
+  private static arrayBufferToBase64(buffer: ArrayBuffer): string {
+    let binary = '';
+    const bytes = new Uint8Array(buffer);
+    const len = bytes.byteLength;
+    for (let i = 0; i < len; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary);
+  }
+
+  /**
+   * Insert text-based document content into Word (for mock data or plain text)
+   */
+  private static async insertTextDocumentIntoWord(
+    documentContent: DocumentContent,
+    officeLogger: ReturnType<typeof logger.createContextLogger>
+  ): Promise<void> {
+    return Word.run(async (context) => {
+      officeLogger.debug('Starting Word.run context for text document insertion', {
         fileName: documentContent.fileName,
         contentLength: documentContent.content.length
       });
@@ -420,7 +577,7 @@ Party B: _________________ Date: _________`,
 
       officeLogger.debug('Synchronizing Word context changes');
       await context.sync();
-      officeLogger.logOfficeOperation('Document insertion', true);
+      officeLogger.logOfficeOperation('Text document insertion', true);
     }).catch((error) => {
       officeLogger.logOfficeOperation('Document insertion', false, error);
       throw error;

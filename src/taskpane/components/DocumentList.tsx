@@ -21,6 +21,11 @@ interface Document {
   type: string;
   dateModified: string;
   size: string;
+  // Extended fields from DocuID API
+  documentId?: number;
+  isPasswordProtected?: boolean;
+  isEncrypted?: boolean;
+  description?: string | null;
 }
 
 interface ShareData {
@@ -213,7 +218,12 @@ const DocumentList: React.FC<DocumentListProps> = ({
             <div key={document.id} className="document-item">
               <div className="document-icon">{getFileIcon(document.type)}</div>
               <div className="document-info">
-                <h3 className="document-title">{document.title}</h3>
+                <h3 className="document-title">
+                  {document.title}
+                  {document.isPasswordProtected && (
+                    <Shield size={14} className="document-protected-icon" title="Password Protected" />
+                  )}
+                </h3>
                 <div className="document-meta">
                   <span className="document-type">{document.type.toUpperCase()}</span>
                   <span className="document-separator">•</span>
