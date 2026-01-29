@@ -11,7 +11,7 @@ const urlProd = "https://www.contoso.com/"; // CHANGE THIS TO YOUR PRODUCTION DE
 // API BACKEND CONFIGURATION
 // Set to true to use local DocuID backend, false for dev server
 // ============================================================
-const USE_LOCAL_BACKEND = true;
+const USE_LOCAL_BACKEND = false;
 
 // Backend URLs
 const API_TARGETS = {
