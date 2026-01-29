@@ -216,14 +216,29 @@ export class DocuIdApiService {
     const startTime = Date.now();
 
     try {
-      this.apiLogger.logApiRequest('GET', accessUrl, { type: 'download' });
+      // Convert absolute backend URL to relative proxy URL to avoid CORS issues
+      // The access URL might be something like: http://localhost:3001/api/documents/123/download
+      // We need to route it through our proxy: /api/docuid/documents/123/download
+      let downloadUrl = accessUrl;
+      
+      // Check if this is a backend URL that needs to go through our proxy
+      if (accessUrl.includes('/api/documents/')) {
+        // Extract the path after /api/documents/
+        const match = accessUrl.match(/\/api\/documents\/(.+)/);
+        if (match) {
+          // Route through our proxy
+          downloadUrl = `/api/docuid/documents/${match[1]}`;
+        }
+      }
 
-      const response = await this.getApiInstance().get(accessUrl, {
+      this.apiLogger.logApiRequest('GET', downloadUrl, { type: 'download', originalUrl: accessUrl });
+
+      const response = await this.getApiInstance().get(downloadUrl, {
         responseType: 'blob',
       });
 
       const responseTime = Date.now() - startTime;
-      this.apiLogger.logApiResponse('GET', accessUrl, response.status, responseTime);
+      this.apiLogger.logApiResponse('GET', downloadUrl, response.status, responseTime);
 
       return response.data;
     } catch (error) {

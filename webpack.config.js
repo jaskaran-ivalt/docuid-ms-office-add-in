@@ -141,14 +141,26 @@ module.exports = async (env, options) => {
           },
           logLevel: 'debug'
         },
-        // Dashboard document endpoints: /api/docuid/documents/* -> /api/dashboard/documents/*
+        // Document endpoints: handles both /api/documents/* and /api/dashboard/documents/*
+        // Download/content endpoints go to /api/documents/
+        // Other endpoints (word-files, access, etc.) go to /api/dashboard/documents/
         {
           context: ['/api/docuid/documents'],
           target: apiTarget.url,
           changeOrigin: true,
           secure: apiTarget.secure,
-          pathRewrite: {
-            '^/api/docuid/documents': '/api/dashboard/documents'
+          pathRewrite: (path, req) => {
+            console.log(`📡 Proxy pathRewrite: ${path}`);
+            // Check if this is a download or content endpoint
+            if (path.match(/\/api\/docuid\/documents\/\d+\/(download|content)$/)) {
+              const newPath = path.replace('/api/docuid/documents', '/api/documents');
+              console.log(`   → Rewriting to: ${newPath} (download/content)`);
+              return newPath;
+            }
+            // All other document endpoints go to /api/dashboard/documents/
+            const newPath = path.replace('/api/docuid/documents', '/api/dashboard/documents');
+            console.log(`   → Rewriting to: ${newPath} (dashboard)`);
+            return newPath;
           },
           logLevel: 'debug'
         }
