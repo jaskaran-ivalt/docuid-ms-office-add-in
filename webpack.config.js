@@ -105,23 +105,45 @@ module.exports = async (env, options) => {
       },
       port: process.env.npm_package_config_dev_server_port || 3000,
       proxy: [
+        // Biometric auth endpoints: /api/docuid/biometric/* -> /api/biometric/*
         {
-          context: ['/api/docuid'],
+          context: ['/api/docuid/biometric'],
           target: 'https://dev.docuid.net',
           changeOrigin: true,
           secure: true,
           pathRewrite: {
-            '^/api/docuid': '/api'
+            '^/api/docuid/biometric': '/api/biometric'
           },
           logLevel: 'debug'
         },
+        // Dashboard document endpoints: /api/docuid/documents/* -> /api/dashboard/documents/*
         {
-          context: ['/api/dashboard'],
-          target: 'http://localhost:3000',
+          context: ['/api/docuid/documents'],
+          target: 'https://dev.docuid.net',
           changeOrigin: true,
-          secure: false,
+          secure: true,
+          pathRewrite: {
+            '^/api/docuid/documents': '/api/dashboard/documents'
+          },
           logLevel: 'debug'
         }
+        // For local DocuID backend testing, uncomment and modify targets:
+        // {
+        //   context: ['/api/docuid/biometric'],
+        //   target: 'http://localhost:3001',
+        //   changeOrigin: true,
+        //   secure: false,
+        //   pathRewrite: { '^/api/docuid/biometric': '/api/biometric' },
+        //   logLevel: 'debug'
+        // },
+        // {
+        //   context: ['/api/docuid/documents'],
+        //   target: 'http://localhost:3001',
+        //   changeOrigin: true,
+        //   secure: false,
+        //   pathRewrite: { '^/api/docuid/documents': '/api/dashboard/documents' },
+        //   logLevel: 'debug'
+        // }
       ]
     },
   };

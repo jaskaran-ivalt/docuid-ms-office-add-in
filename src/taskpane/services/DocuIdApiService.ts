@@ -128,7 +128,7 @@ export class DocuIdApiService {
       if (options?.offset) params.append('offset', options.offset.toString());
 
       const queryString = params.toString();
-      const url = `/api/dashboard/documents/word-files${queryString ? `?${queryString}` : ''}`;
+      const url = `/api/docuid/documents/word-files${queryString ? `?${queryString}` : ''}`;
 
       this.apiLogger.logApiRequest('GET', url, { options });
 
@@ -147,7 +147,7 @@ export class DocuIdApiService {
       throw new Error(response.data.message || 'Failed to fetch documents');
     } catch (error) {
       const responseTime = Date.now() - startTime;
-      this.apiLogger.logApiResponse('GET', '/api/dashboard/documents/word-files', 
+      this.apiLogger.logApiResponse('GET', '/api/docuid/documents/word-files', 
         (error as AxiosError).response?.status || 0, responseTime);
       this.apiLogger.error('Failed to fetch Word documents', error as Error);
       throw error;
@@ -159,7 +159,7 @@ export class DocuIdApiService {
    */
   static async getDocumentAccess(documentId: number): Promise<DocumentAccess> {
     const startTime = Date.now();
-    const url = `/api/dashboard/documents/${documentId}/access`;
+    const url = `/api/docuid/documents/${documentId}/access`;
 
     try {
       this.apiLogger.logApiRequest('GET', url, { documentId });
@@ -189,7 +189,7 @@ export class DocuIdApiService {
    */
   static async getDocument(documentId: number): Promise<DocuIdDocument> {
     const startTime = Date.now();
-    const url = `/api/dashboard/documents/${documentId}`;
+    const url = `/api/docuid/documents/${documentId}`;
 
     try {
       this.apiLogger.logApiRequest('GET', url, { documentId });
