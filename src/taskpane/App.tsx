@@ -85,10 +85,23 @@ const App: React.FC = () => {
 
   const loadDocuments = async () => {
     try {
+      setIsLoading(true);
       const docs = await DocumentService.getDocuments();
       setDocuments(docs);
     } catch (err) {
+      // Check if it's a 401 Unauthorized error
+      if (err && typeof err === 'object' && 'response' in err) {
+        const axiosError = err as { response?: { status?: number } };
+        if (axiosError.response?.status === 401) {
+          // Session expired or invalid - logout and show login screen
+          handleLogout();
+          setError("Session expired. Please login again.");
+          return;
+        }
+      }
       setError("Failed to load documents");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -105,6 +118,15 @@ const App: React.FC = () => {
       setIsLoading(true);
       await DocumentService.openDocument(document.id);
     } catch (err) {
+      // Check if it's a 401 Unauthorized error
+      if (err && typeof err === 'object' && 'response' in err) {
+        const axiosError = err as { response?: { status?: number } };
+        if (axiosError.response?.status === 401) {
+          handleLogout();
+          setError("Session expired. Please login again.");
+          return;
+        }
+      }
       setError("Failed to open document");
     } finally {
       setIsLoading(false);
@@ -118,6 +140,15 @@ const App: React.FC = () => {
       // Remove the document from the list
       setDocuments((prev) => prev.filter((doc) => doc.id !== documentId));
     } catch (err) {
+      // Check if it's a 401 Unauthorized error
+      if (err && typeof err === 'object' && 'response' in err) {
+        const axiosError = err as { response?: { status?: number } };
+        if (axiosError.response?.status === 401) {
+          handleLogout();
+          setError("Session expired. Please login again.");
+          return;
+        }
+      }
       setError("Failed to close document");
     } finally {
       setIsLoading(false);
