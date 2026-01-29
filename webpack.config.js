@@ -7,6 +7,27 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const urlDev = "https://localhost:3000/";
 const urlProd = "https://www.contoso.com/"; // CHANGE THIS TO YOUR PRODUCTION DEPLOYMENT LOCATION
 
+// ============================================================
+// API BACKEND CONFIGURATION
+// Set to true to use local DocuID backend, false for dev server
+// ============================================================
+const USE_LOCAL_BACKEND = true;
+
+// Backend URLs
+const API_TARGETS = {
+  local: {
+    url: 'http://localhost:3001',
+    secure: false
+  },
+  remote: {
+    url: 'https://dev.docuid.net',
+    secure: true
+  }
+};
+
+// Get current API target based on USE_LOCAL_BACKEND flag
+const apiTarget = USE_LOCAL_BACKEND ? API_TARGETS.local : API_TARGETS.remote;
+
 async function getHttpsOptions() {
   const httpsOptions = await devCerts.getHttpsServerOptions();
   return { ca: httpsOptions.ca, key: httpsOptions.key, cert: httpsOptions.cert };
@@ -14,6 +35,10 @@ async function getHttpsOptions() {
 
 module.exports = async (env, options) => {
   const dev = options.mode === "development";
+  
+  // Log which backend is being used
+  console.log(`\n🔌 API Backend: ${USE_LOCAL_BACKEND ? 'LOCAL' : 'REMOTE'} (${apiTarget.url})\n`);
+  
   const config = {
     devtool: "source-map",
     entry: {
@@ -108,9 +133,9 @@ module.exports = async (env, options) => {
         // Biometric auth endpoints: /api/docuid/biometric/* -> /api/biometric/*
         {
           context: ['/api/docuid/biometric'],
-          target: 'https://dev.docuid.net',
+          target: apiTarget.url,
           changeOrigin: true,
-          secure: true,
+          secure: apiTarget.secure,
           pathRewrite: {
             '^/api/docuid/biometric': '/api/biometric'
           },
@@ -119,31 +144,14 @@ module.exports = async (env, options) => {
         // Dashboard document endpoints: /api/docuid/documents/* -> /api/dashboard/documents/*
         {
           context: ['/api/docuid/documents'],
-          target: 'https://dev.docuid.net',
+          target: apiTarget.url,
           changeOrigin: true,
-          secure: true,
+          secure: apiTarget.secure,
           pathRewrite: {
             '^/api/docuid/documents': '/api/dashboard/documents'
           },
           logLevel: 'debug'
         }
-        // For local DocuID backend testing, uncomment and modify targets:
-        // {
-        //   context: ['/api/docuid/biometric'],
-        //   target: 'http://localhost:3001',
-        //   changeOrigin: true,
-        //   secure: false,
-        //   pathRewrite: { '^/api/docuid/biometric': '/api/biometric' },
-        //   logLevel: 'debug'
-        // },
-        // {
-        //   context: ['/api/docuid/documents'],
-        //   target: 'http://localhost:3001',
-        //   changeOrigin: true,
-        //   secure: false,
-        //   pathRewrite: { '^/api/docuid/documents': '/api/dashboard/documents' },
-        //   logLevel: 'debug'
-        // }
       ]
     },
   };
