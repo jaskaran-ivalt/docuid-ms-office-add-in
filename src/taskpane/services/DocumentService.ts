@@ -88,13 +88,14 @@ export class DocumentService {
       const docLogger = logger.createContextLogger('DocumentService');
       docLogger.error('Failed to fetch documents', error as Error);
       
-      // Fallback to mock data on error during development
-      if (process.env.NODE_ENV === 'development') {
+      // Only fallback to mock data if USE_MOCK_DATA flag is set
+      if (this.USE_MOCK_DATA) {
         docLogger.warn('Falling back to mock documents');
         return this.getMockDocuments();
       }
       
-      throw new Error("Failed to fetch documents");
+      // Otherwise, throw the error
+      throw error;
     }
   }
 
@@ -224,13 +225,15 @@ export class DocumentService {
         binaryContent: blobContent,
       };
     } catch (error) {
-      docLogger.error('Failed to get document content, falling back to mock', error as Error);
+      docLogger.error('Failed to get document content', error as Error);
 
-      // Fallback to mock content during development
-      if (process.env.NODE_ENV === 'development') {
+      // Only fallback to mock if USE_MOCK_DATA flag is set
+      if (this.USE_MOCK_DATA) {
+        docLogger.warn('Falling back to mock document content');
         return this.getMockDocumentContent(documentId);
       }
 
+      // Otherwise, throw the error so the user knows what went wrong
       throw error;
     }
   }
