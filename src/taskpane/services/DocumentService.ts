@@ -1,6 +1,4 @@
-import axios from "axios";
-import { AuthService } from "./AuthService";
-import { DocuIdApiService, DocuIdDocument, DocumentAccess } from "./DocuIdApiService";
+import { DocuIdApiService, DocuIdDocument } from "./DocuIdApiService";
 import { logger } from "./Logger";
 
 /* global Word, Office */
@@ -602,18 +600,19 @@ Party B: _________________ Date: _________`,
    * Download document (for future implementation)
    */
   static async downloadDocument(documentId: string): Promise<Blob> {
-    const sessionToken = AuthService.getSessionToken();
-    if (!sessionToken) {
-      throw new Error("Not authenticated");
+    const docId = parseInt(documentId);
+    if (isNaN(docId)) {
+      throw new Error("Invalid document ID");
     }
 
-    const response = await axios.get(`${this.API_BASE_URL}/api/docuid/documents/${documentId}/download`, {
-      headers: {
-        Authorization: `Bearer ${sessionToken}`,
-      },
-      responseType: "blob",
-    });
+    // Get document access info which includes the download URL
+    const accessInfo = await DocuIdApiService.getDocumentAccess(docId);
 
-    return response.data;
+    if (!accessInfo.access.url) {
+      throw new Error("Document download URL not available");
+    }
+
+    // Download using the presigned URL
+    return DocuIdApiService.downloadDocumentContent(accessInfo.access.url);
   }
 }
