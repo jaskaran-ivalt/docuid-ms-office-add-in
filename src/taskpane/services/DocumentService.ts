@@ -444,6 +444,11 @@ Party B: _________________ Date: _________`,
       });
 
       try {
+        // Clear existing content before inserting new document
+        officeLogger.debug('Clearing existing document content');
+        context.document.body.clear();
+        await context.sync();
+
         // Convert blob to base64
         const arrayBuffer = await documentContent.binaryContent!.arrayBuffer();
         const base64String = this.arrayBufferToBase64(arrayBuffer);
@@ -457,7 +462,7 @@ Party B: _________________ Date: _________`,
         // Using insertFileFromBase64 to insert the Word document content
         context.document.body.insertFileFromBase64(
           base64String,
-          Word.InsertLocation.end
+          Word.InsertLocation.start
         );
 
         await context.sync();
@@ -506,8 +511,10 @@ Party B: _________________ Date: _________`,
         fileName: documentContent.fileName,
         contentLength: documentContent.content.length
       });
-      // Clear existing content (optional)
-      // context.document.body.clear();
+      // Clear existing content before inserting new document
+      officeLogger.debug('Clearing existing document content');
+      context.document.body.clear();
+      await context.sync();
 
       // Insert document title with proper formatting
       officeLogger.debug('Inserting document title');
