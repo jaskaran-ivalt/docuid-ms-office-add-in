@@ -26,7 +26,10 @@ interface Document {
 
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingDocuments, setIsLoadingDocuments] = useState(false);
+  const [isLoadingLogin, setIsLoadingLogin] = useState(false);
+  const [isOpeningDocument, setIsOpeningDocument] = useState<string | null>(null);
+  const [isClosingDocument, setIsClosingDocument] = useState<string | null>(null);
   const [documents, setDocuments] = useState<Document[]>([]);
   const [user, setUser] = useState<{ phone: string; name?: string; email?: string } | null>(null);
   const [error, setError] = useState<string>("");
@@ -61,7 +64,7 @@ const App: React.FC = () => {
   }, [debugPanelOpen]);
 
   const handleLogin = async (phoneNumber: string) => {
-    setIsLoading(true);
+    setIsLoadingLogin(true);
     setError("");
 
     try {
@@ -80,13 +83,13 @@ const App: React.FC = () => {
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");
     } finally {
-      setIsLoading(false);
+      setIsLoadingLogin(false);
     }
   };
 
   const loadDocuments = async () => {
     try {
-      setIsLoading(true);
+      setIsLoadingDocuments(true);
       const docs = await DocumentService.getDocuments();
       setDocuments(docs);
     } catch (err) {
@@ -102,7 +105,7 @@ const App: React.FC = () => {
       }
       setError("Failed to load documents");
     } finally {
-      setIsLoading(false);
+      setIsLoadingDocuments(false);
     }
   };
 
@@ -116,7 +119,7 @@ const App: React.FC = () => {
 
   const handleDocumentOpen = async (document: Document) => {
     try {
-      setIsLoading(true);
+      setIsOpeningDocument(document.id);
       await DocumentService.openDocument(document.id);
     } catch (err) {
       // Check if it's a 401 Unauthorized error
@@ -130,13 +133,13 @@ const App: React.FC = () => {
       }
       setError("Failed to open document");
     } finally {
-      setIsLoading(false);
+      setIsOpeningDocument(null);
     }
   };
 
   const handleDocumentClose = async (documentId: string) => {
     try {
-      setIsLoading(true);
+      setIsClosingDocument(documentId);
       await DocumentService.closeDocument(documentId);
       // Remove the document from the list
       setDocuments((prev) => prev.filter((doc) => doc.id !== documentId));
@@ -152,7 +155,7 @@ const App: React.FC = () => {
       }
       setError("Failed to close document");
     } finally {
-      setIsLoading(false);
+      setIsClosingDocument(null);
     }
   };
 
@@ -163,40 +166,31 @@ const App: React.FC = () => {
     mobile?: string;
     message?: string;
   }) => {
-    try {
-      setIsLoading(true);
-      const parsedDocumentId = Number(shareData.documentId);
+    // Share loading is handled internally in ShareSidebar
+    const parsedDocumentId = Number(shareData.documentId);
 
-      if (Number.isNaN(parsedDocumentId)) {
-        throw new Error("Invalid document ID");
-      }
-
-      const response = await DocuIdApiService.shareDocument({
-        documentId: parsedDocumentId,
-        email: shareData.email,
-        countryCode: shareData.countryCode,
-        mobile: shareData.mobile,
-        message: shareData.message,
-      });
-
-      if (!response.success) {
-        throw new Error(response.message || "Failed to share document");
-      }
-    } catch (err) {
-      if (err && typeof err === "object" && "response" in err) {
-        const axiosError = err as { response?: { status?: number } };
-        if (axiosError.response?.status === 401) {
-          handleLogout();
-          setError("Session expired. Please login again.");
-          return;
-        }
-      }
-
-      setError(err instanceof Error ? err.message : "Failed to share document");
-      throw err;
-    } finally {
-      setIsLoading(false);
+    if (Number.isNaN(parsedDocumentId)) {
+      throw new Error("Invalid document ID");
     }
+
+    const response = await DocuIdApiService.shareDocument({
+      documentId: parsedDocumentId,
+      email: shareData.email,
+      countryCode: shareData.countryCode,
+      mobile: shareData.mobile,
+      message: shareData.message,
+    });
+
+    if (!response.success) {
+      throw new Error(response.message || "Failed to share document");
+    }
+
+    // Return share response for success modal
+    return {
+      shareLink: response.data?.shareLink,
+      shareId: response.data?.shareId,
+      message: response.message,
+    };
   };
 
   const handleNavigateToProfile = () => {
@@ -228,7 +222,7 @@ const App: React.FC = () => {
           )}
 
           {!isAuthenticated ? (
-            <LoginForm onLogin={handleLogin} isLoading={isLoading} />
+            <LoginForm onLogin={handleLogin} isLoading={isLoadingLogin} />
           ) : currentPage === "profile" ? (
             <ProfilePage onBack={handleNavigateToDocuments} />
           ) : (
@@ -237,7 +231,10 @@ const App: React.FC = () => {
               onDocumentOpen={handleDocumentOpen}
               onDocumentShare={handleDocumentShare}
               onCloseDocument={handleDocumentClose}
-              isLoading={isLoading}
+              isLoadingDocuments={isLoadingDocuments}
+              openingDocumentId={isOpeningDocument}
+              closingDocumentId={isClosingDocument}
+              onReload={loadDocuments}
             />
           )}
         </main>

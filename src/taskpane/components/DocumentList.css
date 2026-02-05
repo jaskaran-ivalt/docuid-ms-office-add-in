@@ -23,12 +23,58 @@
   background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
 }
 
+.documents-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
 .documents-header h2 {
-  margin: 0 0 20px 0;
+  margin: 0;
   font-size: 22px;
   font-weight: 700;
   color: #323130;
   letter-spacing: -0.5px;
+}
+
+.reload-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: white;
+  border: 1px solid #d1d1d1;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #323130;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.reload-button:hover:not(:disabled) {
+  background: #f8f9fa;
+  border-color: #0078d4;
+  color: #0078d4;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.reload-button:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.reload-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.reload-button .spinning {
+  animation: spin 1s linear infinite;
 }
 
 .search-container {
@@ -210,6 +256,7 @@
   border-radius: 4px;
   margin-right: 16px;
   flex-shrink: 0;
+  animation: skeletonPulse 1.5s ease-in-out infinite;
 }
 
 .skeleton-content {
@@ -225,6 +272,7 @@
   animation: shimmer 1.5s infinite;
   border-radius: 2px;
   margin-bottom: 8px;
+  animation-delay: 0.1s;
 }
 
 .skeleton-meta {
@@ -240,6 +288,7 @@
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   border-radius: 2px;
+  animation-delay: 0.2s;
 }
 
 .skeleton-text {
@@ -249,6 +298,7 @@
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   border-radius: 2px;
+  animation-delay: 0.3s;
 }
 
 .skeleton-actions {
@@ -264,6 +314,31 @@
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   border-radius: 4px;
+  animation-delay: 0.4s;
+}
+
+.document-skeleton {
+  animation: fadeIn 0.3s ease-in;
+}
+
+.document-skeleton:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.document-skeleton:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.document-skeleton:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+.document-skeleton:nth-child(4) {
+  animation-delay: 0.3s;
+}
+
+.document-skeleton:nth-child(5) {
+  animation-delay: 0.4s;
 }
 
 .loading-tips {
@@ -386,6 +461,10 @@
 }
 
 .document-open-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   background: #0078d4;
   color: white;
   border: none;
@@ -395,7 +474,11 @@
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
-  min-width: 60px;
+  min-width: 80px;
+}
+
+.document-open-btn svg {
+  flex-shrink: 0;
 }
 
 .document-open-btn:hover:not(:disabled) {
@@ -456,6 +539,15 @@
   }
   100% {
     background-position: 200% 0;
+  }
+}
+
+@keyframes skeletonPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
   }
 }
 
