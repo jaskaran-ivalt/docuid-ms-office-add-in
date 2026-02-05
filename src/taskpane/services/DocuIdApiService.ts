@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, AxiosError } from "axios";
+import { z } from "zod";
 import { AuthService } from "./AuthService";
 import { logger } from "./Logger";
 
@@ -64,6 +65,65 @@ interface WordFilesResponse {
     count: number;
   };
 }
+
+/**
+ * Share request payload from add-in UI
+ */
+export interface AddinShareRequest {
+  documentId: number;
+  email?: string;
+  countryCode?: string;
+  mobile?: string;
+  message?: string;
+}
+
+/**
+ * Share API response
+ */
+export interface ShareApiResponse {
+  shareId?: number;
+  shareLink?: string;
+  message?: string;
+}
+
+const addinShareRequestSchema = z
+  .object({
+    documentId: z.number().int().positive(),
+    email: z.string().email().optional(),
+    countryCode: z.string().min(2).max(2).optional(),
+    mobile: z.string().min(1).optional(),
+    message: z.string().min(1).optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (!data.email && !data.mobile) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Email or mobile is required",
+        path: ["email"],
+      });
+    }
+  });
+
+const shareRequestSchema = z.object({
+  documentId: z.number().int().positive(),
+  recipientType: z.enum(["individual", "team"]),
+  recipients: z.object({
+    email: z.string().email().optional(),
+    mobile: z.string().optional(),
+    countryCode: z.string().optional(),
+    countryCallingCode: z.string().optional(),
+    mobileWithCountryCode: z.string().optional(),
+    teamIds: z.array(z.number()).optional(),
+    userIds: z.array(z.number()).optional(),
+  }),
+  accessLevel: z.enum(["view", "download", "edit"]),
+  expiryDate: z.string().datetime().optional(),
+  requiresPassword: z.boolean(),
+  password: z.string().optional(),
+  customMessage: z.string().optional(),
+  allowDownload: z.boolean(),
+  allowPrint: z.boolean(),
+});
 
 /**
  * Service for communicating with DocuID dashboard APIs
@@ -255,5 +315,72 @@ export class DocuIdApiService {
    */
   static reset(): void {
     this.instance = null;
+  }
+
+  /**
+   * Share a document with an email or mobile recipient
+   */
+  static async shareDocument(
+    payload: {
+      documentId: number;
+      email?: string;
+      countryCode?: string;
+      mobile?: string;
+      message?: string;
+    }
+  ): Promise<ApiResponse<ShareApiResponse>> {
+    const startTime = Date.now();
+
+    const parsed = addinShareRequestSchema.parse(payload);
+
+    console.log('parsed', parsed);
+    const expiryDate = new Date(
+      Date.now() + 7 * 24 * 60 * 60 * 1000
+    ).toISOString();
+
+    const shareRequest = shareRequestSchema.parse({
+      documentId: parsed.documentId,
+      recipientType: "individual",
+      recipients: {
+        email: parsed.email || undefined,
+        countryCode: `+${parsed.countryCode}` || undefined,
+        mobile: parsed.mobile || undefined,
+      },
+      accessLevel: "download",
+      expiryDate,
+      requiresPassword: false,
+      customMessage: parsed.message || undefined,
+      allowDownload: true,
+      allowPrint: true,
+    });
+
+    const url = "/api/docuid/shares/optimized";
+
+    try {
+      this.apiLogger.logApiRequest("POST", url, {
+        documentId: parsed.documentId,
+        hasEmail: !!parsed.email,
+        hasMobile: !!parsed.mobile,
+      });
+
+      const response = await this.getApiInstance().post<
+        ApiResponse<ShareApiResponse>
+      >(url, shareRequest);
+
+      const responseTime = Date.now() - startTime;
+      this.apiLogger.logApiResponse("POST", url, response.status, responseTime);
+
+      return response.data;
+    } catch (error) {
+      const responseTime = Date.now() - startTime;
+      this.apiLogger.logApiResponse(
+        "POST",
+        url,
+        (error as AxiosError).response?.status || 0,
+        responseTime
+      );
+      this.apiLogger.error("Failed to share document", error as Error);
+      throw error;
+    }
   }
 }

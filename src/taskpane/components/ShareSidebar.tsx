@@ -12,7 +12,7 @@ import {
   Label,
 } from "@fluentui/react";
 import { Share, Mail, Phone, FileText, Calendar, HardDrive, X } from "lucide-react";
-import PhoneInput from "react-phone-number-input";
+import PhoneInput, { parsePhoneNumber } from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import "./ShareSidebar.css";
 
@@ -35,6 +35,7 @@ interface ShareSidebarProps {
 interface ShareData {
   documentId: string;
   email?: string;
+  countryCode?: string;
   mobile?: string;
   message?: string;
 }
@@ -47,7 +48,9 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({
   onCloseDocument,
 }) => {
   const [email, setEmail] = useState("");
-  const [mobile, setMobile] = useState("");
+  const [phoneValue, setPhoneValue] = useState<string | undefined>("");
+  const [countryCode, setCountryCode] = useState(""); // e.g., "US", "IN"
+  const [mobile, setMobile] = useState(""); // e.g., "9530654704" (without country code)
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -60,6 +63,24 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({
 
   const validateMobile = (mobile: string): boolean => {
     return mobile && mobile.length > 0;
+  };
+
+  const handlePhoneChange = (value: string | undefined) => {
+    setPhoneValue(value || "");
+    
+    if (value) {
+      const phoneNumber = parsePhoneNumber(value);
+      if (phoneNumber) {
+        setCountryCode(phoneNumber.countryCallingCode || "");
+        setMobile(phoneNumber.nationalNumber || "");
+      } else {
+        setCountryCode("");
+        setMobile("");
+      }
+    } else {
+      setCountryCode("");
+      setMobile("");
+    }
   };
 
   const handleShare = async () => {
@@ -83,13 +104,18 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({
       return;
     }
 
+    if (mobile && !countryCode) {
+      setError("Please select a valid country code.");
+      return;
+    }
+
     setIsLoading(true);
 
     try {
       const shareData: ShareData = {
         documentId: document.id,
         ...(email && { email }),
-        ...(mobile && { mobile }),
+        ...(mobile && countryCode && { countryCode, mobile }),
         ...(message && { message }),
       };
 
@@ -98,6 +124,8 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({
 
       setTimeout(() => {
         setEmail("");
+        setPhoneValue("");
+        setCountryCode("");
         setMobile("");
         setMessage("");
         setSuccess("");
@@ -112,6 +140,8 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({
 
   const handleDismiss = () => {
     setEmail("");
+    setPhoneValue("");
+    setCountryCode("");
     setMobile("");
     setMessage("");
     setError("");
@@ -256,8 +286,8 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({
               <Label className="form-label">Mobile Number</Label>
               <PhoneInput
                 placeholder="Enter mobile number"
-                value={mobile}
-                onChange={(value) => setMobile(value || "")}
+                value={phoneValue}
+                onChange={handlePhoneChange}
                 defaultCountry="US"
                 disabled={isLoading}
                 className="phone-input-field"
