@@ -221,7 +221,7 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({
       headerText="Share Document"
       closeButtonAriaLabel="Close"
       onRenderHeader={() => (
-        <div className="panel-header-content flex justify-between items-center px-2 py-4">
+        <div className="panel-header-content">
           <h2 className="panel-header-title">Share Document</h2>
           <button
             className="panel-close-btn"
@@ -232,24 +232,7 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({
           </button>
         </div>
       )}
-      styles={{
-        main: {
-          backgroundColor: "#f8f9fa",
-        },
-        content: {
-          padding: "24px",
-        },
-        header: {
-          backgroundColor: "#ffffff",
-          borderBottom: "1px solid #e9ecef",
-          padding: "20px 24px",
-        },
-        headerText: {
-          fontSize: "20px",
-          fontWeight: "600",
-          color: "#323130",
-        },
-      }}
+
     >
       {document && (
         <div className="share-sidebar-content">
@@ -301,9 +284,29 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({
                       border: "1px solid #d1d1d1",
                       borderRadius: "6px",
                       height: "40px",
+                      transition: "all 0.2s ease",
                     },
                     fieldGroup: {
                       border: "none",
+                      transition: "all 0.2s ease",
+                      ":focus-within": {
+                        border: "1px solid #0078d4",
+                        boxShadow: "0 0 0 2px rgba(0, 120, 212, 0.1)",
+                      },
+                      ":after": {
+                        border: "none !important",
+                        outline: "none !important",
+                      },
+                    },
+                    root: {
+                      ":focus-within": {
+                        selectors: {
+                          "::after": {
+                            border: "none !important",
+                            outline: "none !important",
+                          },
+                        },
+                      },
                     },
                   }}
                 />
@@ -342,9 +345,29 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({
                     borderRadius: "6px",
                     padding: "12px",
                     resize: "none",
+                    transition: "all 0.2s ease",
                   },
                   fieldGroup: {
                     border: "none",
+                    transition: "all 0.2s ease",
+                    ":focus-within": {
+                      border: "1px solid #0078d4",
+                      boxShadow: "0 0 0 2px rgba(0, 120, 212, 0.1)",
+                    },
+                    ":after": {
+                      border: "none !important",
+                      outline: "none !important",
+                    },
+                  },
+                  root: {
+                    ":focus-within": {
+                      selectors: {
+                        "::after": {
+                          border: "none !important",
+                          outline: "none !important",
+                        },
+                      },
+                    },
                   },
                 }}
               />
@@ -358,7 +381,7 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({
               onDismiss={() => setError("")}
               styles={{
                 root: {
-                  marginBottom: "16px",
+                  marginBottom: success ? "8px" : "0",
                   borderRadius: "6px",
                 },
               }}
@@ -373,7 +396,7 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({
               onDismiss={() => setSuccess("")}
               styles={{
                 root: {
-                  marginBottom: "16px",
+                  marginBottom: "0",
                   borderRadius: "6px",
                 },
               }}
