@@ -11,8 +11,10 @@ import {
   Database,
   Shield,
   CheckCircle,
+  RefreshCw,
 } from "lucide-react";
 import ShareSidebar from "./ShareSidebar";
+import ShareSuccessModal from "./ShareSuccessModal";
 import "./DocumentList.css";
 
 interface Document {
@@ -35,12 +37,24 @@ interface ShareData {
   message?: string;
 }
 
+interface ShareResponse {
+  shareLink?: string;
+  shareId?: number;
+  message?: string;
+  recipientEmail?: string;
+  recipientMobile?: string;
+  customMessage?: string;
+}
+
 interface DocumentListProps {
   documents: Document[];
   onDocumentOpen: (document: Document) => Promise<void>;
-  onDocumentShare?: (shareData: ShareData) => Promise<void>;
+  onDocumentShare?: (shareData: ShareData) => Promise<ShareResponse>;
   onCloseDocument?: (documentId: string) => Promise<void>;
-  isLoading: boolean;
+  isLoadingDocuments: boolean;
+  openingDocumentId: string | null;
+  closingDocumentId: string | null;
+  onReload?: () => Promise<void>;
 }
 
 const DocumentList: React.FC<DocumentListProps> = ({
@@ -48,15 +62,38 @@ const DocumentList: React.FC<DocumentListProps> = ({
   onDocumentOpen,
   onDocumentShare,
   onCloseDocument,
-  isLoading,
+  isLoadingDocuments,
+  openingDocumentId,
+  closingDocumentId,
+  onReload,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isShareSidebarOpen, setIsShareSidebarOpen] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [shareResponse, setShareResponse] = useState<ShareResponse | null>(null);
+  const [isReloading, setIsReloading] = useState(false);
 
   const filteredDocuments = documents.filter((doc) =>
     doc.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleReload = async () => {
+    if (!onReload || isReloading) return;
+    setIsReloading(true);
+    try {
+      await onReload();
+    } catch (error) {
+      console.error("Failed to reload documents:", error);
+    } finally {
+      setIsReloading(false);
+    }
+  };
+
+  const handleShareSuccess = (response: ShareResponse) => {
+    setShareResponse(response);
+    setIsSuccessModalOpen(true);
+  };
 
   const getFileIcon = (type: string) => {
     switch (type.toLowerCase()) {
@@ -107,7 +144,7 @@ const DocumentList: React.FC<DocumentListProps> = ({
     </div>
   );
 
-  if (isLoading) {
+  if (isLoadingDocuments) {
     return (
       <div className="documents-loading-container">
         {/* Loading Header */}
@@ -179,7 +216,20 @@ const DocumentList: React.FC<DocumentListProps> = ({
   return (
     <div className="documents-container">
       <div className="documents-header">
-        <h2>Your Documents</h2>
+        <div className="documents-header-top">
+          <h2>Your Documents</h2>
+          {onReload && (
+            <button
+              className="reload-button"
+              onClick={handleReload}
+              disabled={isReloading || isLoadingDocuments}
+              title="Reload documents"
+            >
+              <RefreshCw size={18} className={isReloading ? "spinning" : ""} />
+              <span>{isReloading ? "Reloading..." : "Reload"}</span>
+            </button>
+          )}
+        </div>
         <div className="search-container">
           <Search size={16} className="search-icon" />
           <TextField
@@ -236,9 +286,16 @@ const DocumentList: React.FC<DocumentListProps> = ({
                 <button
                   className="document-open-btn"
                   onClick={() => onDocumentOpen(document)}
-                  disabled={isLoading}
+                  disabled={isLoadingDocuments || openingDocumentId === document.id || closingDocumentId === document.id}
                 >
-                  Open
+                  {openingDocumentId === document.id ? (
+                    <>
+                      <Loader2 size={14} className="spinning" />
+                      <span>Opening...</span>
+                    </>
+                  ) : (
+                    "Open"
+                  )}
                 </button>
                 <button
                   className="document-share-btn"
@@ -246,7 +303,7 @@ const DocumentList: React.FC<DocumentListProps> = ({
                     setSelectedDocument(document);
                     setIsShareSidebarOpen(true);
                   }}
-                  disabled={isLoading}
+                  disabled={isLoadingDocuments || openingDocumentId === document.id || closingDocumentId === document.id}
                 >
                   Share
                 </button>
@@ -265,15 +322,37 @@ const DocumentList: React.FC<DocumentListProps> = ({
         document={selectedDocument}
         onShare={async (shareData) => {
           if (onDocumentShare) {
-            await onDocumentShare(shareData);
+            return await onDocumentShare(shareData);
           } else {
             // Default implementation - you can customize this
             console.log("Sharing document:", shareData);
             // Simulate API call
             await new Promise((resolve) => setTimeout(resolve, 1000));
+            return { message: "Document shared successfully" };
           }
         }}
         onCloseDocument={onCloseDocument}
+        onShareSuccess={handleShareSuccess}
+      />
+
+      <ShareSuccessModal
+        isOpen={isSuccessModalOpen}
+        onDismiss={() => {
+          setIsSuccessModalOpen(false);
+          setShareResponse(null);
+        }}
+        document={selectedDocument}
+        shareDetails={
+          shareResponse
+            ? {
+                shareLink: shareResponse.shareLink,
+                recipientEmail: shareResponse.recipientEmail,
+                recipientMobile: shareResponse.recipientMobile,
+                message: shareResponse.customMessage,
+                expiryDate: undefined, // Will be populated from API response if needed
+              }
+            : null
+        }
       />
     </div>
   );

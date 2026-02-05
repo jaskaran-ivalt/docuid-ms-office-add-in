@@ -11,7 +11,7 @@ import {
   Spinner,
   Label,
 } from "@fluentui/react";
-import { Share, Mail, Phone, FileText, Calendar, HardDrive, X } from "lucide-react";
+import { Share, Mail, Phone, FileText, Calendar, HardDrive, X, Loader2 } from "lucide-react";
 import PhoneInput, { parsePhoneNumber } from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import "./ShareSidebar.css";
@@ -28,8 +28,9 @@ interface ShareSidebarProps {
   isOpen: boolean;
   onDismiss: () => void;
   document: Document | null;
-  onShare: (shareData: ShareData) => Promise<void>;
+  onShare: (shareData: ShareData) => Promise<ShareResponse>;
   onCloseDocument?: (documentId: string) => Promise<void>;
+  onShareSuccess?: (response: ShareResponse) => void;
 }
 
 interface ShareData {
@@ -40,12 +41,22 @@ interface ShareData {
   message?: string;
 }
 
+interface ShareResponse {
+  shareLink?: string;
+  shareId?: number;
+  message?: string;
+  recipientEmail?: string;
+  recipientMobile?: string;
+  customMessage?: string;
+}
+
 const ShareSidebar: React.FC<ShareSidebarProps> = ({
   isOpen,
   onDismiss,
   document,
   onShare,
   onCloseDocument,
+  onShareSuccess,
 }) => {
   const [email, setEmail] = useState("");
   const [phoneValue, setPhoneValue] = useState<string | undefined>("");
@@ -55,6 +66,7 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [shareResponse, setShareResponse] = useState<ShareResponse | null>(null);
 
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -110,6 +122,8 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({
     }
 
     setIsLoading(true);
+    setError("");
+    setSuccess("");
 
     try {
       const shareData: ShareData = {
@@ -119,20 +133,37 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({
         ...(message && { message }),
       };
 
-      await onShare(shareData);
+      const response = await onShare(shareData);
+      const enrichedResponse = {
+        ...response,
+        recipientEmail: email || undefined,
+        recipientMobile: mobile ? `${countryCode}${mobile}` : undefined,
+        customMessage: message || undefined,
+      };
+      setShareResponse(enrichedResponse);
       setSuccess("Document shared successfully!");
 
+      // Notify parent component of successful share
+      if (onShareSuccess) {
+        onShareSuccess(enrichedResponse);
+      }
+
+      // Close sidebar after short delay to show success message
       setTimeout(() => {
-        setEmail("");
-        setPhoneValue("");
-        setCountryCode("");
-        setMobile("");
-        setMessage("");
-        setSuccess("");
         onDismiss();
-      }, 2000);
+        // Reset form after sidebar closes
+        setTimeout(() => {
+          setEmail("");
+          setPhoneValue("");
+          setCountryCode("");
+          setMobile("");
+          setMessage("");
+          setSuccess("");
+          setShareResponse(null);
+        }, 300);
+      }, 500);
     } catch (err) {
-      setError("Failed to share document. Please try again.");
+      setError(err instanceof Error ? err.message : "Failed to share document. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -146,6 +177,7 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({
     setMessage("");
     setError("");
     setSuccess("");
+    setShareResponse(null);
     onDismiss();
   };
 
@@ -353,10 +385,8 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({
           {/* Action Buttons */}
           <div className="action-buttons">
             <PrimaryButton
-              text={isLoading ? "Sharing..." : "Share Document"}
               onClick={handleShare}
               disabled={isLoading || (!email && !mobile)}
-              iconProps={isLoading ? undefined : { iconName: undefined }}
               styles={{
                 root: {
                   height: "44px",
@@ -372,6 +402,10 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({
                   cursor: (!email && !mobile) || isLoading ? "not-allowed" : "pointer",
                   transition: "all 0.2s ease",
                   flex: 1,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "8px",
                 },
                 rootHovered: {
                   background:
@@ -387,7 +421,14 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({
                 },
               }}
             >
-              {isLoading && <Spinner size={1} style={{ marginRight: 8 }} />}
+              {isLoading ? (
+                <>
+                  <Loader2 size={16} className="spinning" />
+                  <span>Sharing...</span>
+                </>
+              ) : (
+                <span>Share Document</span>
+              )}
             </PrimaryButton>
             <DefaultButton
               text="Cancel"
