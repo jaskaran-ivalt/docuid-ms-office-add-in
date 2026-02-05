@@ -11,7 +11,7 @@ const urlProd = "https://www.contoso.com/"; // CHANGE THIS TO YOUR PRODUCTION DE
 // API BACKEND CONFIGURATION
 // Set to true to use local DocuID backend, false for dev server
 // ============================================================
-const USE_LOCAL_BACKEND = false;
+const USE_LOCAL_BACKEND = true;
 
 // Backend URLs
 const API_TARGETS = {
@@ -161,6 +161,17 @@ module.exports = async (env, options) => {
             const newPath = path.replace('/api/docuid/documents', '/api/dashboard/documents');
             console.log(`   → Rewriting to: ${newPath} (dashboard)`);
             return newPath;
+          },
+          logLevel: 'debug'
+        },
+        // Share endpoints: /api/docuid/shares/* -> /api/dashboard/shares/*
+        {
+          context: ['/api/docuid/shares'],
+          target: apiTarget.url,
+          changeOrigin: true,
+          secure: apiTarget.secure,
+          pathRewrite: {
+            '^/api/docuid/shares': '/api/dashboard/shares'
           },
           logLevel: 'debug'
         }

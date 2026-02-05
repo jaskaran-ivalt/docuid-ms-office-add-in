@@ -5,6 +5,7 @@ import Header from "@/taskpane/components/Header";
 import ProfilePage from "@/taskpane/components/ProfilePage";
 import DebugPanel from "@/taskpane/components/DebugPanel";
 import { AuthService } from "@/taskpane/services/AuthService";
+import { DocuIdApiService } from "@/taskpane/services/DocuIdApiService";
 import { DocumentService } from "@/taskpane/services/DocumentService";
 import { DocuIdThemeProvider } from "./components/DesignSystem";
 import { logger } from "@/taskpane/services/Logger";
@@ -155,6 +156,49 @@ const App: React.FC = () => {
     }
   };
 
+  const handleDocumentShare = async (shareData: {
+    documentId: string;
+    email?: string;
+    countryCode?: string;
+    mobile?: string;
+    message?: string;
+  }) => {
+    try {
+      setIsLoading(true);
+      const parsedDocumentId = Number(shareData.documentId);
+
+      if (Number.isNaN(parsedDocumentId)) {
+        throw new Error("Invalid document ID");
+      }
+
+      const response = await DocuIdApiService.shareDocument({
+        documentId: parsedDocumentId,
+        email: shareData.email,
+        countryCode: shareData.countryCode,
+        mobile: shareData.mobile,
+        message: shareData.message,
+      });
+
+      if (!response.success) {
+        throw new Error(response.message || "Failed to share document");
+      }
+    } catch (err) {
+      if (err && typeof err === "object" && "response" in err) {
+        const axiosError = err as { response?: { status?: number } };
+        if (axiosError.response?.status === 401) {
+          handleLogout();
+          setError("Session expired. Please login again.");
+          return;
+        }
+      }
+
+      setError(err instanceof Error ? err.message : "Failed to share document");
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleNavigateToProfile = () => {
     setCurrentPage("profile");
   };
@@ -191,6 +235,7 @@ const App: React.FC = () => {
             <DocumentList
               documents={documents}
               onDocumentOpen={handleDocumentOpen}
+              onDocumentShare={handleDocumentShare}
               onCloseDocument={handleDocumentClose}
               isLoading={isLoading}
             />
