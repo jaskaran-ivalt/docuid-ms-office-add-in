@@ -122,3 +122,4 @@ Desktop.ini
 # Office Add-in specific
 *.OfficeAddin
 manifest*.xml.copybak
+.vercel
