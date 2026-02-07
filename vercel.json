@@ -5,6 +5,14 @@
   "framework": null,
   "rewrites": [
     {
+      "source": "/",
+      "destination": "/taskpane.html"
+    },
+    {
+      "source": "/index.html",
+      "destination": "/taskpane.html"
+    },
+    {
       "source": "/api/docuid/biometric/:path*",
       "destination": "https://dev.docuid.net/api/biometric/:path*"
     },
