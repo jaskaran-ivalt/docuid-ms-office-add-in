@@ -1,0 +1,52 @@
+# Dependencies
+node_modules
+
+# Development files
+.git
+.gitignore
+.eslintrc.json
+.prettierrc
+
+# Documentation
+docs/
+*.md
+!README.md
+
+# Development config
+webpack.config.js
+tsconfig.json
+babel.config.json
+postcss.config.js
+tailwind.config.js
+
+# Source files (only need built output)
+src/
+
+# Test and coverage
+coverage/
+.nyc_output/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Development certificates
+certs/
+*.pem
+*.crt
+*.key
+
+# Lock files (keep package-lock.json or bun.lock for reproducible builds)
+pnpm-lock.yaml
+
+# Environment files (set in Vercel dashboard instead)
+.env
+.env.local
+.env.development
+.env.production

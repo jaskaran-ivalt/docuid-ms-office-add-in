@@ -1,0 +1,56 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": null,
+  "rewrites": [
+    {
+      "source": "/api/docuid/biometric/:path*",
+      "destination": "https://dev.docuid.net/api/biometric/:path*"
+    },
+    {
+      "source": "/api/docuid/documents/:id/download",
+      "destination": "https://dev.docuid.net/api/documents/:id/download"
+    },
+    {
+      "source": "/api/docuid/documents/:id/content",
+      "destination": "https://dev.docuid.net/api/documents/:id/content"
+    },
+    {
+      "source": "/api/docuid/documents/:path*",
+      "destination": "https://dev.docuid.net/api/dashboard/documents/:path*"
+    },
+    {
+      "source": "/api/docuid/shares/:path*",
+      "destination": "https://dev.docuid.net/api/dashboard/shares/:path*"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, PUT, DELETE, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, Authorization"
+        }
+      ]
+    }
+  ],
+  "routes": [
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ]
+}

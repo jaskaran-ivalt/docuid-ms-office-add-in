@@ -5,7 +5,12 @@ const CopyWebpackPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 const urlDev = "https://localhost:3000/";
-const urlProd = "https://www.contoso.com/"; // CHANGE THIS TO YOUR PRODUCTION DEPLOYMENT LOCATION
+// Use environment variable for production URL (Vercel sets VERCEL_URL)
+const urlProd = process.env.VERCEL_URL 
+  ? `https://${process.env.VERCEL_URL}/` 
+  : process.env.PRODUCTION_URL 
+    ? process.env.PRODUCTION_URL 
+    : "https://docuid-addin.vercel.app/";
 
 // ============================================================
 // API BACKEND CONFIGURATION
@@ -48,6 +53,8 @@ module.exports = async (env, options) => {
     },
     output: {
       clean: true,
+      path: require("path").resolve(__dirname, "dist"),
+      publicPath: dev ? "/" : "/",
     },
     resolve: {
       extensions: [".ts", ".tsx", ".js", ".jsx", ".html"],
@@ -109,6 +116,15 @@ module.exports = async (env, options) => {
               }
             },
           },
+          // Copy production manifest in production builds
+          ...(dev ? [] : [{
+            from: "manifest-production.xml",
+            to: "manifest-production.xml",
+            transform(content) {
+              // Replace placeholder URL with actual production URL
+              return content.toString().replace(/https:\/\/docuid-addin\.vercel\.app\//g, urlProd);
+            },
+          }]),
         ],
       }),
       new HtmlWebpackPlugin({

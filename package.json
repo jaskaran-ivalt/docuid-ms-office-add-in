@@ -23,7 +23,9 @@
     "start": "office-addin-debugging start manifest.xml",
     "stop": "office-addin-debugging stop manifest.xml",
     "validate": "office-addin-manifest validate manifest.xml",
-    "watch": "webpack --mode development --watch"
+    "validate:prod": "office-addin-manifest validate manifest-production.xml",
+    "watch": "webpack --mode development --watch",
+    "vercel-build": "npm run build"
   },
   "dependencies": {
     "@fluentui/react": "^8.123.0",
