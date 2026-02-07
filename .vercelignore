@@ -12,15 +12,11 @@ docs/
 *.md
 !README.md
 
-# Development config
-webpack.config.js
-tsconfig.json
-babel.config.json
-postcss.config.js
-tailwind.config.js
+# Note: Build config files (webpack.config.js, tsconfig.json, babel.config.json, 
+# postcss.config.js, tailwind.config.js) must NOT be ignored - they are needed for the build
 
-# Source files (only need built output)
-src/
+# Source files are needed for build
+# src/
 
 # Test and coverage
 coverage/
