@@ -8,7 +8,7 @@
   <Description DefaultValue="DocuID add-in for document management."/>
   <IconUrl DefaultValue="https://docuid-ms-office-add-in.vercel.app/assets/icon-32.png"/>
   <HighResolutionIconUrl DefaultValue="https://docuid-ms-office-add-in.vercel.app/assets/icon-64.png"/>
-  <SupportUrl DefaultValue="https://www.docuid.net/help"/>
+  <SupportUrl DefaultValue="https://www.docuid.net"/>
   <AppDomains>
     <AppDomain>https://www.docuid.net</AppDomain>
     <AppDomain>https://docuid-ms-office-add-in.vercel.app</AppDomain>
@@ -53,7 +53,6 @@
                   <Action xsi:type="ShowTaskpane">
                     <TaskpaneId>ButtonId1</TaskpaneId>
                     <SourceLocation resid="Taskpane.Url"/>
-                    <Width>800</Width>
                   </Action>
                 </Control>
               </Group>
