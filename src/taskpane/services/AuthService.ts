@@ -68,8 +68,19 @@ export class AuthService {
         const response = await this.repository.pollResult(phoneNumber);
         
         if (response && response.data?.details) {
+          console.log("[AuthService] Success response data keys:", Object.keys(response));
+          if (response.data) console.log("[AuthService] Success response.data keys:", Object.keys(response.data));
+          
+          // Try to get token from server response
+          const anyData = response.data as any;
+          const serverToken = anyData.token || anyData.data?.token || anyData.sessionToken || anyData.data?.sessionToken;
+          
+          if (serverToken) {
+            console.log("[AuthService] Received real session token from server");
+          }
+
           return {
-            sessionToken: this.generateSessionToken(),
+            sessionToken: serverToken || this.generateSessionToken(),
             user: response.data.details,
             message: response.message,
             timestamp: new Date().toISOString(),

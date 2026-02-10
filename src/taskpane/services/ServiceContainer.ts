@@ -31,13 +31,17 @@ class ServiceContainer {
         if (authData) {
           const parsed = JSON.parse(authData);
           if (parsed && parsed.sessionToken) {
-            const token = `Bearer ${parsed.sessionToken}`;
-            console.log(`[HttpClient] Setting Auth header for ${config.url}`, token);
-            // Use safe header setting for Axios 1.x
-            if (config.headers && typeof config.headers.set === 'function') {
-              config.headers.set('Authorization', token);
+            if (parsed.sessionToken.startsWith('mock_token_')) {
+              console.log(`[HttpClient] Skipping Auth header for mock token: ${parsed.sessionToken}`);
             } else {
-              (config.headers as any).Authorization = token;
+              const token = `Bearer ${parsed.sessionToken}`;
+              console.log(`[HttpClient] Setting Auth header for ${config.url}`);
+              // Use safe header setting for Axios 1.x
+              if (config.headers && typeof config.headers.set === 'function') {
+                config.headers.set('Authorization', token);
+              } else {
+                (config.headers as any).Authorization = token;
+              }
             }
           }
         }
