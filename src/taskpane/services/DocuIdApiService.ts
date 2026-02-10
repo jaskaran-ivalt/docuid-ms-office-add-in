@@ -150,6 +150,14 @@ export class DocuIdApiService {
         const token = AuthService.getSessionToken();
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
+          this.apiLogger.debug("Adding Authorization header to request", {
+            url: config.url,
+            tokenPrefix: token.substring(0, 10) + "...",
+          });
+        } else {
+          this.apiLogger.warn("No session token available for API request", {
+            url: config.url,
+          });
         }
         return config;
       });
