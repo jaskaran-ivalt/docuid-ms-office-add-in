@@ -89,14 +89,29 @@ export class AuthService {
 
   getStoredAuth(): StoredAuth | null {
     const stored = this.storage.getItem(AuthService.STORAGE_KEY);
-    if (!stored) return null;
-
-    const authData: StoredAuth = JSON.parse(stored);
-    if (Date.now() > authData.expiresAt) {
-      this.logout();
+    if (!stored) {
+      console.log("[AuthService] No stored auth found");
       return null;
     }
-    return authData;
+
+    try {
+      const authData: StoredAuth = JSON.parse(stored);
+      console.log("[AuthService] Found stored auth:", { 
+        phone: authData.phone, 
+        hasToken: !!authData.sessionToken,
+        expiresAt: new Date(authData.expiresAt).toLocaleString()
+      });
+
+      if (Date.now() > authData.expiresAt) {
+        console.warn("[AuthService] Auth token expired, logging out...");
+        this.logout();
+        return null;
+      }
+      return authData;
+    } catch (e) {
+      console.error("[AuthService] Failed to parse stored auth", e);
+      return null;
+    }
   }
 
   logout(): void {
@@ -105,7 +120,7 @@ export class AuthService {
   }
 
   private generateSessionToken(): string {
-    return "token_" + Math.random().toString(36).substr(2, 9);
+    return "mock_token_" + Math.random().toString(36).substr(2, 9);
   }
 
   isAuthenticated(): boolean {

@@ -91,10 +91,12 @@ const App: React.FC = () => {
       const docs = await documentService.getDocuments();
       setDocuments(docs);
     } catch (err) {
+      console.error("[App] Load documents failed:", err);
       // Check if it's a 401 Unauthorized error
       if (err && typeof err === 'object' && 'response' in err) {
         const axiosError = err as { response?: { status?: number } };
         if (axiosError.response?.status === 401) {
+          console.warn("[App] Session expired (401), logging out...");
           // Session expired or invalid - logout and show login screen
           handleLogout();
           setError("Session expired. Please login again.");

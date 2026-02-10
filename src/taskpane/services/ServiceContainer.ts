@@ -26,12 +26,23 @@ class ServiceContainer {
     
     // Configure interceptors
     this.httpClient.getInstance().interceptors.request.use((config) => {
-      const authData = this.storage.getItem('docuid_auth');
-      if (authData) {
-        const { sessionToken } = JSON.parse(authData);
-        if (sessionToken) {
-          config.headers.Authorization = `Bearer ${sessionToken}`;
+      try {
+        const authData = this.storage.getItem('docuid_auth');
+        if (authData) {
+          const parsed = JSON.parse(authData);
+          if (parsed && parsed.sessionToken) {
+            const token = `Bearer ${parsed.sessionToken}`;
+            console.log(`[HttpClient] Setting Auth header for ${config.url}`, token);
+            // Use safe header setting for Axios 1.x
+            if (config.headers && typeof config.headers.set === 'function') {
+              config.headers.set('Authorization', token);
+            } else {
+              (config.headers as any).Authorization = token;
+            }
+          }
         }
+      } catch (error) {
+        console.error('Error in Auth interceptor:', error);
       }
       return config;
     });
