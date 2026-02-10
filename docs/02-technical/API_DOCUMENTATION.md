@@ -1,9 +1,10 @@
 # DocuID API Documentation
 
 ## Overview
+
 This document outlines the API endpoints required for the DocuID Office Add-in to integrate with the backend services for biometric authentication and document management.
 
-**Base URL:** `https://api.docuid.net`  
+**Base URL:** `https://dev.docuid.net`  
 **Authentication:** Bearer Token (JWT)  
 **Content-Type:** `application/json`
 
@@ -12,16 +13,19 @@ This document outlines the API endpoints required for the DocuID Office Add-in t
 ## Authentication APIs
 
 ### 1. Initiate Login
+
 Initiates the biometric authentication process for a user.
 
 **Endpoint:** `POST /api/auth/login`
 
 **Headers:**
+
 ```
 Content-Type: application/json
 ```
 
 **Request Body:**
+
 ```json
 {
   "phoneNumber": "+1234567890",
@@ -35,6 +39,7 @@ Content-Type: application/json
 ```
 
 **Response (200 OK):**
+
 ```json
 {
   "success": true,
@@ -46,6 +51,7 @@ Content-Type: application/json
 ```
 
 **Response (400 Bad Request):**
+
 ```json
 {
   "success": false,
@@ -55,6 +61,7 @@ Content-Type: application/json
 ```
 
 **Response (404 Not Found):**
+
 ```json
 {
   "success": false,
@@ -64,16 +71,19 @@ Content-Type: application/json
 ```
 
 ### 2. Verify Authentication
+
 Checks the status of biometric verification and returns authentication token.
 
 **Endpoint:** `GET /api/auth/verify/{sessionId}`
 
 **Headers:**
+
 ```
 Content-Type: application/json
 ```
 
 **Response (200 OK - Verified):**
+
 ```json
 {
   "success": true,
@@ -91,6 +101,7 @@ Content-Type: application/json
 ```
 
 **Response (200 OK - Pending):**
+
 ```json
 {
   "success": true,
@@ -100,6 +111,7 @@ Content-Type: application/json
 ```
 
 **Response (200 OK - Failed):**
+
 ```json
 {
   "success": false,
@@ -110,17 +122,20 @@ Content-Type: application/json
 ```
 
 ### 3. Refresh Token
+
 Refreshes the authentication token using a refresh token.
 
 **Endpoint:** `POST /api/auth/refresh`
 
 **Headers:**
+
 ```
 Content-Type: application/json
 Authorization: Bearer {refreshToken}
 ```
 
 **Request Body:**
+
 ```json
 {
   "refreshToken": "refresh_token_here"
@@ -128,6 +143,7 @@ Authorization: Bearer {refreshToken}
 ```
 
 **Response (200 OK):**
+
 ```json
 {
   "success": true,
@@ -137,17 +153,20 @@ Authorization: Bearer {refreshToken}
 ```
 
 ### 4. Logout
+
 Invalidates the current session and tokens.
 
 **Endpoint:** `POST /api/auth/logout`
 
 **Headers:**
+
 ```
 Content-Type: application/json
 Authorization: Bearer {accessToken}
 ```
 
 **Response (200 OK):**
+
 ```json
 {
   "success": true,
@@ -160,17 +179,20 @@ Authorization: Bearer {accessToken}
 ## Document Management APIs
 
 ### 1. Get User Documents
+
 Retrieves a list of documents accessible to the authenticated user.
 
 **Endpoint:** `GET /api/documents`
 
 **Headers:**
+
 ```
 Content-Type: application/json
 Authorization: Bearer {accessToken}
 ```
 
 **Query Parameters:**
+
 - `page` (optional): Page number for pagination (default: 1)
 - `limit` (optional): Number of documents per page (default: 20, max: 100)
 - `search` (optional): Search query for document titles
@@ -179,11 +201,13 @@ Authorization: Bearer {accessToken}
 - `sortOrder` (optional): Sort order (asc, desc) (default: desc)
 
 **Example Request:**
+
 ```
 GET /api/documents?page=1&limit=10&search=report&type=pdf&sortBy=dateModified&sortOrder=desc
 ```
 
 **Response (200 OK):**
+
 ```json
 {
   "success": true,
@@ -219,17 +243,20 @@ GET /api/documents?page=1&limit=10&search=report&type=pdf&sortBy=dateModified&so
 ```
 
 ### 2. Get Document Details
+
 Retrieves detailed information about a specific document.
 
 **Endpoint:** `GET /api/documents/{documentId}`
 
 **Headers:**
+
 ```
 Content-Type: application/json
 Authorization: Bearer {accessToken}
 ```
 
 **Response (200 OK):**
+
 ```json
 {
   "success": true,
@@ -262,20 +289,24 @@ Authorization: Bearer {accessToken}
 ```
 
 ### 3. Get Document Content
+
 Retrieves the content of a document for viewing/editing in Office applications.
 
 **Endpoint:** `GET /api/documents/{documentId}/content`
 
 **Headers:**
+
 ```
 Content-Type: application/json
 Authorization: Bearer {accessToken}
 ```
 
 **Query Parameters:**
+
 - `format` (optional): Output format (text, html, office) (default: office)
 
 **Response (200 OK):**
+
 ```json
 {
   "success": true,
@@ -295,32 +326,38 @@ Authorization: Bearer {accessToken}
 ```
 
 ### 4. Download Document
+
 Downloads the original document file.
 
 **Endpoint:** `GET /api/documents/{documentId}/download`
 
 **Headers:**
+
 ```
 Authorization: Bearer {accessToken}
 ```
 
 **Response (200 OK):**
+
 - Returns the file as binary data
 - Content-Type: `application/pdf`, `application/vnd.openxmlformats-officedocument.wordprocessingml.document`, etc.
 - Content-Disposition: `attachment; filename="Annual Report 2024.pdf"`
 
 ### 5. Search Documents
+
 Advanced search functionality for documents.
 
 **Endpoint:** `POST /api/documents/search`
 
 **Headers:**
+
 ```
 Content-Type: application/json
 Authorization: Bearer {accessToken}
 ```
 
 **Request Body:**
+
 ```json
 {
   "query": "financial report",
@@ -342,6 +379,7 @@ Authorization: Bearer {accessToken}
 ```
 
 **Response (200 OK):**
+
 ```json
 {
   "success": true,
@@ -362,6 +400,7 @@ Authorization: Bearer {accessToken}
 ## Error Handling
 
 ### Standard Error Response Format
+
 All API endpoints return errors in the following format:
 
 ```json
@@ -380,6 +419,7 @@ All API endpoints return errors in the following format:
 ### Error Codes
 
 #### Authentication Errors
+
 - `INVALID_PHONE_NUMBER` - The phone number format is invalid
 - `USER_NOT_FOUND` - No user exists with the provided phone number
 - `VERIFICATION_FAILED` - Biometric verification failed
@@ -388,6 +428,7 @@ All API endpoints return errors in the following format:
 - `INSUFFICIENT_PERMISSIONS` - User lacks required permissions
 
 #### Document Errors
+
 - `DOCUMENT_NOT_FOUND` - Document does not exist or user lacks access
 - `DOCUMENT_ACCESS_DENIED` - User does not have permission to access document
 - `DOCUMENT_PROCESSING_ERROR` - Error occurred while processing document
@@ -395,6 +436,7 @@ All API endpoints return errors in the following format:
 - `UNSUPPORTED_FORMAT` - Document format is not supported
 
 #### General Errors
+
 - `INTERNAL_SERVER_ERROR` - Unexpected server error
 - `RATE_LIMIT_EXCEEDED` - Too many requests from client
 - `SERVICE_UNAVAILABLE` - Service temporarily unavailable
@@ -411,6 +453,7 @@ API endpoints are rate-limited to prevent abuse:
 - **Document content/download:** 30 requests per minute
 
 Rate limit headers are included in responses:
+
 ```
 X-RateLimit-Limit: 60
 X-RateLimit-Remaining: 59
@@ -432,11 +475,12 @@ X-RateLimit-Reset: 1642234567
 ## Integration Examples
 
 ### JavaScript/TypeScript Example
+
 ```typescript
-import axios from 'axios';
+import axios from "axios";
 
 class DocuIDAPI {
-  private baseURL = 'https://api.docuid.net';
+  private baseURL = "https://dev.docuid.net";
   private accessToken: string | null = null;
 
   async login(phoneNumber: string): Promise<void> {
@@ -444,13 +488,13 @@ class DocuIDAPI {
       phoneNumber,
       biometricRequest: true,
       deviceInfo: {
-        platform: 'office-addin',
-        version: '1.0.0'
-      }
+        platform: "office-addin",
+        version: "1.0.0",
+      },
     });
 
     const { sessionId } = response.data;
-    
+
     // Poll for verification
     const authResult = await this.pollForVerification(sessionId);
     this.accessToken = authResult.accessToken;
@@ -462,25 +506,25 @@ class DocuIDAPI {
 
     while (attempts < maxAttempts) {
       const response = await axios.get(`${this.baseURL}/api/auth/verify/${sessionId}`);
-      
-      if (response.data.status === 'verified') {
+
+      if (response.data.status === "verified") {
         return response.data;
-      } else if (response.data.status === 'failed') {
-        throw new Error('Verification failed');
+      } else if (response.data.status === "failed") {
+        throw new Error("Verification failed");
       }
 
-      await new Promise(resolve => setTimeout(resolve, 5000)); // Wait 5 seconds
+      await new Promise((resolve) => setTimeout(resolve, 5000)); // Wait 5 seconds
       attempts++;
     }
 
-    throw new Error('Verification timeout');
+    throw new Error("Verification timeout");
   }
 
   async getDocuments(): Promise<any[]> {
     const response = await axios.get(`${this.baseURL}/api/documents`, {
       headers: {
-        'Authorization': `Bearer ${this.accessToken}`
-      }
+        Authorization: `Bearer ${this.accessToken}`,
+      },
     });
 
     return response.data.data.documents;
@@ -493,12 +537,16 @@ class DocuIDAPI {
 ## Testing
 
 ### Postman Collection
+
 A Postman collection is available for testing all API endpoints:
-- Import the collection from: `https://api.docuid.net/postman/collection.json`
+
+- Import the collection from: `https://dev.docuid.net/postman/collection.json`
 - Set up environment variables for base URL and tokens
 
 ### Test Accounts
+
 Development environment test accounts:
+
 - Phone: `+1234567890` (auto-approves biometric verification)
 - Phone: `+1234567891` (auto-rejects biometric verification)
 - Phone: `+1234567892` (times out biometric verification)
@@ -508,7 +556,8 @@ Development environment test accounts:
 ## Changelog
 
 ### Version 1.0.0 (2024-01-15)
+
 - Initial API specification
 - Authentication endpoints
 - Document management endpoints
-- Error handling specifications 
+- Error handling specifications

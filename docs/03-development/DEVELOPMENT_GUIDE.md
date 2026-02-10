@@ -7,6 +7,7 @@ This guide provides comprehensive instructions for setting up, developing, and m
 ## Prerequisites
 
 ### Required Software
+
 - **Node.js**: LTS version (18.x or higher)
 - **Package Manager**: pnpm (recommended) or npm
 - **IDE**: Visual Studio Code (recommended)
@@ -14,6 +15,7 @@ This guide provides comprehensive instructions for setting up, developing, and m
 - **Operating System**: Windows 10+ or macOS 10.14+
 
 ### Development Tools
+
 ```bash
 # Install global dependencies
 npm install -g yo generator-office
@@ -28,6 +30,7 @@ yo --version      # Should be 4.x or higher
 ## Environment Setup
 
 ### 1. Clone and Install Dependencies
+
 ```bash
 # Clone the repository
 git clone <repository-url>
@@ -41,6 +44,7 @@ pnpm run build:dev
 ```
 
 ### 2. Development Certificates
+
 The project uses HTTPS for Office Add-in requirements. Certificates are automatically managed by `office-addin-dev-certs`.
 
 ```bash
@@ -50,6 +54,7 @@ pnpm run dev-server
 ```
 
 ### 3. Office Configuration
+
 ```bash
 # Sign in to M365 account (if using Office 365)
 pnpm run signin
@@ -61,6 +66,7 @@ pnpm start
 ## Project Structure Deep Dive
 
 ### Source Code Organization
+
 ```
 src/
 ├── taskpane/                 # Main React application
@@ -82,6 +88,7 @@ src/
 ```
 
 ### Configuration Files
+
 ```
 ├── package.json             # Dependencies and scripts
 ├── tsconfig.json           # TypeScript configuration
@@ -94,6 +101,7 @@ src/
 ## Development Workflow
 
 ### 1. Starting Development
+
 ```bash
 # Start development server with hot reload
 pnpm run dev-server
@@ -108,6 +116,7 @@ pnpm run build:dev
 ### 2. Code Development Process
 
 #### Component Development
+
 ```typescript
 // Example: Creating a new component
 import React, { useState, useEffect } from 'react';
@@ -134,28 +143,29 @@ export default NewComponent;
 ```
 
 #### Service Development
+
 ```typescript
 // Example: Extending a service
 export class ExtendedService {
-  private static readonly API_BASE = 'https://api.docuid.net';
+  private static readonly API_BASE = "https://dev.docuid.net";
 
   static async newMethod(param: string): Promise<Result> {
     try {
       const token = AuthService.getSessionToken();
       if (!token) {
-        throw new Error('Not authenticated');
+        throw new Error("Not authenticated");
       }
 
       const response = await axios.get(`${this.API_BASE}/endpoint`, {
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       });
 
       return response.data;
     } catch (error) {
-      throw new Error('Operation failed');
+      throw new Error("Operation failed");
     }
   }
 }
@@ -164,6 +174,7 @@ export class ExtendedService {
 ### 3. Testing During Development
 
 #### Manual Testing
+
 ```bash
 # Start with specific Office application
 pnpm start --host word
@@ -176,17 +187,19 @@ pnpm start --host word
 ```
 
 #### Phone Number Test Cases
+
 ```typescript
 // Test authentication with different scenarios
 const testPhoneNumbers = {
-  valid: '+1234567890',           // Success scenario
-  invalid: '+1234567invalid',     // Triggers validation error
-  error: '+1234567error',         // Triggers server error
-  timeout: '+1234567timeout'      // Triggers timeout scenario
+  valid: "+1234567890", // Success scenario
+  invalid: "+1234567invalid", // Triggers validation error
+  error: "+1234567error", // Triggers server error
+  timeout: "+1234567timeout", // Triggers timeout scenario
 };
 ```
 
 ### 4. Code Quality and Linting
+
 ```bash
 # Run ESLint
 pnpm run lint
@@ -206,28 +219,33 @@ pnpm run validate
 ### Office.js Integration
 
 #### Word API Usage
+
 ```typescript
 // Example: Advanced document manipulation
 export class AdvancedDocumentService {
   static async insertFormattedContent(content: DocumentContent): Promise<void> {
     return Word.run(async (context) => {
       const body = context.document.body;
-      
+
       // Insert title with custom styling
       const title = body.insertParagraph(content.title, Word.InsertLocation.start);
       title.styleBuiltIn = Word.BuiltInStyleName.title;
-      title.font.color = '#2b579a';
+      title.font.color = "#2b579a";
       title.font.size = 18;
-      
+
       // Insert content with formatting
       const contentParagraph = body.insertParagraph(content.text, Word.InsertLocation.end);
       contentParagraph.styleBuiltIn = Word.BuiltInStyleName.normal;
-      
+
       // Insert table if data available
       if (content.tableData) {
-        const table = body.insertTable(content.tableData.rows, content.tableData.cols, Word.InsertLocation.end);
+        const table = body.insertTable(
+          content.tableData.rows,
+          content.tableData.cols,
+          Word.InsertLocation.end
+        );
         table.styleBuiltIn = Word.BuiltInStyleName.gridTable4Accent1;
-        
+
         // Populate table data
         content.tableData.data.forEach((row, rowIndex) => {
           row.forEach((cell, colIndex) => {
@@ -235,7 +253,7 @@ export class AdvancedDocumentService {
           });
         });
       }
-      
+
       await context.sync();
     });
   }
@@ -243,6 +261,7 @@ export class AdvancedDocumentService {
 ```
 
 #### Error Handling Best Practices
+
 ```typescript
 // Robust error handling for Office.js
 class OfficeErrorHandler {
@@ -268,6 +287,7 @@ class OfficeErrorHandler {
 ### State Management Patterns
 
 #### React Hooks Pattern
+
 ```typescript
 // Custom hook for authentication state
 export const useAuth = () => {
@@ -307,6 +327,7 @@ export const useAuth = () => {
 ```
 
 #### Context Pattern for Global State
+
 ```typescript
 // Auth context provider
 interface AuthContextType {
@@ -320,7 +341,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const authState = useAuth();
-  
+
   return (
     <AuthContext.Provider value={authState}>
       {children}
@@ -340,51 +361,53 @@ export const useAuthContext = () => {
 ## API Integration Development
 
 ### Development vs Production APIs
+
 ```typescript
 // Environment-aware API configuration
 class APIConfig {
   static getBaseURL(): string {
-    if (process.env.NODE_ENV === 'development') {
-      return 'http://localhost:3001'; // Mock server
+    if (process.env.NODE_ENV === "development") {
+      return "http://localhost:3001"; // Mock server
     }
-    return 'https://api.docuid.net'; // Production API
+    return "https://dev.docuid.net"; // Production API
   }
-  
+
   static getEndpoints() {
     return {
       auth: {
         login: `${this.getBaseURL()}/api/auth/login`,
         verify: `${this.getBaseURL()}/api/auth/verify`,
         refresh: `${this.getBaseURL()}/api/auth/refresh`,
-        logout: `${this.getBaseURL()}/api/auth/logout`
+        logout: `${this.getBaseURL()}/api/auth/logout`,
       },
       documents: {
         list: `${this.getBaseURL()}/api/documents`,
         detail: `${this.getBaseURL()}/api/documents/:id`,
         content: `${this.getBaseURL()}/api/documents/:id/content`,
-        download: `${this.getBaseURL()}/api/documents/:id/download`
-      }
+        download: `${this.getBaseURL()}/api/documents/:id/download`,
+      },
     };
   }
 }
 ```
 
 ### Mock Server Setup
+
 ```typescript
 // Development mock server
 export class MockAPIServer {
   static setupMockEndpoints() {
     // Mock authentication
     this.mockAuthEndpoints();
-    
+
     // Mock document endpoints
     this.mockDocumentEndpoints();
   }
-  
+
   private static mockAuthEndpoints() {
     // Implementation for mock auth endpoints
   }
-  
+
   private static mockDocumentEndpoints() {
     // Implementation for mock document endpoints
   }
@@ -396,6 +419,7 @@ export class MockAPIServer {
 ### Common Development Issues
 
 #### 1. Add-in Not Loading
+
 ```bash
 # Check if certificates are trusted
 pnpm run dev-server
@@ -408,25 +432,27 @@ pnpm run validate
 ```
 
 #### 2. Authentication Issues
+
 ```typescript
 // Debug authentication state
 const debugAuth = () => {
-  console.log('Auth State:', {
+  console.log("Auth State:", {
     isAuthenticated: AuthService.isAuthenticated(),
     storedAuth: AuthService.getStoredAuth(),
-    sessionToken: AuthService.getSessionToken()
+    sessionToken: AuthService.getSessionToken(),
   });
 };
 ```
 
 #### 3. Office.js Issues
+
 ```typescript
 // Debug Office.js initialization
 Office.onReady((info) => {
-  console.log('Office.js ready:', {
+  console.log("Office.js ready:", {
     host: info.host,
     platform: info.platform,
-    isSupported: Office.context !== undefined
+    isSupported: Office.context !== undefined,
   });
 });
 ```
@@ -434,49 +460,53 @@ Office.onReady((info) => {
 ### Development Tools
 
 #### Browser Developer Tools
+
 - **Console**: Error messages and debug logs
 - **Network**: API call monitoring
 - **Application**: localStorage inspection
 - **Sources**: Breakpoint debugging
 
 #### Office Add-in Debugging
+
 ```typescript
 // Enable debug logging
-localStorage.setItem('docuid_debug', 'true');
+localStorage.setItem("docuid_debug", "true");
 
 // Office.js debugging
 if (Office.context.diagnostics) {
-  console.log('Office diagnostics:', Office.context.diagnostics);
+  console.log("Office diagnostics:", Office.context.diagnostics);
 }
 ```
 
 ## Performance Optimization
 
 ### Bundle Optimization
+
 ```javascript
 // Webpack configuration for performance
 module.exports = {
   optimization: {
     splitChunks: {
-      chunks: 'all',
+      chunks: "all",
       cacheGroups: {
         vendor: {
           test: /[\\/]node_modules[\\/]/,
-          name: 'vendors',
-          chunks: 'all',
+          name: "vendors",
+          chunks: "all",
         },
       },
     },
   },
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, 'src'),
+      "@": path.resolve(__dirname, "src"),
     },
   },
 };
 ```
 
 ### React Performance
+
 ```typescript
 // Memoization for expensive operations
 const ExpensiveComponent = React.memo(({ data }) => {
@@ -506,18 +536,21 @@ const DocumentList = () => {
 ## Best Practices
 
 ### Code Organization
+
 1. **Single Responsibility**: Each component/service has one clear purpose
 2. **Consistent Naming**: Use descriptive, consistent naming conventions
 3. **Type Safety**: Leverage TypeScript for type safety
 4. **Error Boundaries**: Implement error boundaries for graceful failure handling
 
 ### Security Best Practices
+
 1. **Input Validation**: Validate all user inputs
 2. **Secure Storage**: Use secure methods for sensitive data storage
 3. **Error Handling**: Don't expose sensitive information in error messages
 4. **HTTPS**: Always use HTTPS in production
 
 ### Performance Best Practices
+
 1. **Lazy Loading**: Load components and data on demand
 2. **Memoization**: Cache expensive calculations
 3. **Bundle Splitting**: Split code for optimal loading
@@ -526,6 +559,7 @@ const DocumentList = () => {
 ## Deployment Preparation
 
 ### Production Build
+
 ```bash
 # Create production build
 pnpm run build
@@ -538,6 +572,7 @@ ls -la dist/
 ```
 
 ### Pre-deployment Checklist
+
 - [ ] All tests passing
 - [ ] Code quality checks passed
 - [ ] Security audit completed
@@ -550,4 +585,4 @@ ls -la dist/
 
 ---
 
-*This development guide is regularly updated with new patterns and best practices. For questions or improvements, please refer to the project team.*
+_This development guide is regularly updated with new patterns and best practices. For questions or improvements, please refer to the project team._

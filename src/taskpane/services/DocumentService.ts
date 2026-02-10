@@ -27,9 +27,10 @@ interface DocumentContent {
 
 export class DocumentService {
   // Use proxy in development, direct API in production
-  private static readonly API_BASE_URL = process.env.NODE_ENV === 'development'
-    ? '' // Use relative URLs for webpack proxy
-    : "https://api.docuid.net";
+  private static readonly API_BASE_URL =
+    process.env.NODE_ENV === "development"
+      ? "" // Use relative URLs for webpack proxy
+      : "https://dev.docuid.net";
 
   // Flag to use mock data during development when API is unavailable
   private static readonly USE_MOCK_DATA = false;
@@ -38,18 +39,18 @@ export class DocumentService {
    * Format file size for display
    */
   private static formatFileSize(bytes: number): string {
-    if (bytes === 0) return '0 B';
+    if (bytes === 0) return "0 B";
     const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const sizes = ["B", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i];
   }
 
   /**
    * Extract file extension from filename
    */
   private static getFileExtension(fileName: string): string {
-    const ext = fileName.split('.').pop()?.toLowerCase() || '';
+    const ext = fileName.split(".").pop()?.toLowerCase() || "";
     return ext;
   }
 
@@ -57,16 +58,16 @@ export class DocumentService {
    * Get user's Word documents from the DocuID API
    */
   static async getDocuments(): Promise<Document[]> {
-    const docLogger = logger.createContextLogger('DocumentService');
+    const docLogger = logger.createContextLogger("DocumentService");
 
     try {
       // Use mock data if flag is set
       if (this.USE_MOCK_DATA) {
-        docLogger.debug('Using mock documents');
+        docLogger.debug("Using mock documents");
         return this.getMockDocuments();
       }
 
-      docLogger.info('Fetching Word documents from DocuID API');
+      docLogger.info("Fetching Word documents from DocuID API");
 
       const apiDocs = await DocuIdApiService.getWordDocuments();
 
@@ -82,18 +83,18 @@ export class DocumentService {
         description: doc.description,
       }));
 
-      docLogger.info('Documents fetched successfully', { count: documents.length });
+      docLogger.info("Documents fetched successfully", { count: documents.length });
       return documents;
     } catch (error) {
-      const docLogger = logger.createContextLogger('DocumentService');
-      docLogger.error('Failed to fetch documents', error as Error);
-      
+      const docLogger = logger.createContextLogger("DocumentService");
+      docLogger.error("Failed to fetch documents", error as Error);
+
       // Only fallback to mock data if USE_MOCK_DATA flag is set
       if (this.USE_MOCK_DATA) {
-        docLogger.warn('Falling back to mock documents');
+        docLogger.warn("Falling back to mock documents");
         return this.getMockDocuments();
       }
-      
+
       // Otherwise, throw the error
       throw error;
     }
@@ -136,7 +137,7 @@ export class DocumentService {
    * Open a document in Word
    */
   static async openDocument(documentId: string): Promise<void> {
-    const docLogger = logger.createContextLogger('DocumentService');
+    const docLogger = logger.createContextLogger("DocumentService");
 
     try {
       docLogger.info(`Opening document: ${documentId}`);
@@ -151,10 +152,13 @@ export class DocumentService {
 
       docLogger.info(`Successfully opened document: ${documentId}`, {
         fileName: documentContent.fileName,
-        contentType: documentContent.contentType
+        contentType: documentContent.contentType,
       });
     } catch (error) {
-      docLogger.error(`Failed to open document: ${documentId}`, error instanceof Error ? error : new Error(String(error)));
+      docLogger.error(
+        `Failed to open document: ${documentId}`,
+        error instanceof Error ? error : new Error(String(error))
+      );
       throw new Error("Failed to open document in Word");
     }
   }
@@ -163,7 +167,7 @@ export class DocumentService {
    * Close a document
    */
   static async closeDocument(documentId: string): Promise<void> {
-    const docLogger = logger.createContextLogger('DocumentService');
+    const docLogger = logger.createContextLogger("DocumentService");
 
     try {
       docLogger.info(`Closing document: ${documentId}`);
@@ -174,7 +178,10 @@ export class DocumentService {
       // In a real implementation, you would call the API to close the document
       docLogger.info(`Document closed successfully: ${documentId}`);
     } catch (error) {
-      docLogger.error(`Failed to close document: ${documentId}`, error instanceof Error ? error : new Error(String(error)));
+      docLogger.error(
+        `Failed to close document: ${documentId}`,
+        error instanceof Error ? error : new Error(String(error))
+      );
       throw new Error("Failed to close document");
     }
   }
@@ -183,7 +190,7 @@ export class DocumentService {
    * Get document content from API
    */
   private static async getDocumentContent(documentId: string): Promise<DocumentContent> {
-    const docLogger = logger.createContextLogger('DocumentService');
+    const docLogger = logger.createContextLogger("DocumentService");
 
     // Use mock data if flag is set
     if (this.USE_MOCK_DATA) {
@@ -193,19 +200,19 @@ export class DocumentService {
     try {
       const docId = parseInt(documentId);
       if (isNaN(docId)) {
-        throw new Error('Invalid document ID');
+        throw new Error("Invalid document ID");
       }
 
-      docLogger.info('Fetching document access info', { documentId });
+      docLogger.info("Fetching document access info", { documentId });
 
       // Get document access information
       const accessInfo = await DocuIdApiService.getDocumentAccess(docId);
 
       if (!accessInfo.access.url) {
-        throw new Error('Document access URL not available');
+        throw new Error("Document access URL not available");
       }
 
-      docLogger.debug('Downloading document content', {
+      docLogger.debug("Downloading document content", {
         documentId,
         url: accessInfo.access.url,
         fileType: accessInfo.fileType,
@@ -218,18 +225,18 @@ export class DocumentService {
       // For now, return the basic info with binary content attached
       return {
         id: documentId,
-        content: '', // Binary content is in binaryContent field
+        content: "", // Binary content is in binaryContent field
         contentType: accessInfo.fileType,
         fileName: accessInfo.fileName,
         documentType: this.getFileExtension(accessInfo.fileName),
         binaryContent: blobContent,
       };
     } catch (error) {
-      docLogger.error('Failed to get document content', error as Error);
+      docLogger.error("Failed to get document content", error as Error);
 
       // Only fallback to mock if USE_MOCK_DATA flag is set
       if (this.USE_MOCK_DATA) {
-        docLogger.warn('Falling back to mock document content');
+        docLogger.warn("Falling back to mock document content");
         return this.getMockDocumentContent(documentId);
       }
 
@@ -419,7 +426,7 @@ Party B: _________________ Date: _________`,
    * Insert document content into Word
    */
   private static async insertIntoWord(documentContent: DocumentContent): Promise<void> {
-    const officeLogger = logger.createContextLogger('DocumentService.Office');
+    const officeLogger = logger.createContextLogger("DocumentService.Office");
 
     // Check if we have binary content (real Word document)
     if (documentContent.binaryContent) {
@@ -438,14 +445,14 @@ Party B: _________________ Date: _________`,
     officeLogger: ReturnType<typeof logger.createContextLogger>
   ): Promise<void> {
     return Word.run(async (context) => {
-      officeLogger.debug('Starting Word.run context for binary document insertion', {
+      officeLogger.debug("Starting Word.run context for binary document insertion", {
         fileName: documentContent.fileName,
         contentType: documentContent.contentType,
       });
 
       try {
         // Clear existing content before inserting new document
-        officeLogger.debug('Clearing existing document content');
+        officeLogger.debug("Clearing existing document content");
         context.document.body.clear();
         await context.sync();
 
@@ -453,25 +460,22 @@ Party B: _________________ Date: _________`,
         const arrayBuffer = await documentContent.binaryContent!.arrayBuffer();
         const base64String = this.arrayBufferToBase64(arrayBuffer);
 
-        officeLogger.debug('Converted document to base64', {
+        officeLogger.debug("Converted document to base64", {
           originalSize: arrayBuffer.byteLength,
           base64Length: base64String.length,
         });
 
         // Insert the file into Word
         // Using insertFileFromBase64 to insert the Word document content
-        context.document.body.insertFileFromBase64(
-          base64String,
-          Word.InsertLocation.start
-        );
+        context.document.body.insertFileFromBase64(base64String, Word.InsertLocation.start);
 
         await context.sync();
-        officeLogger.logOfficeOperation('Binary document insertion', true);
+        officeLogger.logOfficeOperation("Binary document insertion", true);
       } catch (error) {
-        officeLogger.logOfficeOperation('Binary document insertion', false, error);
-        
+        officeLogger.logOfficeOperation("Binary document insertion", false, error);
+
         // If binary insertion fails, try to fall back to text notification
-        officeLogger.warn('Binary insertion failed, inserting notification instead');
+        officeLogger.warn("Binary insertion failed, inserting notification instead");
         const errorParagraph = context.document.body.insertParagraph(
           `[DocuID] Document "${documentContent.fileName}" loaded. Binary insertion not supported for this document type.`,
           Word.InsertLocation.end
@@ -481,7 +485,7 @@ Party B: _________________ Date: _________`,
         await context.sync();
       }
     }).catch((error) => {
-      officeLogger.logOfficeOperation('Document insertion', false, error);
+      officeLogger.logOfficeOperation("Document insertion", false, error);
       throw error;
     });
   }
@@ -490,7 +494,7 @@ Party B: _________________ Date: _________`,
    * Convert ArrayBuffer to base64 string
    */
   private static arrayBufferToBase64(buffer: ArrayBuffer): string {
-    let binary = '';
+    let binary = "";
     const bytes = new Uint8Array(buffer);
     const len = bytes.byteLength;
     for (let i = 0; i < len; i++) {
@@ -507,17 +511,17 @@ Party B: _________________ Date: _________`,
     officeLogger: ReturnType<typeof logger.createContextLogger>
   ): Promise<void> {
     return Word.run(async (context) => {
-      officeLogger.debug('Starting Word.run context for text document insertion', {
+      officeLogger.debug("Starting Word.run context for text document insertion", {
         fileName: documentContent.fileName,
-        contentLength: documentContent.content.length
+        contentLength: documentContent.content.length,
       });
       // Clear existing content before inserting new document
-      officeLogger.debug('Clearing existing document content');
+      officeLogger.debug("Clearing existing document content");
       context.document.body.clear();
       await context.sync();
 
       // Insert document title with proper formatting
-      officeLogger.debug('Inserting document title');
+      officeLogger.debug("Inserting document title");
       const titleParagraph = context.document.body.insertParagraph(
         documentContent.fileName,
         Word.InsertLocation.start
@@ -572,7 +576,7 @@ Party B: _________________ Date: _________`,
       }
 
       // Insert footer with timestamp
-      officeLogger.debug('Inserting document footer');
+      officeLogger.debug("Inserting document footer");
       context.document.body.insertParagraph("", Word.InsertLocation.end);
       const footerParagraph = context.document.body.insertParagraph(
         `---\nDocument inserted via DocuID on ${new Date().toLocaleString()}`,
@@ -583,11 +587,11 @@ Party B: _________________ Date: _________`,
       footerParagraph.alignment = Word.Alignment.centered;
       footerParagraph.styleBuiltIn = Word.BuiltInStyleName.footer;
 
-      officeLogger.debug('Synchronizing Word context changes');
+      officeLogger.debug("Synchronizing Word context changes");
       await context.sync();
-      officeLogger.logOfficeOperation('Text document insertion', true);
+      officeLogger.logOfficeOperation("Text document insertion", true);
     }).catch((error) => {
-      officeLogger.logOfficeOperation('Document insertion', false, error);
+      officeLogger.logOfficeOperation("Document insertion", false, error);
       throw error;
     });
   }

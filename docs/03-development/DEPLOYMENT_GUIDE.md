@@ -23,27 +23,31 @@ This guide provides comprehensive instructions for deploying the DocuID Office A
 ## Environment Configuration
 
 ### Development Environment
+
 Already configured for local development with:
+
 - Webpack dev server with hot reload
 - Self-signed SSL certificates
 - Mock authentication and document services
 - Debug logging enabled
 
 ### Staging Environment
+
 ```bash
 # Environment variables for staging
 NODE_ENV=staging
-API_BASE_URL=https://staging-api.docuid.net
+API_BASE_URL=https://staging-dev.docuid.net
 HTTPS_ENABLED=true
 DEBUG_MODE=true
 LOG_LEVEL=debug
 ```
 
 ### Production Environment
+
 ```bash
 # Environment variables for production
 NODE_ENV=production
-API_BASE_URL=https://api.docuid.net
+API_BASE_URL=https://dev.docuid.net
 HTTPS_ENABLED=true
 DEBUG_MODE=false
 LOG_LEVEL=error
@@ -53,6 +57,7 @@ MONITORING_ENABLED=true
 ## Pre-Deployment Checklist
 
 ### Code Quality Verification
+
 ```bash
 # Run all quality checks
 pnpm run lint                    # ESLint validation
@@ -62,6 +67,7 @@ pnpm run build                  # Production build test
 ```
 
 ### Security Checklist
+
 - [ ] All secrets removed from code
 - [ ] API endpoints configured for target environment
 - [ ] SSL certificates configured
@@ -71,6 +77,7 @@ pnpm run build                  # Production build test
 - [ ] CORS policies configured
 
 ### Performance Checklist
+
 - [ ] Bundle size optimized
 - [ ] Assets compressed
 - [ ] Lazy loading implemented
@@ -82,23 +89,24 @@ pnpm run build                  # Production build test
 ### Production Build Configuration
 
 #### Webpack Production Configuration
+
 ```javascript
 // webpack.prod.js
-const path = require('path');
-const { merge } = require('webpack-merge');
-const common = require('./webpack.config.js');
+const path = require("path");
+const { merge } = require("webpack-merge");
+const common = require("./webpack.config.js");
 
 module.exports = merge(common, {
-  mode: 'production',
+  mode: "production",
   optimization: {
     minimize: true,
     splitChunks: {
-      chunks: 'all',
+      chunks: "all",
       cacheGroups: {
         vendor: {
           test: /[\\/]node_modules[\\/]/,
-          name: 'vendors',
-          chunks: 'all',
+          name: "vendors",
+          chunks: "all",
         },
       },
     },
@@ -111,6 +119,7 @@ module.exports = merge(common, {
 ```
 
 #### Build Scripts
+
 ```bash
 # Clean previous builds
 rm -rf dist/
@@ -127,6 +136,7 @@ du -sh dist/*
 ```
 
 ### Build Output Structure
+
 ```
 dist/
 ├── taskpane.html              # Main add-in HTML
@@ -150,15 +160,18 @@ dist/
 ## Hosting Requirements
 
 ### HTTPS Requirements
+
 Office Add-ins **require** HTTPS hosting. No exceptions.
 
 #### SSL Certificate Requirements
+
 - Valid SSL certificate from trusted CA
 - TLS 1.2 or higher
 - No self-signed certificates in production
 - Certificate must match domain name
 
 #### Recommended Hosting Providers
+
 ```
 Enterprise Level:
 • Azure App Service
@@ -176,46 +189,47 @@ CDN Options:
 ### Server Configuration
 
 #### NGINX Configuration Example
+
 ```nginx
 server {
     listen 443 ssl http2;
     server_name your-domain.com;
-    
+
     ssl_certificate /path/to/certificate.crt;
     ssl_certificate_key /path/to/private.key;
     ssl_protocols TLSv1.2 TLSv1.3;
     ssl_ciphers ECDHE-RSA-AES256-GCM-SHA512:DHE-RSA-AES256-GCM-SHA512;
-    
+
     # Security headers
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
     add_header X-Content-Type-Options "nosniff" always;
     add_header X-Frame-Options "DENY" always;
     add_header X-XSS-Protection "1; mode=block" always;
     add_header Referrer-Policy "strict-origin-when-cross-origin" always;
-    
+
     # CORS for Office domains
     add_header Access-Control-Allow-Origin "https://office.com" always;
     add_header Access-Control-Allow-Methods "GET, POST, OPTIONS" always;
     add_header Access-Control-Allow-Headers "Authorization, Content-Type" always;
-    
+
     root /var/www/docuid-addon/dist;
     index taskpane.html;
-    
+
     location / {
         try_files $uri $uri/ =404;
     }
-    
+
     # Cache static assets
     location /assets/ {
         expires 1y;
         add_header Cache-Control "public, immutable";
     }
-    
+
     location /js/ {
         expires 1y;
         add_header Cache-Control "public, immutable";
     }
-    
+
     location /css/ {
         expires 1y;
         add_header Cache-Control "public, immutable";
@@ -231,28 +245,29 @@ server {
 ```
 
 #### Apache Configuration Example
+
 ```apache
 <VirtualHost *:443>
     ServerName your-domain.com
     DocumentRoot /var/www/docuid-addon/dist
-    
+
     SSLEngine on
     SSLCertificateFile /path/to/certificate.crt
     SSLCertificateKeyFile /path/to/private.key
     SSLProtocol all -SSLv3 -TLSv1 -TLSv1.1
     SSLCipherSuite ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384
-    
+
     # Security headers
     Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
     Header always set X-Content-Type-Options "nosniff"
     Header always set X-Frame-Options "DENY"
     Header always set X-XSS-Protection "1; mode=block"
-    
+
     # CORS headers
     Header always set Access-Control-Allow-Origin "https://office.com"
     Header always set Access-Control-Allow-Methods "GET, POST, OPTIONS"
     Header always set Access-Control-Allow-Headers "Authorization, Content-Type"
-    
+
     # Cache configuration
     <LocationMatch "\.(css|js|png|jpg|gif|ico)$">
         ExpiresActive On
@@ -269,41 +284,42 @@ server {
 ## Manifest Configuration for Production
 
 ### Update Manifest URLs
+
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1" 
-           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-           xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0" 
-           xmlns:ov="http://schemas.microsoft.com/office/taskpaneappversionoverrides" 
+<OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0"
+           xmlns:ov="http://schemas.microsoft.com/office/taskpaneappversionoverrides"
            xsi:type="TaskPaneApp">
-  
+
   <Id>c42a66ec-73b7-459d-af77-4324c5454a40</Id>
   <Version>1.0.0.0</Version>
   <ProviderName>Your Company Name</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="DocuID"/>
   <Description DefaultValue="Secure biometric authentication and document access for Office"/>
-  
+
   <!-- Update all URLs to production domain -->
   <IconUrl DefaultValue="https://your-domain.com/assets/icon-32.png"/>
   <HighResolutionIconUrl DefaultValue="https://your-domain.com/assets/icon-64.png"/>
   <SupportUrl DefaultValue="https://your-domain.com/support"/>
-  
+
   <AppDomains>
     <AppDomain>https://your-domain.com</AppDomain>
-    <AppDomain>https://api.docuid.net</AppDomain>
+    <AppDomain>https://dev.docuid.net</AppDomain>
   </AppDomains>
-  
+
   <Hosts>
     <Host Name="Document"/>
   </Hosts>
-  
+
   <DefaultSettings>
     <SourceLocation DefaultValue="https://your-domain.com/taskpane.html"/>
   </DefaultSettings>
-  
+
   <Permissions>ReadWriteDocument</Permissions>
-  
+
   <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="VersionOverridesV1_0">
     <Hosts>
       <Host xsi:type="Document">
@@ -313,7 +329,7 @@ server {
         </DesktopFormFactor>
       </Host>
     </Hosts>
-    
+
     <Resources>
       <bt:Images>
         <bt:Image id="Icon.16x16" DefaultValue="https://your-domain.com/assets/icon-16.png"/>
@@ -331,35 +347,36 @@ server {
 ```
 
 ### Automated URL Replacement
+
 ```javascript
 // deployment/update-manifest.js
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
 function updateManifestUrls(environment) {
-  const manifestPath = path.join(__dirname, '../dist/manifest.xml');
-  let manifest = fs.readFileSync(manifestPath, 'utf8');
-  
+  const manifestPath = path.join(__dirname, "../dist/manifest.xml");
+  let manifest = fs.readFileSync(manifestPath, "utf8");
+
   const urls = {
-    development: 'https://localhost:3000',
-    staging: 'https://staging-your-domain.com',
-    production: 'https://your-domain.com'
+    development: "https://localhost:3000",
+    staging: "https://staging-your-domain.com",
+    production: "https://your-domain.com",
   };
-  
+
   const targetUrl = urls[environment];
   if (!targetUrl) {
     throw new Error(`Unknown environment: ${environment}`);
   }
-  
+
   // Replace localhost URLs with target URL
   manifest = manifest.replace(/https:\/\/localhost:3000/g, targetUrl);
-  
+
   fs.writeFileSync(manifestPath, manifest);
   console.log(`Updated manifest URLs for ${environment} environment`);
 }
 
 // Usage: node update-manifest.js production
-const environment = process.argv[2] || 'production';
+const environment = process.argv[2] || "production";
 updateManifestUrls(environment);
 ```
 
@@ -368,6 +385,7 @@ updateManifestUrls(environment);
 ### Manual Deployment
 
 #### Step 1: Prepare Build
+
 ```bash
 # Clean and build
 rm -rf dist/
@@ -381,6 +399,7 @@ ls -la dist/
 ```
 
 #### Step 2: Upload to Server
+
 ```bash
 # Using SCP
 scp -r dist/* user@your-server:/var/www/docuid-addon/
@@ -393,6 +412,7 @@ rsync -avz --delete dist/ user@your-server:/var/www/docuid-addon/
 ```
 
 #### Step 3: Update Server Configuration
+
 ```bash
 # Restart web server
 sudo systemctl restart nginx
@@ -409,93 +429,95 @@ curl -I https://your-domain.com/taskpane.html
 ### Automated Deployment (CI/CD)
 
 #### GitHub Actions Deployment
+
 ```yaml
 # .github/workflows/deploy.yml
 name: Deploy to Production
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-        cache: 'pnpm'
-    
-    - name: Install dependencies
-      run: pnpm install
-    
-    - name: Run tests
-      run: pnpm run test
-    
-    - name: Build for production
-      run: |
-        NODE_ENV=production pnpm run build
-        node deployment/update-manifest.js production
-    
-    - name: Deploy to server
-      uses: appleboy/scp-action@v0.1.4
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        key: ${{ secrets.SSH_KEY }}
-        source: "dist/*"
-        target: "/var/www/docuid-addon/"
-    
-    - name: Restart web server
-      uses: appleboy/ssh-action@v0.1.5
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        key: ${{ secrets.SSH_KEY }}
-        script: sudo systemctl restart nginx
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run tests
+        run: pnpm run test
+
+      - name: Build for production
+        run: |
+          NODE_ENV=production pnpm run build
+          node deployment/update-manifest.js production
+
+      - name: Deploy to server
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          source: "dist/*"
+          target: "/var/www/docuid-addon/"
+
+      - name: Restart web server
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: sudo systemctl restart nginx
 ```
 
 #### Azure DevOps Pipeline
+
 ```yaml
 # azure-pipelines.yml
 trigger:
-- main
+  - main
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: "ubuntu-latest"
 
 steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '18.x'
-  displayName: 'Install Node.js'
+  - task: NodeTool@0
+    inputs:
+      versionSpec: "18.x"
+    displayName: "Install Node.js"
 
-- script: |
-    npm install -g pnpm
-    pnpm install
-  displayName: 'Install dependencies'
+  - script: |
+      npm install -g pnpm
+      pnpm install
+    displayName: "Install dependencies"
 
-- script: |
-    pnpm run lint
-    pnpm run test
-  displayName: 'Run quality checks'
+  - script: |
+      pnpm run lint
+      pnpm run test
+    displayName: "Run quality checks"
 
-- script: |
-    NODE_ENV=production pnpm run build
-    node deployment/update-manifest.js production
-  displayName: 'Build for production'
+  - script: |
+      NODE_ENV=production pnpm run build
+      node deployment/update-manifest.js production
+    displayName: "Build for production"
 
-- task: AzureWebApp@1
-  inputs:
-    azureSubscription: 'Azure-Connection'
-    appType: 'webApp'
-    appName: 'docuid-addon'
-    package: 'dist'
-  displayName: 'Deploy to Azure'
+  - task: AzureWebApp@1
+    inputs:
+      azureSubscription: "Azure-Connection"
+      appType: "webApp"
+      appName: "docuid-addon"
+      package: "dist"
+    displayName: "Deploy to Azure"
 ```
 
 ## Office Add-in Store Deployment
@@ -503,6 +525,7 @@ steps:
 ### Store Submission Requirements
 
 #### App Package Preparation
+
 ```bash
 # Create Office Add-in package
 zip -r DocuID-AddIn.zip dist/
@@ -515,6 +538,7 @@ zip -r DocuID-AddIn.zip dist/
 ```
 
 #### Store Validation Checklist
+
 - [ ] Valid manifest.xml with no errors
 - [ ] All URLs use HTTPS
 - [ ] Icons in all required sizes (16x16, 32x32, 64x64, 80x80, 128x128)
@@ -526,6 +550,7 @@ zip -r DocuID-AddIn.zip dist/
 - [ ] Testing notes for Microsoft reviewers
 
 #### Submission Process
+
 1. **Partner Center**: Create app listing in Microsoft Partner Center
 2. **Upload Package**: Upload the add-in package
 3. **Store Listing**: Complete store listing information
@@ -537,6 +562,7 @@ zip -r DocuID-AddIn.zip dist/
 ### Private Distribution (Enterprise)
 
 #### Office 365 Admin Center Deployment
+
 ```bash
 # For enterprise deployment without public store
 
@@ -547,6 +573,7 @@ zip -r DocuID-AddIn.zip dist/
 ```
 
 #### SharePoint App Catalog Deployment
+
 ```bash
 # For SharePoint-based organizations
 
@@ -559,6 +586,7 @@ zip -r DocuID-AddIn.zip dist/
 ## Post-Deployment Verification
 
 ### Functionality Testing
+
 ```bash
 # Test checklist after deployment
 
@@ -584,6 +612,7 @@ zip -r DocuID-AddIn.zip dist/
 ```
 
 ### SSL/HTTPS Verification
+
 ```bash
 # SSL certificate verification
 openssl s_client -connect your-domain.com:443 -servername your-domain.com
@@ -597,6 +626,7 @@ echo | openssl s_client -connect your-domain.com:443 2>/dev/null | openssl x509 
 ```
 
 ### Security Headers Verification
+
 ```bash
 # Check security headers
 curl -I https://your-domain.com/taskpane.html
@@ -613,19 +643,21 @@ curl -I https://your-domain.com/taskpane.html
 ### Application Monitoring
 
 #### Health Check Endpoint
+
 ```typescript
 // health-check.ts
-app.get('/health', (req, res) => {
+app.get("/health", (req, res) => {
   res.status(200).json({
-    status: 'healthy',
+    status: "healthy",
     timestamp: new Date().toISOString(),
     version: process.env.APP_VERSION,
-    environment: process.env.NODE_ENV
+    environment: process.env.NODE_ENV,
   });
 });
 ```
 
 #### Log Monitoring
+
 ```bash
 # Monitor application logs
 tail -f /var/log/nginx/access.log
@@ -636,38 +668,40 @@ tail -f /var/log/nginx/error.log
 ```
 
 #### Performance Monitoring
+
 ```javascript
 // Basic performance monitoring
 const performanceMonitor = {
   trackPageLoad: () => {
-    window.addEventListener('load', () => {
+    window.addEventListener("load", () => {
       const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
       console.log(`Page load time: ${loadTime}ms`);
-      
+
       // Send to monitoring service
       if (window.analytics) {
-        window.analytics.track('page_load_time', { duration: loadTime });
+        window.analytics.track("page_load_time", { duration: loadTime });
       }
     });
   },
 
   trackAPIResponse: (endpoint, responseTime) => {
     console.log(`API ${endpoint} response time: ${responseTime}ms`);
-    
+
     // Send to monitoring service
     if (window.analytics) {
-      window.analytics.track('api_response_time', { 
-        endpoint, 
-        duration: responseTime 
+      window.analytics.track("api_response_time", {
+        endpoint,
+        duration: responseTime,
       });
     }
-  }
+  },
 };
 ```
 
 ### Update Procedures
 
 #### Rolling Updates
+
 ```bash
 # Zero-downtime deployment strategy
 
@@ -679,6 +713,7 @@ const performanceMonitor = {
 ```
 
 #### Rollback Procedures
+
 ```bash
 # Rollback steps if issues occur
 
@@ -694,6 +729,7 @@ const performanceMonitor = {
 ### Common Deployment Issues
 
 #### Certificate Issues
+
 ```bash
 # Problem: SSL certificate not trusted
 # Solution:
@@ -704,6 +740,7 @@ const performanceMonitor = {
 ```
 
 #### Manifest Loading Issues
+
 ```bash
 # Problem: Add-in doesn't load
 # Solutions:
@@ -714,6 +751,7 @@ const performanceMonitor = {
 ```
 
 #### Performance Issues
+
 ```bash
 # Problem: Slow loading times
 # Solutions:
@@ -727,6 +765,7 @@ const performanceMonitor = {
 ### Emergency Procedures
 
 #### Service Outage Response
+
 ```bash
 1. Immediate Response (0-15 minutes)
    - Identify scope of outage
@@ -750,6 +789,7 @@ const performanceMonitor = {
 ## Backup and Recovery
 
 ### Backup Strategy
+
 ```bash
 # Application backup
 tar -czf docuid-addon-backup-$(date +%Y%m%d).tar.gz /var/www/docuid-addon/
@@ -762,6 +802,7 @@ cp -r /etc/nginx/sites-available/ nginx-config-backup/
 ```
 
 ### Recovery Procedures
+
 ```bash
 # Application recovery
 tar -xzf docuid-addon-backup-YYYYMMDD.tar.gz -C /var/www/
@@ -775,4 +816,4 @@ curl -I https://your-domain.com/health
 
 ---
 
-*This deployment guide should be customized for your specific hosting environment and organizational requirements.*
+_This deployment guide should be customized for your specific hosting environment and organizational requirements._
