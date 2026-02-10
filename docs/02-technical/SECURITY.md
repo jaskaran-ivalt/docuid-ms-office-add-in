@@ -68,17 +68,18 @@ This document outlines the security architecture, considerations, and implementa
 3. **Session Management**
    ```typescript
    interface SecureSession {
-     sessionToken: string;      // JWT token
-     expiresAt: number;        // Unix timestamp
-     refreshToken: string;     // Refresh capability
-     userId: string;           // User identifier
-     permissions: string[];    // Access permissions
+     sessionToken: string; // JWT token
+     expiresAt: number; // Unix timestamp
+     refreshToken: string; // Refresh capability
+     userId: string; // User identifier
+     permissions: string[]; // Access permissions
    }
    ```
 
 ### Token Security
 
 #### JWT Token Structure
+
 ```json
 {
   "header": {
@@ -96,14 +97,16 @@ This document outlines the security architecture, considerations, and implementa
 ```
 
 #### Token Storage Security
+
 - **Storage Location**: localStorage (development), secure storage (production)
 - **Encryption**: Tokens encrypted at rest in production
 - **Expiration**: Automatic cleanup of expired tokens
 - **Validation**: Server-side token validation on each request
 
 #### Token Lifecycle
+
 ```mermaid
-graph LR 
+graph LR
     A[Login Request] --> B[Generate JWT]
     B --> C[Store Encrypted Token]
     C --> D[API Requests]
@@ -122,18 +125,20 @@ graph LR
 ### Document Security
 
 #### Access Control
+
 - **User Authorization**: Document access based on user permissions
 - **Session Validation**: Active session required for all document operations
 - **Audit Trail**: All document access logged with timestamps
 - **Content Protection**: No local caching of sensitive document content
 
 #### Data Classification
+
 ```typescript
 enum DocumentSecurityLevel {
-  PUBLIC = 'public',
-  INTERNAL = 'internal',
-  CONFIDENTIAL = 'confidential',
-  RESTRICTED = 'restricted'
+  PUBLIC = "public",
+  INTERNAL = "internal",
+  CONFIDENTIAL = "confidential",
+  RESTRICTED = "restricted",
 }
 
 interface SecureDocument {
@@ -146,12 +151,14 @@ interface SecureDocument {
 ```
 
 ### Data in Transit
+
 - **Encryption**: TLS 1.3 for all communications
 - **Certificate Validation**: Strict certificate validation
 - **Header Security**: Security headers for all requests
 - **Payload Integrity**: Request/response integrity checks
 
 ### Data at Rest
+
 - **Local Storage**: Minimal sensitive data storage
 - **Token Encryption**: Encrypted storage of authentication tokens
 - **No Document Caching**: Documents not persisted locally
@@ -160,6 +167,7 @@ interface SecureDocument {
 ## Office Add-in Security
 
 ### Manifest Security
+
 ```xml
 <Permissions>ReadWriteDocument</Permissions>
 <Requirements>
@@ -170,19 +178,23 @@ interface SecureDocument {
 ```
 
 ### Content Security Policy
+
 ```html
-<meta http-equiv="Content-Security-Policy" 
-      content="
-        default-src 'self' https://api.docuid.net;
+<meta
+  http-equiv="Content-Security-Policy"
+  content="
+        default-src 'self' https://dev.docuid.net;
         script-src 'self' 'unsafe-inline' https://appsforoffice.microsoft.com;
         style-src 'self' 'unsafe-inline';
         img-src 'self' data: https:;
-        connect-src 'self' https://api.docuid.net;
+        connect-src 'self' https://dev.docuid.net;
         frame-ancestors https://office.com https://*.office.com;
-      ">
+      "
+/>
 ```
 
 ### Domain Security
+
 - **HTTPS Only**: All resources served over HTTPS
 - **CORS Configuration**: Restricted to Office domains
 - **Domain Validation**: Manifest domain restrictions
@@ -191,39 +203,41 @@ interface SecureDocument {
 ## Input Validation & Sanitization
 
 ### Phone Number Validation
+
 ```typescript
 class PhoneValidator {
   static validate(phoneNumber: string): boolean {
     // E.164 format validation
     const e164Regex = /^\+[1-9]\d{1,14}$/;
-    
+
     // Length validation (6-15 digits plus country code)
     if (phoneNumber.length < 7 || phoneNumber.length > 16) {
       return false;
     }
-    
+
     // Format validation
     return e164Regex.test(phoneNumber);
   }
-  
+
   static sanitize(phoneNumber: string): string {
     // Remove non-numeric characters except +
-    return phoneNumber.replace(/[^\d+]/g, '');
+    return phoneNumber.replace(/[^\d+]/g, "");
   }
 }
 ```
 
 ### Document Content Sanitization
+
 ```typescript
 class ContentSanitizer {
   static sanitizeForOffice(content: string): string {
     // Remove potentially dangerous HTML/script content
     const cleanContent = content
-      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-      .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
-      .replace(/javascript:/gi, '')
-      .replace(/on\w+\s*=/gi, '');
-    
+      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
+      .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, "")
+      .replace(/javascript:/gi, "")
+      .replace(/on\w+\s*=/gi, "");
+
     return cleanContent;
   }
 }
@@ -232,25 +246,27 @@ class ContentSanitizer {
 ## Error Handling & Information Security
 
 ### Secure Error Messages
+
 ```typescript
 class SecureErrorHandler {
   static sanitizeError(error: Error, context: string): string {
     // Never expose internal system details
     const genericMessages = {
-      'authentication': 'Authentication failed. Please try again.',
-      'authorization': 'Access denied. Insufficient permissions.',
-      'network': 'Network error. Please check your connection.',
-      'server': 'Service temporarily unavailable. Please try again later.'
+      authentication: "Authentication failed. Please try again.",
+      authorization: "Access denied. Insufficient permissions.",
+      network: "Network error. Please check your connection.",
+      server: "Service temporarily unavailable. Please try again later.",
     };
-    
+
     // Log detailed error internally, return generic message
     this.logError(error, context);
-    return genericMessages[context] || 'An unexpected error occurred.';
+    return genericMessages[context] || "An unexpected error occurred.";
   }
 }
 ```
 
 ### Information Disclosure Prevention
+
 - **Stack Traces**: Never expose stack traces to users
 - **API Errors**: Generic error messages for security issues
 - **Debug Information**: Debug mode disabled in production
@@ -259,33 +275,35 @@ class SecureErrorHandler {
 ## Network Security
 
 ### API Security Headers
+
 ```typescript
 const securityHeaders = {
-  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
-  'X-Content-Type-Options': 'nosniff',
-  'X-Frame-Options': 'DENY',
-  'X-XSS-Protection': '1; mode=block',
-  'Referrer-Policy': 'strict-origin-when-cross-origin',
-  'Content-Security-Policy': 'default-src \'self\' https://api.docuid.net'
+  "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+  "X-Content-Type-Options": "nosniff",
+  "X-Frame-Options": "DENY",
+  "X-XSS-Protection": "1; mode=block",
+  "Referrer-Policy": "strict-origin-when-cross-origin",
+  "Content-Security-Policy": "default-src 'self' https://dev.docuid.net",
 };
 ```
 
 ### Rate Limiting Implementation
+
 ```typescript
 class RateLimiter {
   private attempts: Map<string, number[]> = new Map();
-  
+
   isAllowed(identifier: string, maxAttempts: number, timeWindow: number): boolean {
     const now = Date.now();
     const userAttempts = this.attempts.get(identifier) || [];
-    
+
     // Remove attempts outside time window
-    const recentAttempts = userAttempts.filter(time => now - time < timeWindow);
-    
+    const recentAttempts = userAttempts.filter((time) => now - time < timeWindow);
+
     if (recentAttempts.length >= maxAttempts) {
       return false;
     }
-    
+
     recentAttempts.push(now);
     this.attempts.set(identifier, recentAttempts);
     return true;
@@ -298,21 +316,25 @@ class RateLimiter {
 ### Common Vulnerabilities & Mitigations
 
 #### Cross-Site Scripting (XSS)
+
 - **Prevention**: Content Security Policy, input sanitization
 - **Detection**: Automated scanning in CI/CD pipeline
 - **Response**: Immediate patching and security updates
 
 #### Cross-Site Request Forgery (CSRF)
+
 - **Prevention**: JWT tokens with proper validation
 - **SameSite Cookies**: Strict cookie policies
 - **Origin Validation**: Request origin verification
 
 #### Injection Attacks
+
 - **SQL Injection**: Parameterized queries (backend)
 - **NoSQL Injection**: Input validation and sanitization
 - **Command Injection**: No system command execution in add-in
 
 #### Man-in-the-Middle Attacks
+
 - **Prevention**: TLS 1.3, certificate pinning
 - **Detection**: Certificate transparency monitoring
 - **Response**: Immediate certificate rotation
@@ -320,6 +342,7 @@ class RateLimiter {
 ### Security Testing
 
 #### Automated Security Testing
+
 ```yaml
 # Security testing pipeline
 security_tests:
@@ -334,6 +357,7 @@ security_tests:
 ```
 
 #### Security Code Review Checklist
+
 - [ ] Input validation implemented for all user inputs
 - [ ] Authentication tokens properly secured
 - [ ] Sensitive data not logged or exposed
@@ -346,12 +370,14 @@ security_tests:
 ## Compliance & Regulatory
 
 ### Data Protection Compliance
+
 - **GDPR**: European data protection compliance
 - **CCPA**: California privacy law compliance
 - **HIPAA**: Healthcare data protection (if applicable)
 - **SOX**: Financial data protection (if applicable)
 
 ### Office Add-in Store Compliance
+
 - **Security Review**: Microsoft Store security requirements
 - **Privacy Policy**: Comprehensive privacy documentation
 - **Data Handling**: Transparent data usage policies
@@ -360,16 +386,18 @@ security_tests:
 ## Incident Response
 
 ### Security Incident Classification
+
 ```typescript
 enum IncidentSeverity {
-  CRITICAL = 'critical',     // Data breach, system compromise
-  HIGH = 'high',            // Authentication bypass, privilege escalation
-  MEDIUM = 'medium',        // Information disclosure, DoS
-  LOW = 'low'              // Minor security issues
+  CRITICAL = "critical", // Data breach, system compromise
+  HIGH = "high", // Authentication bypass, privilege escalation
+  MEDIUM = "medium", // Information disclosure, DoS
+  LOW = "low", // Minor security issues
 }
 ```
 
 ### Response Procedures
+
 1. **Detection**: Automated monitoring and alerting
 2. **Assessment**: Severity classification and impact analysis
 3. **Containment**: Immediate threat mitigation
@@ -380,21 +408,23 @@ enum IncidentSeverity {
 ## Security Monitoring
 
 ### Logging Strategy
+
 ```typescript
 interface SecurityEvent {
   timestamp: string;
-  eventType: 'auth' | 'access' | 'error' | 'admin';
+  eventType: "auth" | "access" | "error" | "admin";
   userId?: string;
   ipAddress: string;
   userAgent: string;
   action: string;
   resource?: string;
-  outcome: 'success' | 'failure';
+  outcome: "success" | "failure";
   details?: Record<string, any>;
 }
 ```
 
 ### Monitoring Metrics
+
 - Authentication success/failure rates
 - API response times and error rates
 - Document access patterns and anomalies
@@ -405,6 +435,7 @@ interface SecurityEvent {
 ## Production Security Checklist
 
 ### Pre-Deployment Security Verification
+
 - [ ] All security headers configured
 - [ ] TLS 1.3 enabled with proper certificate
 - [ ] Content Security Policy implemented
@@ -419,6 +450,7 @@ interface SecurityEvent {
 - [ ] Dependency vulnerabilities resolved
 
 ### Ongoing Security Maintenance
+
 - [ ] Regular security updates and patches
 - [ ] Quarterly penetration testing
 - [ ] Monthly vulnerability assessments
@@ -428,4 +460,4 @@ interface SecurityEvent {
 
 ---
 
-*This security documentation is regularly updated to reflect current threats and best practices. Last security review: 2025-06-29*
+_This security documentation is regularly updated to reflect current threats and best practices. Last security review: 2025-06-29_

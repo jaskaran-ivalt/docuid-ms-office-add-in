@@ -46,27 +46,31 @@ The manifest must meet specific requirements:
 <!-- 5. Valid AppDomains for external URLs -->
 <AppDomains>
   <AppDomain>https://www.docuid.net</AppDomain>
-  <AppDomain>https://api.docuid.net</AppDomain>
+  <AppDomain>https://dev.docuid.net</AppDomain>
 </AppDomains>
 ```
 
 ### 1.2 Create Required Assets
 
 #### Icons (Required)
+
 Create PNG icons with transparent backgrounds:
+
 - `icon-16.png` - 16x16 pixels
-- `icon-32.png` - 32x32 pixels  
+- `icon-32.png` - 32x32 pixels
 - `icon-64.png` - 64x64 pixels
 - `icon-80.png` - 80x80 pixels
 - `icon-128.png` - 128x128 pixels (store listing)
 
 #### Screenshots (Required for Store Listing)
+
 - Minimum 1366x768 pixels
 - PNG or JPEG format
 - At least 1 screenshot, recommended 3-5
 - Show the add-in in action within Word
 
 #### Store Listing Images
+
 - **Logo**: 300x300 pixels (for AppSource listing)
 - **Hero Image**: 960x540 pixels (optional, for featured placement)
 - **Promotional images**: Various sizes for marketing
@@ -74,7 +78,9 @@ Create PNG icons with transparent backgrounds:
 ### 1.3 Prepare Legal Documents
 
 #### Privacy Policy (Required)
+
 Create a privacy policy covering:
+
 - What data you collect
 - How you use the data
 - Data storage and security
@@ -84,7 +90,9 @@ Create a privacy policy covering:
 Host at: `https://www.docuid.net/privacy`
 
 #### Terms of Use (Required)
+
 Include:
+
 - License grant
 - Usage restrictions
 - Disclaimers
@@ -137,24 +145,29 @@ office-addin-validator manifest-production.xml
 ### 3.2 Fill in Store Listing
 
 #### App Overview
+
 - **App name**: DocuID
 - **Category**: Productivity
 - **Subcategory**: Document Management
 
 #### Descriptions
+
 - **Short description** (max 100 characters):
+
   > "Secure biometric authentication and document management for Word."
 
 - **Long description** (max 4000 characters):
   > DocuID enables secure document access through biometric authentication directly in Microsoft Word.
   >
   > **Key Features:**
+  >
   > - 🔐 Biometric Authentication: Secure login using phone number + biometric verification
   > - 📄 Document Management: Browse and access your authorized documents
   > - 🔄 Office Integration: Seamlessly insert documents into Word
   > - 🔍 Real-time Search: Find documents quickly
   >
   > **How it works:**
+  >
   > 1. Enter your registered phone number
   > 2. Complete biometric verification on your mobile device
   > 3. Access and insert your authorized documents
@@ -162,7 +175,9 @@ office-addin-validator manifest-production.xml
   > DocuID is perfect for professionals who need secure, authenticated access to sensitive documents.
 
 #### Screenshots
+
 Upload 3-5 screenshots showing:
+
 1. Login screen with phone entry
 2. Authentication in progress
 3. Document list view
@@ -170,6 +185,7 @@ Upload 3-5 screenshots showing:
 5. Search functionality
 
 #### Keywords (for searchability)
+
 - document management
 - biometric authentication
 - secure documents
@@ -179,17 +195,20 @@ Upload 3-5 screenshots showing:
 ### 3.3 Provide Technical Info
 
 #### Manifest URL
+
 ```
 https://your-domain.vercel.app/manifest-production.xml
 ```
 
 #### Supported Platforms
+
 - ✅ Windows Desktop
 - ✅ Mac Desktop
 - ❌ Web (if not supported)
 - ❌ iPad (if not supported)
 
 #### Supported Languages
+
 - English (United States)
 
 ### 3.4 Provide Legal Info
@@ -200,7 +219,9 @@ https://your-domain.vercel.app/manifest-production.xml
 - **Support Email**: support@docuid.net
 
 ### 3.5 Certification Notes (Optional)
+
 Provide testing instructions for Microsoft reviewers:
+
 ```
 To test this add-in:
 1. Enter phone number: +1234567890
@@ -259,6 +280,7 @@ To test this add-in:
 ### 5.2 Handle Updates
 
 For updates:
+
 1. Increment version in manifest: `<Version>1.0.0.1</Version>`
 2. Deploy updated code to production
 3. Submit update in Partner Center
@@ -295,6 +317,7 @@ For updates:
 ## Support
 
 For submission issues:
+
 - [Partner Center Support](https://partner.microsoft.com/support)
 - [Stack Overflow - office-js tag](https://stackoverflow.com/questions/tagged/office-js)
 - [Microsoft Tech Community](https://techcommunity.microsoft.com/t5/microsoft-365-developer-platform/bd-p/Microsoft365DeveloperPlatform)

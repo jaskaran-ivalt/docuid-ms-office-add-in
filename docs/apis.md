@@ -1,8 +1,9 @@
 # DocuID API - Requests & Responses
 
 ## Base URL
+
 ```
-https://api.docuid.net
+https://dev.docuid.net
 ```
 
 ---
@@ -12,14 +13,16 @@ https://api.docuid.net
 ### POST `/api/dashboard/auth/login`
 
 **Request:**
+
 ```bash
-curl -X POST https://api.docuid.net/api/dashboard/auth/login \
+curl -X POST https://dev.docuid.net/api/dashboard/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email": "user@example.com", "password": "yourpassword"}' \
   -c cookies.txt
 ```
 
 **Request Body:**
+
 ```json
 {
   "email": "user@example.com",
@@ -28,6 +31,7 @@ curl -X POST https://api.docuid.net/api/dashboard/auth/login \
 ```
 
 **Response (200):**
+
 ```json
 {
   "success": true,
@@ -42,6 +46,7 @@ curl -X POST https://api.docuid.net/api/dashboard/auth/login \
 ```
 
 **Response (401):**
+
 ```json
 {
   "error": "Invalid credentials"
@@ -55,8 +60,9 @@ curl -X POST https://api.docuid.net/api/dashboard/auth/login \
 ### POST `/api/biometric/auth-request`
 
 **Request:**
+
 ```bash
-curl -X POST https://api.docuid.net/api/biometric/auth-request \
+curl -X POST https://dev.docuid.net/api/biometric/auth-request \
   -H "Content-Type: application/json" \
   -H "x-api-key: YOUR_API_KEY" \
   -d '{"mobile": "+1234567890", "requestFrom": "DocuID"}' \
@@ -64,6 +70,7 @@ curl -X POST https://api.docuid.net/api/biometric/auth-request \
 ```
 
 **Request Body:**
+
 ```json
 {
   "mobile": "+1234567890",
@@ -72,6 +79,7 @@ curl -X POST https://api.docuid.net/api/biometric/auth-request \
 ```
 
 **Response (200):**
+
 ```json
 {
   "success": true,
@@ -80,6 +88,7 @@ curl -X POST https://api.docuid.net/api/biometric/auth-request \
 ```
 
 **Response (404):**
+
 ```json
 {
   "error": {
@@ -91,8 +100,9 @@ curl -X POST https://api.docuid.net/api/biometric/auth-request \
 ### POST `/api/biometric/auth-result`
 
 **Request:**
+
 ```bash
-curl -X POST https://api.docuid.net/api/biometric/auth-result \
+curl -X POST https://dev.docuid.net/api/biometric/auth-result \
   -H "Content-Type: application/json" \
   -H "x-api-key: YOUR_API_KEY" \
   -d '{"mobile": "+1234567890"}' \
@@ -100,6 +110,7 @@ curl -X POST https://api.docuid.net/api/biometric/auth-result \
 ```
 
 **Request Body:**
+
 ```json
 {
   "mobile": "+1234567890"
@@ -107,6 +118,7 @@ curl -X POST https://api.docuid.net/api/biometric/auth-result \
 ```
 
 **Response (200):**
+
 ```json
 {
   "data": {
@@ -123,6 +135,7 @@ curl -X POST https://api.docuid.net/api/biometric/auth-result \
 ```
 
 **Response (401):**
+
 ```json
 {
   "error": {
@@ -132,6 +145,7 @@ curl -X POST https://api.docuid.net/api/biometric/auth-result \
 ```
 
 **Response (404):**
+
 ```json
 {
   "error": {
@@ -141,6 +155,7 @@ curl -X POST https://api.docuid.net/api/biometric/auth-result \
 ```
 
 **Response (422):**
+
 ```json
 {
   "error": {
@@ -156,12 +171,14 @@ curl -X POST https://api.docuid.net/api/biometric/auth-result \
 ### GET `/api/auth/me`
 
 **Request:**
+
 ```bash
-curl -X GET https://api.docuid.net/api/auth/me \
+curl -X GET https://dev.docuid.net/api/auth/me \
   -b cookies.txt
 ```
 
 **Response (200):**
+
 ```json
 {
   "userId": 123,
@@ -173,6 +190,7 @@ curl -X GET https://api.docuid.net/api/auth/me \
 ```
 
 **Response (401):**
+
 ```json
 {
   "error": "Not authenticated",
@@ -186,12 +204,14 @@ curl -X GET https://api.docuid.net/api/auth/me \
 ### GET `/api/auth/token-info`
 
 **Request:**
+
 ```bash
-curl -X GET https://api.docuid.net/api/auth/token-info \
+curl -X GET https://dev.docuid.net/api/auth/token-info \
   -b cookies.txt
 ```
 
 **Response (200):**
+
 ```json
 {
   "userId": 123,
@@ -205,6 +225,7 @@ curl -X GET https://api.docuid.net/api/auth/token-info \
 ```
 
 **Response (401):**
+
 ```json
 {
   "error": "Token expired",
@@ -215,8 +236,9 @@ curl -X GET https://api.docuid.net/api/auth/token-info \
 ### POST `/api/auth/set-session`
 
 **Request:**
+
 ```bash
-curl -X POST https://api.docuid.net/api/auth/set-session \
+curl -X POST https://dev.docuid.net/api/auth/set-session \
   -H "Content-Type: application/json" \
   -d '{
     "userId": 123,
@@ -228,6 +250,7 @@ curl -X POST https://api.docuid.net/api/auth/set-session \
 ```
 
 **Request Body:**
+
 ```json
 {
   "userId": 123,
@@ -238,6 +261,7 @@ curl -X POST https://api.docuid.net/api/auth/set-session \
 ```
 
 **Response (200):**
+
 ```json
 {
   "success": true,
@@ -246,6 +270,7 @@ curl -X POST https://api.docuid.net/api/auth/set-session \
 ```
 
 **Response (400):**
+
 ```json
 {
   "error": "Validation failed",
@@ -264,13 +289,15 @@ curl -X POST https://api.docuid.net/api/auth/set-session \
 ### POST `/api/auth/logout`
 
 **Request:**
+
 ```bash
-curl -X POST https://api.docuid.net/api/auth/logout \
+curl -X POST https://dev.docuid.net/api/auth/logout \
   -b cookies.txt \
   -c cookies.txt
 ```
 
 **Response (200):**
+
 ```json
 {
   "success": true,
@@ -279,6 +306,7 @@ curl -X POST https://api.docuid.net/api/auth/logout \
 ```
 
 **Response (500):**
+
 ```json
 {
   "error": "Internal Server Error"
@@ -289,26 +317,27 @@ curl -X POST https://api.docuid.net/api/auth/logout \
 
 ## 🔐 Status Codes
 
-| Code | Description |
-|------|-------------|
-| `200` | Success |
-| `400` | Bad Request |
-| `401` | Unauthorized |
-| `403` | Forbidden |
-| `404` | Not Found |
-| `422` | Unprocessable Entity |
+| Code  | Description           |
+| ----- | --------------------- |
+| `200` | Success               |
+| `400` | Bad Request           |
+| `401` | Unauthorized          |
+| `403` | Forbidden             |
+| `404` | Not Found             |
+| `422` | Unprocessable Entity  |
 | `500` | Internal Server Error |
 
 ---
 
 ## 🔐 Cookie Configuration
 
-| Cookie | Purpose | Expiry |
-|--------|---------|--------|
-| `token` | Access token | 24 hours |
-| `refreshToken` | Refresh token | 7 days |
+| Cookie         | Purpose       | Expiry   |
+| -------------- | ------------- | -------- |
+| `token`        | Access token  | 24 hours |
+| `refreshToken` | Refresh token | 7 days   |
 
 **Cookie Settings:**
+
 - Domain: `.docuid.net`
 - Secure: `true`
 - SameSite: `none`

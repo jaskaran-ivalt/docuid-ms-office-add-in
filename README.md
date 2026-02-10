@@ -21,12 +21,14 @@ A Microsoft Office Add-in that enables secure biometric authentication and docum
 ## 🛠️ Quick Start
 
 1. **Clone the repository**
+
    ```bash
    git clone <repository-url>
    cd DocuID
    ```
 
 2. **Install dependencies**
+
    ```bash
    pnpm install
    # or npm install
@@ -39,6 +41,7 @@ A Microsoft Office Add-in that enables secure biometric authentication and docum
    ```
 
 This will automatically:
+
 - Start the HTTPS development server on port 3000
 - Launch Microsoft Word
 - Sideload the add-in for testing
@@ -59,7 +62,7 @@ REACT_APP_DOCUID_API_KEY=your_api_key_here
 
 The application uses webpack proxy to bypass CORS restrictions during development:
 
-- **Proxy Path**: `/api/docuid/*` → `https://api.docuid.net/api/*`
+- **Proxy Path**: `/api/docuid/*` → `https://dev.docuid.net/api/*`
 - **Purpose**: Allows API calls from `localhost:3000` to work with the production API
 - **Automatic**: No additional configuration needed - works out of the box
 
@@ -80,34 +83,36 @@ The app includes a comprehensive debug panel for monitoring application behavior
 
 ### Log Levels & Contexts
 
-| Context | Description | Key Events Logged |
-|---------|-------------|-------------------|
-| `AuthService` | Authentication operations | Login attempts, API calls, token management |
-| `AuthService.API` | Biometric API interactions | Request/response times, HTTP status codes |
-| `AuthService.Poll` | Authentication polling | Polling attempts, timeouts, success/failure |
-| `AuthService.Storage` | Local storage operations | Token storage, expiration checks |
-| `DocumentService` | Document operations | Open/close actions, Word integration |
-| `DocumentService.Office` | Office.js operations | Word API calls, success/failure |
-| `App` | Main application events | Component lifecycle, state changes |
+| Context                  | Description                | Key Events Logged                           |
+| ------------------------ | -------------------------- | ------------------------------------------- |
+| `AuthService`            | Authentication operations  | Login attempts, API calls, token management |
+| `AuthService.API`        | Biometric API interactions | Request/response times, HTTP status codes   |
+| `AuthService.Poll`       | Authentication polling     | Polling attempts, timeouts, success/failure |
+| `AuthService.Storage`    | Local storage operations   | Token storage, expiration checks            |
+| `DocumentService`        | Document operations        | Open/close actions, Word integration        |
+| `DocumentService.Office` | Office.js operations       | Word API calls, success/failure             |
+| `App`                    | Main application events    | Component lifecycle, state changes          |
 
 ### Viewing Logs
 
 #### Browser Console
+
 ```javascript
 // Enable debug logging
-localStorage.setItem('docuid_log_level', '0'); // 0=DEBUG, 1=INFO, 2=WARN, 3=ERROR
+localStorage.setItem("docuid_log_level", "0"); // 0=DEBUG, 1=INFO, 2=WARN, 3=ERROR
 
 // Disable console output
-localStorage.setItem('docuid_console_logging', 'false');
+localStorage.setItem("docuid_console_logging", "false");
 
 // Clear settings
-localStorage.removeItem('docuid_log_level');
-localStorage.removeItem('docuid_console_logging');
+localStorage.removeItem("docuid_log_level");
+localStorage.removeItem("docuid_console_logging");
 ```
 
 #### Programmatic Access
+
 ```typescript
-import { logger } from './services/Logger';
+import { logger } from "./services/Logger";
 
 // Get recent logs
 const logs = logger.getLogHistory();
@@ -116,8 +121,8 @@ const logs = logger.getLogHistory();
 const logData = logger.exportLogs();
 
 // Create contextual logger
-const authLogger = logger.createContextLogger('MyComponent');
-authLogger.info('Operation completed', { userId: '123' });
+const authLogger = logger.createContextLogger("MyComponent");
+authLogger.info("Operation completed", { userId: "123" });
 ```
 
 ### Troubleshooting
@@ -188,25 +193,31 @@ DocuID/
 
 The add-in integrates with backend APIs for authentication and document management. See the [API Documentation](docs/02-technical/API_DOCUMENTATION.md) for complete endpoint specifications.
 
-**Current Implementation**: 
+**Current Implementation**:
+
 - Development mode uses mock data and simulated authentication
 - Production mode will integrate with actual docuid.net APIs
 
 ### Key Components
 
 #### AuthService
+
 Handles biometric authentication flow:
+
 - Login initiation
 - Session management
 - Token storage and refresh
 
 #### DocumentService
+
 Manages document operations:
+
 - Fetching document lists
 - Retrieving document content
 - Office.js integration for inserting content
 
 #### React Components
+
 - **Header**: Branding and user info display
 - **LoginForm**: Phone number input and authentication
 - **DocumentList**: Document browsing and search
@@ -246,6 +257,7 @@ The interface follows Microsoft Office design principles:
 - **[📊 Diagrams](docs/04-diagrams/)** - System architecture and user flow diagrams
 
 ### Quick Links
+
 - [🏗️ System Architecture](docs/02-technical/ARCHITECTURE.md)
 - [🔒 Security Documentation](docs/02-technical/SECURITY.md)
 - [🚀 Deployment Guide](docs/03-development/DEPLOYMENT_GUIDE.md)
@@ -256,6 +268,7 @@ The interface follows Microsoft Office design principles:
 For detailed deployment instructions, see the [Deployment Guide](docs/03-development/DEPLOYMENT_GUIDE.md).
 
 ### Quick Deployment Overview
+
 1. **Development**: Already configured with HTTPS certificates
 2. **Production**: HTTPS hosting required, SSL certificates, manifest URL updates
 3. **Distribution**: Office Store submission or enterprise deployment
@@ -265,11 +278,13 @@ For detailed deployment instructions, see the [Deployment Guide](docs/03-develop
 For comprehensive testing procedures, see the [Testing Guide](docs/03-development/TESTING_GUIDE.md).
 
 ### Quick Testing
+
 1. Start development: `pnpm start`
 2. Test phone numbers: `+1234567890` (success), `+1234567invalid` (error)
 3. Verify document operations and Office.js integration
 
 ### Test Coverage
+
 - Authentication flows and error handling
 - Document management and search
 - Office.js integration and Word manipulation
@@ -278,6 +293,7 @@ For comprehensive testing procedures, see the [Testing Guide](docs/03-developmen
 ## 🔧 Configuration
 
 ### Environment Variables
+
 ```bash
 # Development server port
 npm_package_config_dev_server_port=3000
@@ -287,7 +303,9 @@ npm_package_config_app_to_debug=word
 ```
 
 ### Manifest Configuration
+
 Key settings in `manifest.xml`:
+
 - Add-in ID and version
 - Supported Office hosts
 - Required permissions
@@ -309,40 +327,48 @@ See [Development Guide](docs/03-development/DEVELOPMENT_GUIDE.md) for detailed w
 ### Common Issues
 
 **Add-in not loading**
+
 - Ensure development server is running on HTTPS
 - Check certificate installation
 - Verify manifest.xml syntax
 
 **Authentication fails**
+
 - Check mock authentication logic
 - Verify phone number format
 - Ensure localStorage is accessible
 
 **Document insertion fails**
+
 - Verify Office.js API compatibility
 - Check Word version support
 - Review console errors
 
 ### Debug Mode
+
 Enable debug logging by setting:
+
 ```javascript
-localStorage.setItem('docuid_debug', 'true');
+localStorage.setItem("docuid_debug", "true");
 ```
 
 ## 📞 Support & Resources
 
 ### Getting Help
+
 - **[📖 Documentation](docs/)** - Comprehensive project documentation
 - **[🔧 Development Guide](docs/03-development/DEVELOPMENT_GUIDE.md)** - Setup and development workflows
 - **[🧪 Testing Guide](docs/03-development/TESTING_GUIDE.md)** - Testing procedures and strategies
 - **[🚀 Deployment Guide](docs/03-development/DEPLOYMENT_GUIDE.md)** - Production deployment instructions
 
 ### Quick Debug
+
 Enable debug mode: `localStorage.setItem('docuid_debug', 'true')`
 
 ## 📊 Project Status
 
 ### ✅ Phase 1 Complete (Foundation)
+
 - **Environment Setup** - Development environment with HTTPS and hot reload
 - **React Architecture** - TypeScript-based React components and services
 - **Office.js Integration** - Document insertion and Word manipulation
@@ -351,16 +377,18 @@ Enable debug mode: `localStorage.setItem('docuid_debug', 'true')`
 - **Documentation** - Comprehensive guides and technical specifications
 
 ### 🔄 Phase 2 Ready (Authentication Integration)
+
 - **API Client Setup** - Real docuid.net integration
 - **Production Authentication** - Replace mock with biometric verification
 - **Enhanced Security** - Production-ready security measures
 - **Error Handling** - Network and API failure management
 
 ### 📈 Overall Progress: 26% Complete
+
 **Timeline**: On track for July 2025 completion  
 **Quality**: High - Clean architecture, comprehensive documentation  
 **Status**: 🟢 Excellent project health
 
 ---
 
-**Built with ❤️ using React, TypeScript, and Office.js** 
+**Built with ❤️ using React, TypeScript, and Office.js**
