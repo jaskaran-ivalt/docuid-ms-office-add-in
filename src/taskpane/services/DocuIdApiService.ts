@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, AxiosError } from "axios";
 import { z } from "zod";
-import { AuthService } from "./AuthService";
+import { authService } from "./ServiceContainer";
 import { logger } from "./Logger";
 
 /* global */
@@ -138,7 +138,7 @@ export class DocuIdApiService {
   private static getApiInstance(): AxiosInstance {
     if (!this.instance) {
       this.instance = axios.create({
-        baseURL: process.env.NODE_ENV === 'development' ? '' : 'https://docuid.net',
+        baseURL: '', // Always use relative URLs - proxied by webpack dev-server or Vercel rewrites
         headers: {
           'Content-Type': 'application/json',
         },
@@ -147,7 +147,7 @@ export class DocuIdApiService {
 
       // Add request interceptor for auth token
       this.instance.interceptors.request.use((config) => {
-        const token = AuthService.getSessionToken();
+        const token = authService.getStoredAuth()?.sessionToken;
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
@@ -160,7 +160,7 @@ export class DocuIdApiService {
         (error: AxiosError) => {
           if (error.response?.status === 401) {
             this.apiLogger.warn('Unauthorized - clearing auth');
-            AuthService.logout();
+            authService.logout();
           }
           return Promise.reject(error);
         }

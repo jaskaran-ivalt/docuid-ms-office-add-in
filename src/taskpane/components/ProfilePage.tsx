@@ -28,7 +28,7 @@ import {
   Check,
   Smartphone,
 } from "lucide-react";
-import { AuthService } from "../services/AuthService";
+import { authService } from "../services/ServiceContainer";
 import "./ProfilePage.css";
 
 interface ProfilePageProps {
@@ -67,7 +67,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
   // Load user data from AuthService on component mount
   useEffect(() => {
     const loadUserData = () => {
-      const storedAuth = AuthService.getStoredAuth();
+      const storedAuth = authService.getStoredAuth();
       if (storedAuth?.user) {
         const userProfile: UserProfile = {
           id: storedAuth.user.id.toString(),

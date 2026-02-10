@@ -4,9 +4,7 @@ import DocumentList from "@/taskpane/components/DocumentList";
 import Header from "@/taskpane/components/Header";
 import ProfilePage from "@/taskpane/components/ProfilePage";
 import DebugPanel from "@/taskpane/components/DebugPanel";
-import { AuthService } from "@/taskpane/services/AuthService";
-import { DocuIdApiService } from "@/taskpane/services/DocuIdApiService";
-import { DocumentService } from "@/taskpane/services/DocumentService";
+import { authService, documentService } from "@/taskpane/services/ServiceContainer";
 import { DocuIdThemeProvider } from "./components/DesignSystem";
 import { logger } from "@/taskpane/services/Logger";
 import "./App.css";
@@ -38,8 +36,8 @@ const App: React.FC = () => {
 
   useEffect(() => {
     // Check if user is already authenticated
-    const savedAuth = AuthService.getStoredAuth();
-    const savedUser = AuthService.getStoredUser();
+    const savedAuth = authService.getStoredAuth();
+    const savedUser = authService.getStoredAuth()?.user;
     if (savedAuth) {
       setIsAuthenticated(true);
       setUser({
@@ -68,11 +66,11 @@ const App: React.FC = () => {
     setError("");
 
     try {
-      await AuthService.login(phoneNumber);
+      await authService.login(phoneNumber);
       setIsAuthenticated(true);
 
       // Get user data from stored auth
-      const savedUser = AuthService.getStoredUser();
+      const savedUser = authService.getStoredAuth()?.user;
       setUser({
         phone: phoneNumber,
         name: savedUser?.name,
@@ -90,7 +88,7 @@ const App: React.FC = () => {
   const loadDocuments = async () => {
     try {
       setIsLoadingDocuments(true);
-      const docs = await DocumentService.getDocuments();
+      const docs = await documentService.getDocuments();
       setDocuments(docs);
     } catch (err) {
       // Check if it's a 401 Unauthorized error
@@ -110,7 +108,7 @@ const App: React.FC = () => {
   };
 
   const handleLogout = () => {
-    AuthService.logout();
+    authService.logout();
     setIsAuthenticated(false);
     setUser(null);
     setDocuments([]);
@@ -120,7 +118,7 @@ const App: React.FC = () => {
   const handleDocumentOpen = async (document: Document) => {
     try {
       setIsOpeningDocument(document.id);
-      await DocumentService.openDocument(document.id);
+      await documentService.openDocument(document.id);
     } catch (err) {
       // Check if it's a 401 Unauthorized error
       if (err && typeof err === 'object' && 'response' in err) {
@@ -140,7 +138,7 @@ const App: React.FC = () => {
   const handleDocumentClose = async (documentId: string) => {
     try {
       setIsClosingDocument(documentId);
-      await DocumentService.closeDocument(documentId);
+      await documentService.closeDocument(documentId); 
       // Remove the document from the list
       setDocuments((prev) => prev.filter((doc) => doc.id !== documentId));
     } catch (err) {
@@ -173,7 +171,7 @@ const App: React.FC = () => {
       throw new Error("Invalid document ID");
     }
 
-    const response = await DocuIdApiService.shareDocument({
+    const response = await documentService.shareDocument({
       documentId: parsedDocumentId,
       email: shareData.email,
       countryCode: shareData.countryCode,
