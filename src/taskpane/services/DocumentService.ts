@@ -26,11 +26,8 @@ interface DocumentContent {
 }
 
 export class DocumentService {
-  // Use proxy in development, direct API in production
-  private static readonly API_BASE_URL =
-    process.env.NODE_ENV === "development"
-      ? "" // Use relative URLs for webpack proxy
-      : "https://dev.docuid.net";
+  // Always use relative URLs — proxied by webpack dev-server (dev) and Vercel rewrites (prod)
+  private static readonly API_BASE_URL = "";
 
   // Flag to use mock data during development when API is unavailable
   private static readonly USE_MOCK_DATA = false;

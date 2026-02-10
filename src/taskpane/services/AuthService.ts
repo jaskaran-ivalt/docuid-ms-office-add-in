@@ -46,11 +46,8 @@ interface StoredAuth {
 export class AuthService {
   private static readonly STORAGE_KEY = "docuid_auth";
   private static readonly logger = Logger.getInstance().createContextLogger("AuthService");
-  // Use proxy in development, direct API in production
-  private static readonly API_BASE_URL =
-    process.env.NODE_ENV === "development"
-      ? "" // Use relative URLs for webpack proxy
-      : "https://dev.docuid.net";
+  // Always use relative URLs — proxied by webpack dev-server (dev) and Vercel rewrites (prod)
+  private static readonly API_BASE_URL = "";
 
   /**
    * Authenticate user with phone number via biometric verification
