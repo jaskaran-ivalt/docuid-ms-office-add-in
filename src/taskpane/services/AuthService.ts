@@ -16,7 +16,6 @@ export interface User {
 
 export interface StoredAuth {
   phone: string;
-  sessionToken: string;
   expiresAt: number;
   user?: User;
   message?: string;
@@ -44,7 +43,6 @@ export class AuthService {
 
       const authData: StoredAuth = {
         phone: phoneNumber,
-        sessionToken: authResult.sessionToken || this.generateSessionToken(),
         expiresAt: Date.now() + 24 * 60 * 60 * 1000,
         user: authResult.user,
         message: authResult.message,
@@ -59,7 +57,7 @@ export class AuthService {
     }
   }
 
-  private async pollAuthResult(phoneNumber: string): Promise<{ sessionToken?: string; user?: User; message?: string; timestamp?: string }> {
+  private async pollAuthResult(phoneNumber: string): Promise<{ user?: User; message?: string; timestamp?: string }> {
     const maxAttempts = 60;
     const pollInterval = 2000;
 
@@ -68,19 +66,9 @@ export class AuthService {
         const response = await this.repository.pollResult(phoneNumber);
         
         if (response && response.data?.details) {
-          console.log("[AuthService] Success response data keys:", Object.keys(response));
-          if (response.data) console.log("[AuthService] Success response.data keys:", Object.keys(response.data));
+          console.log("[AuthService] Authentication successful");
           
-          // Try to get token from server response
-          const anyData = response.data as any;
-          const serverToken = anyData.token || anyData.data?.token || anyData.sessionToken || anyData.data?.sessionToken;
-          
-          if (serverToken) {
-            console.log("[AuthService] Received real session token from server");
-          }
-
           return {
-            sessionToken: serverToken || this.generateSessionToken(),
             user: response.data.details,
             message: response.message,
             timestamp: new Date().toISOString(),
@@ -109,7 +97,6 @@ export class AuthService {
       const authData: StoredAuth = JSON.parse(stored);
       console.log("[AuthService] Found stored auth:", { 
         phone: authData.phone, 
-        hasToken: !!authData.sessionToken,
         expiresAt: new Date(authData.expiresAt).toLocaleString()
       });
 
@@ -128,10 +115,6 @@ export class AuthService {
   logout(): void {
     this.storage.removeItem(AuthService.STORAGE_KEY);
     this.logger.info("User logged out");
-  }
-
-  private generateSessionToken(): string {
-    return "mock_token_" + Math.random().toString(36).substr(2, 9);
   }
 
   isAuthenticated(): boolean {

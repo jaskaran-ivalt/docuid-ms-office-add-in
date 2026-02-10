@@ -23,33 +23,6 @@ class ServiceContainer {
     
     this.authService = new AuthService(this.authRepository, this.storage);
     this.documentService = new DocumentService(this.documentRepository);
-    
-    // Configure interceptors
-    this.httpClient.getInstance().interceptors.request.use((config) => {
-      try {
-        const authData = this.storage.getItem('docuid_auth');
-        if (authData) {
-          const parsed = JSON.parse(authData);
-          if (parsed && parsed.sessionToken) {
-            if (parsed.sessionToken.startsWith('mock_token_')) {
-              console.log(`[HttpClient] Skipping Auth header for mock token: ${parsed.sessionToken}`);
-            } else {
-              const token = `Bearer ${parsed.sessionToken}`;
-              console.log(`[HttpClient] Setting Auth header for ${config.url}`);
-              // Use safe header setting for Axios 1.x
-              if (config.headers && typeof config.headers.set === 'function') {
-                config.headers.set('Authorization', token);
-              } else {
-                (config.headers as any).Authorization = token;
-              }
-            }
-          }
-        }
-      } catch (error) {
-        console.error('Error in Auth interceptor:', error);
-      }
-      return config;
-    });
   }
 
   public static getInstance(): ServiceContainer {
