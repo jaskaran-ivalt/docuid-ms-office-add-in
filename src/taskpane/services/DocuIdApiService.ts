@@ -138,7 +138,7 @@ export class DocuIdApiService {
   private static getApiInstance(): AxiosInstance {
     if (!this.instance) {
       this.instance = axios.create({
-        baseURL: process.env.NODE_ENV === "development" ? "" : "https://docuid.net",
+        baseURL: "", // Always use relative URLs - proxied via webpack (dev) or Vercel rewrites (prod)
         headers: {
           "Content-Type": "application/json",
         },
