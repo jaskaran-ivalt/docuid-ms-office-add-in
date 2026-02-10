@@ -82,6 +82,13 @@ export class AuthService {
 
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(authData));
 
+      this.logger.info("Authentication data stored in localStorage", {
+        hasToken: !!authData.sessionToken,
+        tokenPrefix: authData.sessionToken?.substring(0, 10) + "...",
+        expiresIn: Math.round((authData.expiresAt - Date.now()) / 1000 / 60) + " minutes",
+        userId: authData.user?.id,
+      });
+
       this.logger.logAuthEvent("LOGIN_SUCCESS", authResult.user?.id?.toString(), {
         phone: phoneNumber.substring(0, 3) + "***",
         userName: authResult.user?.name,
@@ -115,6 +122,7 @@ export class AuthService {
             "Content-Type": "application/json",
             "x-api-key": "PKIqfASvBfaKQxsg6DVn92ANw7bLsWXSalEsg5Bz",
           },
+          withCredentials: true, // Enable cookie-based session handling
         }
       );
 
@@ -187,6 +195,7 @@ export class AuthService {
               "Content-Type": "application/json",
               "x-api-key": "PKIqfASvBfaKQxsg6DVn92ANw7bLsWXSalEsg5Bz",
             },
+            withCredentials: true, // Enable cookie-based session handling
           }
         );
 
@@ -210,8 +219,30 @@ export class AuthService {
             userId: response.data.data.details.id,
             userName: response.data.data.details.name,
           });
+
+          // Debug: Log the full response structure to see where the session token is
+          this.logger.debug("Auth result response structure", {
+            hasDataSessionToken: !!response.data.data.sessionToken,
+            hasSessionToken: !!response.data.sessionToken,
+            hasCookies: document.cookie?.length > 0,
+            responseDataKeys: Object.keys(response.data.data || {}),
+          });
+
+          // Extract the session token from the backend response
+          // Backend returns token in response.data.data.sessionToken
+          const sessionToken = response.data.data.sessionToken || response.data.sessionToken;
+
+          if (!sessionToken) {
+            this.logger.warn("Backend did not return a session token - this will cause 401 errors");
+          } else {
+            this.logger.info("Session token extracted from backend", {
+              tokenPrefix: sessionToken.substring(0, 10) + "...",
+              tokenLength: sessionToken.length,
+            });
+          }
+
           return {
-            sessionToken: this.generateSessionToken(),
+            sessionToken: sessionToken || this.generateSessionToken(),
             user: {
               ...response.data.data.details,
               latitude: response.data.data.details.latitude,
