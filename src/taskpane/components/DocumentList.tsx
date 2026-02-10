@@ -235,7 +235,11 @@ const DocumentList: React.FC<DocumentListProps> = ({
                 <button
                   className="document-open-btn"
                   onClick={() => onDocumentOpen(document)}
-                  disabled={isLoadingDocuments || openingDocumentId === document.id || closingDocumentId === document.id}
+                  disabled={
+                    isLoadingDocuments ||
+                    openingDocumentId === document.id ||
+                    closingDocumentId === document.id
+                  }
                 >
                   {openingDocumentId === document.id ? (
                     <>
@@ -252,7 +256,11 @@ const DocumentList: React.FC<DocumentListProps> = ({
                     setSelectedDocument(document);
                     setIsShareSidebarOpen(true);
                   }}
-                  disabled={isLoadingDocuments || openingDocumentId === document.id || closingDocumentId === document.id}
+                  disabled={
+                    isLoadingDocuments ||
+                    openingDocumentId === document.id ||
+                    closingDocumentId === document.id
+                  }
                 >
                   Share
                 </button>

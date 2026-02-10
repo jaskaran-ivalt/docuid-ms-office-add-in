@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  Dialog,
-  DialogType,
-  PrimaryButton,
-  Stack,
-  Text,
-} from "@fluentui/react";
+import { Dialog, DialogType, PrimaryButton, Stack, Text } from "@fluentui/react";
 import { CheckCircle, Copy, ExternalLink, FileText, Mail, Phone, Calendar } from "lucide-react";
 import "./ShareSuccessModal.css";
 
@@ -87,9 +81,7 @@ const ShareSuccessModal: React.FC<ShareSuccessModalProps> = ({
 
         {/* Success Title */}
         <Text className="success-title">Document Shared Successfully!</Text>
-        <Text className="success-subtitle">
-          Your document has been shared with the recipient.
-        </Text>
+        <Text className="success-subtitle">Your document has been shared with the recipient.</Text>
 
         {/* Document Details */}
         {document && (
@@ -149,9 +141,7 @@ const ShareSuccessModal: React.FC<ShareSuccessModalProps> = ({
                 <Calendar size={16} className="detail-icon" />
                 <div className="detail-content">
                   <Text className="detail-label">Expires On</Text>
-                  <Text className="detail-value">
-                    {shareDetails.expiryDate || getExpiryDate()}
-                  </Text>
+                  <Text className="detail-value">{shareDetails.expiryDate || getExpiryDate()}</Text>
                 </div>
               </div>
               {shareDetails.message && (
@@ -175,17 +165,11 @@ const ShareSuccessModal: React.FC<ShareSuccessModalProps> = ({
                 {shareDetails.shareLink}
               </Text>
               <Stack horizontal tokens={{ childrenGap: 8 }}>
-                <button
-                  className="share-link-button"
-                  onClick={handleCopyLink}
-                >
+                <button className="share-link-button" onClick={handleCopyLink}>
                   <Copy size={14} />
                   <span>Copy</span>
                 </button>
-                <button
-                  className="share-link-button"
-                  onClick={handleOpenLink}
-                >
+                <button className="share-link-button" onClick={handleOpenLink}>
                   <ExternalLink size={14} />
                   <span>Open</span>
                 </button>

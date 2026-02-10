@@ -79,7 +79,7 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({
 
   const handlePhoneChange = (value: string | undefined) => {
     setPhoneValue(value || "");
-    
+
     if (value) {
       const phoneNumber = parsePhoneNumber(value);
       if (phoneNumber) {
@@ -232,7 +232,6 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({
           </button>
         </div>
       )}
-
     >
       {document && (
         <div className="share-sidebar-content">
