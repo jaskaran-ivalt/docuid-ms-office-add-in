@@ -73,7 +73,10 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
           id: storedAuth.user.id.toString(),
           name: storedAuth.user.name || "N/A",
           email: storedAuth.user.email || "N/A",
-          phone: formatPhoneNumber(storedAuth.user.country_code || "", storedAuth.user.mobile || ""),
+          phone: formatPhoneNumber(
+            storedAuth.user.country_code || "",
+            storedAuth.user.mobile || ""
+          ),
           mobile: storedAuth.user.mobile || "N/A",
           country_code: storedAuth.user.country_code || "N/A",
           address: storedAuth.user.address || "N/A",
@@ -118,10 +121,10 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
 
   const handleInputChange = (field: keyof UserProfile, value: any) => {
     if (!formData) return;
-    
+
     // Sanitize input
-    const sanitizedValue = typeof value === 'string' ? sanitizeInput(value) : value;
-    
+    const sanitizedValue = typeof value === "string" ? sanitizeInput(value) : value;
+
     setFormData((prev) => ({
       ...prev!,
       [field]: sanitizedValue,
@@ -130,34 +133,34 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
 
   const validateForm = (): { isValid: boolean; errors: string[] } => {
     const errors: string[] = [];
-    
-    if (!formData) return { isValid: false, errors: ['Form data not available'] };
-    
+
+    if (!formData) return { isValid: false, errors: ["Form data not available"] };
+
     // Validate required fields
     if (!formData.name || formData.name.trim().length < 2) {
-      errors.push('Name must be at least 2 characters long');
+      errors.push("Name must be at least 2 characters long");
     }
-    
+
     if (!formData.email || !validateEmail(formData.email)) {
-      errors.push('Please enter a valid email address');
+      errors.push("Please enter a valid email address");
     }
-    
+
     if (!formData.mobile || !validatePhone(formData.mobile)) {
-      errors.push('Please enter a valid mobile number (at least 10 digits)');
+      errors.push("Please enter a valid mobile number (at least 10 digits)");
     }
-    
-    if (!formData.country_code || formData.country_code.replace(/\D/g, '').length === 0) {
-      errors.push('Please enter a valid country code');
+
+    if (!formData.country_code || formData.country_code.replace(/\D/g, "").length === 0) {
+      errors.push("Please enter a valid country code");
     }
-    
+
     if (!formData.address || formData.address.trim().length < 5) {
-      errors.push('Address must be at least 5 characters long');
+      errors.push("Address must be at least 5 characters long");
     }
-    
+
     if (formData.imei && formData.imei !== "N/A" && !validateIMEI(formData.imei)) {
-      errors.push('IMEI must be 15 digits long');
+      errors.push("IMEI must be 15 digits long");
     }
-    
+
     return { isValid: errors.length === 0, errors };
   };
 
@@ -174,14 +177,14 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
 
   const handleSave = async () => {
     if (!formData) return;
-    
+
     // Validate form before saving
     const validation = validateForm();
     if (!validation.isValid) {
-      setError(`Validation failed: ${validation.errors.join(', ')}`);
+      setError(`Validation failed: ${validation.errors.join(", ")}`);
       return;
     }
-    
+
     setIsLoading(true);
     setError("");
     setSuccess("");
@@ -193,7 +196,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
       // Update phone number format
       const updatedFormData = {
         ...formData,
-        phone: formatPhoneNumber(formData.country_code, formData.mobile)
+        phone: formatPhoneNumber(formData.country_code, formData.mobile),
       };
 
       setProfile(updatedFormData);
@@ -231,20 +234,20 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
 
   const validatePhone = (phone: string): boolean => {
     const phoneRegex = /^\+?[\d\s\-\(\)]+$/;
-    return phoneRegex.test(phone) && phone.replace(/\D/g, '').length >= 10;
+    return phoneRegex.test(phone) && phone.replace(/\D/g, "").length >= 10;
   };
 
   const validateIMEI = (imei: string): boolean => {
     if (!imei || imei === "N/A") return true; // Optional field
     const imeiRegex = /^\d{15}$/;
-    return imeiRegex.test(imei.replace(/\D/g, ''));
+    return imeiRegex.test(imei.replace(/\D/g, ""));
   };
 
   const formatPhoneNumber = (countryCode: string, mobile: string): string => {
     if (!countryCode && !mobile) return "N/A";
-    const cleanCountryCode = countryCode?.replace(/\D/g, '') || '';
-    const cleanMobile = mobile?.replace(/\D/g, '') || '';
-    
+    const cleanCountryCode = countryCode?.replace(/\D/g, "") || "";
+    const cleanMobile = mobile?.replace(/\D/g, "") || "";
+
     if (cleanCountryCode && cleanMobile) {
       return `+${cleanCountryCode} ${cleanMobile}`;
     } else if (cleanMobile) {
@@ -254,7 +257,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
   };
 
   const sanitizeInput = (value: string): string => {
-    return value.trim().replace(/[<>]/g, '');
+    return value.trim().replace(/[<>]/g, "");
   };
 
   const formatLocation = (latitude?: number, longitude?: number): string => {
@@ -283,7 +286,14 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
           </button>
           <h1 className="profile-title">Profile Settings</h1>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px' }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "200px",
+          }}
+        >
           <Spinner size={3} label="Loading profile..." />
         </div>
       </div>
@@ -305,7 +315,6 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
             Edit
           </button>
         )} */}
-
       </div>
 
       {/* Messages */}
@@ -331,10 +340,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
 
       {/* Authentication Status Message */}
       {profile.message && profile.message !== "N/A" && (
-        <MessageBar
-          messageBarType={MessageBarType.info}
-          className="profile-message"
-        >
+        <MessageBar messageBarType={MessageBarType.info} className="profile-message">
           <strong>Authentication Status:</strong> {profile.message}
         </MessageBar>
       )}
@@ -352,7 +358,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
               <p className="profile-company">{profile.phone}</p>
               {profile.timestamp && profile.timestamp !== "N/A" && (
                 <p className="profile-timestamp">
-                  <Calendar size={14} style={{ marginRight: '4px' }} />
+                  <Calendar size={14} style={{ marginRight: "4px" }} />
                   Last Activity: {formatTimestamp(profile.timestamp)}
                 </p>
               )}
@@ -493,7 +499,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
         </div>
 
         {/* Device Information */}
-                {/* 
+        {/* 
         <div className="profile-section">
           <h3 className="section-title">
             <Smartphone size={18} />
@@ -523,9 +529,9 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
           </div>
         </div>
  */}
-                
+
         {/* Preferences */}
-      {/*
+        {/*
         <div className="profile-section">
           <h3 className="section-title">
             <Shield size={18} />

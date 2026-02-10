@@ -130,7 +130,7 @@ const shareRequestSchema = z.object({
  */
 export class DocuIdApiService {
   private static instance: AxiosInstance | null = null;
-  private static readonly apiLogger = logger.createContextLogger('DocuIdApiService');
+  private static readonly apiLogger = logger.createContextLogger("DocuIdApiService");
 
   /**
    * Get or create axios instance with auth configuration
@@ -138,9 +138,9 @@ export class DocuIdApiService {
   private static getApiInstance(): AxiosInstance {
     if (!this.instance) {
       this.instance = axios.create({
-        baseURL: process.env.NODE_ENV === 'development' ? '' : 'https://docuid.net',
+        baseURL: process.env.NODE_ENV === "development" ? "" : "https://docuid.net",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         withCredentials: true, // Important for cookie-based auth
       });
@@ -159,7 +159,7 @@ export class DocuIdApiService {
         (response) => response,
         (error: AxiosError) => {
           if (error.response?.status === 401) {
-            this.apiLogger.warn('Unauthorized - clearing auth');
+            this.apiLogger.warn("Unauthorized - clearing auth");
             AuthService.logout();
           }
           return Promise.reject(error);
@@ -182,34 +182,38 @@ export class DocuIdApiService {
 
     try {
       const params = new URLSearchParams();
-      if (options?.search) params.append('search', options.search);
-      if (options?.folderId) params.append('folderId', options.folderId);
-      if (options?.limit) params.append('limit', options.limit.toString());
-      if (options?.offset) params.append('offset', options.offset.toString());
+      if (options?.search) params.append("search", options.search);
+      if (options?.folderId) params.append("folderId", options.folderId);
+      if (options?.limit) params.append("limit", options.limit.toString());
+      if (options?.offset) params.append("offset", options.offset.toString());
 
       const queryString = params.toString();
-      const url = `/api/docuid/documents/word-files${queryString ? `?${queryString}` : ''}`;
+      const url = `/api/docuid/documents/word-files${queryString ? `?${queryString}` : ""}`;
 
-      this.apiLogger.logApiRequest('GET', url, { options });
+      this.apiLogger.logApiRequest("GET", url, { options });
 
       const response = await this.getApiInstance().get<ApiResponse<WordFilesResponse>>(url);
 
       const responseTime = Date.now() - startTime;
-      this.apiLogger.logApiResponse('GET', url, response.status, responseTime);
+      this.apiLogger.logApiResponse("GET", url, response.status, responseTime);
 
       if (response.data.success) {
-        this.apiLogger.info('Word documents fetched successfully', {
+        this.apiLogger.info("Word documents fetched successfully", {
           count: response.data.data.files.length,
         });
         return response.data.data.files;
       }
 
-      throw new Error(response.data.message || 'Failed to fetch documents');
+      throw new Error(response.data.message || "Failed to fetch documents");
     } catch (error) {
       const responseTime = Date.now() - startTime;
-      this.apiLogger.logApiResponse('GET', '/api/docuid/documents/word-files', 
-        (error as AxiosError).response?.status || 0, responseTime);
-      this.apiLogger.error('Failed to fetch Word documents', error as Error);
+      this.apiLogger.logApiResponse(
+        "GET",
+        "/api/docuid/documents/word-files",
+        (error as AxiosError).response?.status || 0,
+        responseTime
+      );
+      this.apiLogger.error("Failed to fetch Word documents", error as Error);
       throw error;
     }
   }
@@ -222,24 +226,29 @@ export class DocuIdApiService {
     const url = `/api/docuid/documents/${documentId}/access`;
 
     try {
-      this.apiLogger.logApiRequest('GET', url, { documentId });
+      this.apiLogger.logApiRequest("GET", url, { documentId });
 
-      const response = await this.getApiInstance().get<ApiResponse<{ document: DocumentAccess }>>(url);
+      const response =
+        await this.getApiInstance().get<ApiResponse<{ document: DocumentAccess }>>(url);
 
       const responseTime = Date.now() - startTime;
-      this.apiLogger.logApiResponse('GET', url, response.status, responseTime);
+      this.apiLogger.logApiResponse("GET", url, response.status, responseTime);
 
       if (response.data.success) {
-        this.apiLogger.info('Document access info retrieved', { documentId });
+        this.apiLogger.info("Document access info retrieved", { documentId });
         return response.data.data.document;
       }
 
-      throw new Error(response.data.message || 'Failed to get document access');
+      throw new Error(response.data.message || "Failed to get document access");
     } catch (error) {
       const responseTime = Date.now() - startTime;
-      this.apiLogger.logApiResponse('GET', url,
-        (error as AxiosError).response?.status || 0, responseTime);
-      this.apiLogger.error('Failed to get document access', error as Error);
+      this.apiLogger.logApiResponse(
+        "GET",
+        url,
+        (error as AxiosError).response?.status || 0,
+        responseTime
+      );
+      this.apiLogger.error("Failed to get document access", error as Error);
       throw error;
     }
   }
@@ -252,19 +261,23 @@ export class DocuIdApiService {
     const url = `/api/docuid/documents/${documentId}`;
 
     try {
-      this.apiLogger.logApiRequest('GET', url, { documentId });
+      this.apiLogger.logApiRequest("GET", url, { documentId });
 
       const response = await this.getApiInstance().get<{ document: DocuIdDocument }>(url);
 
       const responseTime = Date.now() - startTime;
-      this.apiLogger.logApiResponse('GET', url, response.status, responseTime);
+      this.apiLogger.logApiResponse("GET", url, response.status, responseTime);
 
       return response.data.document;
     } catch (error) {
       const responseTime = Date.now() - startTime;
-      this.apiLogger.logApiResponse('GET', url,
-        (error as AxiosError).response?.status || 0, responseTime);
-      this.apiLogger.error('Failed to get document', error as Error);
+      this.apiLogger.logApiResponse(
+        "GET",
+        url,
+        (error as AxiosError).response?.status || 0,
+        responseTime
+      );
+      this.apiLogger.error("Failed to get document", error as Error);
       throw error;
     }
   }
@@ -280,9 +293,9 @@ export class DocuIdApiService {
       // The access URL might be something like: http://localhost:3001/api/documents/123/download
       // We need to route it through our proxy: /api/docuid/documents/123/download
       let downloadUrl = accessUrl;
-      
+
       // Check if this is a backend URL that needs to go through our proxy
-      if (accessUrl.includes('/api/documents/')) {
+      if (accessUrl.includes("/api/documents/")) {
         // Extract the path after /api/documents/
         const match = accessUrl.match(/\/api\/documents\/(.+)/);
         if (match) {
@@ -291,21 +304,28 @@ export class DocuIdApiService {
         }
       }
 
-      this.apiLogger.logApiRequest('GET', downloadUrl, { type: 'download', originalUrl: accessUrl });
+      this.apiLogger.logApiRequest("GET", downloadUrl, {
+        type: "download",
+        originalUrl: accessUrl,
+      });
 
       const response = await this.getApiInstance().get(downloadUrl, {
-        responseType: 'blob',
+        responseType: "blob",
       });
 
       const responseTime = Date.now() - startTime;
-      this.apiLogger.logApiResponse('GET', downloadUrl, response.status, responseTime);
+      this.apiLogger.logApiResponse("GET", downloadUrl, response.status, responseTime);
 
       return response.data;
     } catch (error) {
       const responseTime = Date.now() - startTime;
-      this.apiLogger.logApiResponse('GET', accessUrl,
-        (error as AxiosError).response?.status || 0, responseTime);
-      this.apiLogger.error('Failed to download document content', error as Error);
+      this.apiLogger.logApiResponse(
+        "GET",
+        accessUrl,
+        (error as AxiosError).response?.status || 0,
+        responseTime
+      );
+      this.apiLogger.error("Failed to download document content", error as Error);
       throw error;
     }
   }
@@ -320,23 +340,19 @@ export class DocuIdApiService {
   /**
    * Share a document with an email or mobile recipient
    */
-  static async shareDocument(
-    payload: {
-      documentId: number;
-      email?: string;
-      countryCode?: string;
-      mobile?: string;
-      message?: string;
-    }
-  ): Promise<ApiResponse<ShareApiResponse>> {
+  static async shareDocument(payload: {
+    documentId: number;
+    email?: string;
+    countryCode?: string;
+    mobile?: string;
+    message?: string;
+  }): Promise<ApiResponse<ShareApiResponse>> {
     const startTime = Date.now();
 
     const parsed = addinShareRequestSchema.parse(payload);
 
-    console.log('parsed', parsed);
-    const expiryDate = new Date(
-      Date.now() + 7 * 24 * 60 * 60 * 1000
-    ).toISOString();
+    console.log("parsed", parsed);
+    const expiryDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
 
     const shareRequest = shareRequestSchema.parse({
       documentId: parsed.documentId,
@@ -363,9 +379,10 @@ export class DocuIdApiService {
         hasMobile: !!parsed.mobile,
       });
 
-      const response = await this.getApiInstance().post<
-        ApiResponse<ShareApiResponse>
-      >(url, shareRequest);
+      const response = await this.getApiInstance().post<ApiResponse<ShareApiResponse>>(
+        url,
+        shareRequest
+      );
 
       const responseTime = Date.now() - startTime;
       this.apiLogger.logApiResponse("POST", url, response.status, responseTime);

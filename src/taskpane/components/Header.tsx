@@ -82,22 +82,22 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile, on
                 onClick={onToggleDebug}
                 title="Toggle Debug Panel (Ctrl+Shift+D)"
                 style={{
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  padding: '8px',
-                  borderRadius: '4px',
-                  color: '#666',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  marginRight: '8px'
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  padding: "8px",
+                  borderRadius: "4px",
+                  color: "#666",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginRight: "8px",
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = '#f0f0f0';
+                  e.currentTarget.style.backgroundColor = "#f0f0f0";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.backgroundColor = "transparent";
                 }}
               >
                 <Bug size={16} />
@@ -156,8 +156,8 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile, on
                   {/* Menu Items */}
                   <div className="dropdown-menu-items">
                     {onNavigateToProfile && (
-                      <button 
-                        className="dropdown-menu-item" 
+                      <button
+                        className="dropdown-menu-item"
                         onClick={() => {
                           onNavigateToProfile();
                           setIsDropdownOpen(false);

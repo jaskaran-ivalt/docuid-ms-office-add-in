@@ -45,22 +45,22 @@ const App: React.FC = () => {
       setUser({
         phone: savedAuth.phone,
         name: savedUser?.name,
-        email: savedUser?.email
+        email: savedUser?.email,
       });
       loadDocuments();
     }
 
     // Add keyboard shortcut for debug panel (Ctrl+Shift+D)
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.ctrlKey && event.shiftKey && event.key === 'D') {
+      if (event.ctrlKey && event.shiftKey && event.key === "D") {
         event.preventDefault();
-        setDebugPanelOpen(prev => !prev);
-        logger.createContextLogger('App').info('Debug panel toggled', { open: !debugPanelOpen });
+        setDebugPanelOpen((prev) => !prev);
+        logger.createContextLogger("App").info("Debug panel toggled", { open: !debugPanelOpen });
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, [debugPanelOpen]);
 
   const handleLogin = async (phoneNumber: string) => {
@@ -76,7 +76,7 @@ const App: React.FC = () => {
       setUser({
         phone: phoneNumber,
         name: savedUser?.name,
-        email: savedUser?.email
+        email: savedUser?.email,
       });
 
       await loadDocuments();
@@ -94,7 +94,7 @@ const App: React.FC = () => {
       setDocuments(docs);
     } catch (err) {
       // Check if it's a 401 Unauthorized error
-      if (err && typeof err === 'object' && 'response' in err) {
+      if (err && typeof err === "object" && "response" in err) {
         const axiosError = err as { response?: { status?: number } };
         if (axiosError.response?.status === 401) {
           // Session expired or invalid - logout and show login screen
@@ -123,7 +123,7 @@ const App: React.FC = () => {
       await DocumentService.openDocument(document.id);
     } catch (err) {
       // Check if it's a 401 Unauthorized error
-      if (err && typeof err === 'object' && 'response' in err) {
+      if (err && typeof err === "object" && "response" in err) {
         const axiosError = err as { response?: { status?: number } };
         if (axiosError.response?.status === 401) {
           handleLogout();
@@ -145,7 +145,7 @@ const App: React.FC = () => {
       setDocuments((prev) => prev.filter((doc) => doc.id !== documentId));
     } catch (err) {
       // Check if it's a 401 Unauthorized error
-      if (err && typeof err === 'object' && 'response' in err) {
+      if (err && typeof err === "object" && "response" in err) {
         const axiosError = err as { response?: { status?: number } };
         if (axiosError.response?.status === 401) {
           handleLogout();
@@ -208,7 +208,7 @@ const App: React.FC = () => {
           user={user}
           onLogout={handleLogout}
           onNavigateToProfile={isAuthenticated ? handleNavigateToProfile : undefined}
-          onToggleDebug={() => setDebugPanelOpen(prev => !prev)}
+          onToggleDebug={() => setDebugPanelOpen((prev) => !prev)}
         />
 
         <main className="main-content">
@@ -239,10 +239,7 @@ const App: React.FC = () => {
           )}
         </main>
 
-        <DebugPanel
-          isOpen={debugPanelOpen}
-          onClose={() => setDebugPanelOpen(false)}
-        />
+        <DebugPanel isOpen={debugPanelOpen} onClose={() => setDebugPanelOpen(false)} />
       </div>
     </DocuIdThemeProvider>
   );
