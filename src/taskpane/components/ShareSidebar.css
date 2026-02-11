@@ -317,6 +317,32 @@
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
 }
 
+/* Hide duplicate icons in country dropdown */
+.phone-input-field .PhoneInputCountrySelect option {
+  background-repeat: no-repeat;
+  background-position: left center;
+  padding-left: 0;
+}
+
+.phone-input-field .PhoneInputCountryIconImg {
+  display: inline-block;
+}
+
+.phone-input-field select.PhoneInputCountrySelect option::before {
+  content: none;
+}
+
+.phone-input-field .PhoneInputCountrySelectArrow {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid #605e5c;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
 .action-buttons {
   display: flex;
   gap: 10px;
@@ -349,7 +375,6 @@
   background: rgba(0, 0, 0, 0.0373) !important;
   color: rgba(0, 0, 0, 0.3614) !important;
   cursor: not-allowed;
-}
 }
 
 .spinning {

@@ -147,8 +147,8 @@
 
 .PhoneInput:focus-within {
   border-color: #005fb8;
-  border-width: 2px;
-  outline: 1px solid #005fb8;
+  border-width: 1.5px !important;
+  outline: none;
 }
 
 .PhoneInputCountry {
@@ -215,10 +215,28 @@
 }
 
 .PhoneInputCountrySelectArrow {
-  width: 8px;
-  height: 8px;
-  border-left: 2px solid #605e5c;
-  border-bottom: 2px solid #605e5c;
-  transform: rotate(-45deg);
-  margin-left: 4px;
-} 
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid #605e5c;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+/* Hide duplicate icons in country dropdown */
+.PhoneInputCountrySelect option {
+  background-repeat: no-repeat;
+  background-position: left center;
+  padding-left: 0;
+}
+
+.PhoneInputCountryIconImg {
+  display: inline-block;
+}
+
+/* Ensure only one flag shows in dropdown */
+select.PhoneInputCountrySelect option::before {
+  content: none;
+}
