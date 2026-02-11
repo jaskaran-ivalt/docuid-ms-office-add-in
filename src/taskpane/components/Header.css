@@ -166,6 +166,37 @@
   transform: rotate(180deg);
 }
 
+/* User Profile Section */
+.user-profile-dropdown {
+  position: relative;
+}
+
+/* Override Fluent UI Persona colors in header */
+.header .ms-Persona-primaryText {
+  color: white !important;
+}
+
+.header .ms-Persona-secondaryText {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* Dropdown menu - ensure proper colors */
+.ms-Callout .ms-Persona-primaryText {
+  color: #323130 !important;
+}
+
+.ms-Callout .ms-Persona-secondaryText {
+  color: #605e5c !important;
+}
+
+.ms-Callout .ms-Button {
+  color: #323130 !important;
+}
+
+.ms-Callout .ms-Button:hover {
+  background-color: #f3f2f1 !important;
+}
+
 /* Dropdown Menu */
 .dropdown-menu {
   position: absolute;
