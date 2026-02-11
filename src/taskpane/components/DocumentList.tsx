@@ -95,27 +95,27 @@ const DocumentList: React.FC<DocumentListProps> = ({
   const getFileIcon = (type: string) => {
     switch (type.toLowerCase()) {
       case "pdf":
-        return <Icon iconName="PDF" styles={{ root: { fontSize: 40, color: "#d32f2f" } }} />;
+        return <Icon iconName="PDF" styles={{ root: { fontSize: 32, color: "#d32f2f" } }} />;
       case "docx":
       case "doc":
         return (
-          <Icon iconName="WordDocument" styles={{ root: { fontSize: 40, color: "#2b579a" } }} />
+          <Icon iconName="WordDocument" styles={{ root: { fontSize: 32, color: "#2b579a" } }} />
         );
       case "xlsx":
       case "xls":
         return (
-          <Icon iconName="ExcelDocument" styles={{ root: { fontSize: 40, color: "#217346" } }} />
+          <Icon iconName="ExcelDocument" styles={{ root: { fontSize: 32, color: "#217346" } }} />
         );
       case "pptx":
       case "ppt":
         return (
           <Icon
             iconName="PowerPointDocument"
-            styles={{ root: { fontSize: 40, color: "#d24726" } }}
+            styles={{ root: { fontSize: 32, color: "#d24726" } }}
           />
         );
       default:
-        return <Icon iconName="Page" styles={{ root: { fontSize: 40, color: "#605e5c" } }} />;
+        return <Icon iconName="Page" styles={{ root: { fontSize: 32, color: "#605e5c" } }} />;
     }
   };
 
