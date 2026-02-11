@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { SearchBox, Spinner, PrimaryButton, DefaultButton, Stack, Text, Icon } from "@fluentui/react";
+import {
+  SearchBox,
+  Spinner,
+  PrimaryButton,
+  DefaultButton,
+  Stack,
+  Text,
+  Icon,
+} from "@fluentui/react";
 import { Shield, RefreshCw } from "lucide-react";
 import { Card } from "./shared/Card";
 import ShareSidebar from "./ShareSidebar";
@@ -90,13 +98,22 @@ const DocumentList: React.FC<DocumentListProps> = ({
         return <Icon iconName="PDF" styles={{ root: { fontSize: 40, color: "#d32f2f" } }} />;
       case "docx":
       case "doc":
-        return <Icon iconName="WordDocument" styles={{ root: { fontSize: 40, color: "#2b579a" } }} />;
+        return (
+          <Icon iconName="WordDocument" styles={{ root: { fontSize: 40, color: "#2b579a" } }} />
+        );
       case "xlsx":
       case "xls":
-        return <Icon iconName="ExcelDocument" styles={{ root: { fontSize: 40, color: "#217346" } }} />;
+        return (
+          <Icon iconName="ExcelDocument" styles={{ root: { fontSize: 40, color: "#217346" } }} />
+        );
       case "pptx":
       case "ppt":
-        return <Icon iconName="PowerPointDocument" styles={{ root: { fontSize: 40, color: "#d24726" } }} />;
+        return (
+          <Icon
+            iconName="PowerPointDocument"
+            styles={{ root: { fontSize: 40, color: "#d24726" } }}
+          />
+        );
       default:
         return <Icon iconName="Page" styles={{ root: { fontSize: 40, color: "#605e5c" } }} />;
     }
@@ -106,10 +123,10 @@ const DocumentList: React.FC<DocumentListProps> = ({
   const DocumentSkeleton = () => (
     <Card elevation={1}>
       <Stack horizontal tokens={{ childrenGap: 12 }} verticalAlign="center">
-        <div style={{ width: 40, height: 40, backgroundColor: '#f3f2f1', borderRadius: 4 }} />
+        <div style={{ width: 40, height: 40, backgroundColor: "#f3f2f1", borderRadius: 4 }} />
         <Stack tokens={{ childrenGap: 4 }} styles={{ root: { flex: 1 } }}>
-          <div style={{ width: '60%', height: 16, backgroundColor: '#f3f2f1', borderRadius: 2 }} />
-          <div style={{ width: '40%', height: 12, backgroundColor: '#f3f2f1', borderRadius: 2 }} />
+          <div style={{ width: "60%", height: 16, backgroundColor: "#f3f2f1", borderRadius: 2 }} />
+          <div style={{ width: "40%", height: 12, backgroundColor: "#f3f2f1", borderRadius: 2 }} />
         </Stack>
       </Stack>
     </Card>
@@ -132,7 +149,10 @@ const DocumentList: React.FC<DocumentListProps> = ({
   }
 
   return (
-    <Stack tokens={{ padding: 16, childrenGap: 16 }} styles={{ root: { backgroundColor: "#f5f5f5", minHeight: "100%" } }}>
+    <Stack
+      tokens={{ padding: 16, childrenGap: 16 }}
+      styles={{ root: { backgroundColor: "#f5f5f5", minHeight: "100%" } }}
+    >
       <Stack horizontal horizontalAlign="space-between" verticalAlign="center">
         <Text variant="xLarge" styles={{ root: { fontWeight: 600 } }}>
           Your Documents
@@ -157,7 +177,16 @@ const DocumentList: React.FC<DocumentListProps> = ({
       {isLoadingDocuments ? (
         <Stack tokens={{ childrenGap: 12 }}>
           {[1, 2, 3].map((i) => (
-            <Card key={i} elevation={0} styles={{ root: { backgroundColor: "white", border: "1px solid #edebe9" } }}>
+            <Card
+              key={i}
+              styles={{
+                root: {
+                  backgroundColor: "white",
+                  border: "1px solid #edebe9",
+                  boxShadow: "0 0 transparent",
+                },
+              }}
+            >
               <Stack horizontal tokens={{ childrenGap: 12 }}>
                 <Spinner />
                 <Text>Loading documents...</Text>
@@ -166,7 +195,11 @@ const DocumentList: React.FC<DocumentListProps> = ({
           ))}
         </Stack>
       ) : filteredDocuments.length === 0 ? (
-        <Stack horizontalAlign="center" tokens={{ padding: 40, childrenGap: 12 }} styles={{ root: { backgroundColor: "white", border: "1px solid #edebe9" } }}>
+        <Stack
+          horizontalAlign="center"
+          tokens={{ padding: 40, childrenGap: 12 }}
+          styles={{ root: { backgroundColor: "white", border: "1px solid #edebe9" } }}
+        >
           <Icon iconName="FabricFolder" styles={{ root: { fontSize: 48, color: "#a19f9d" } }} />
           <Text variant="large" styles={{ root: { fontWeight: 600 } }}>
             {documents.length === 0 ? "No Documents Available" : "No Documents Found"}
@@ -180,18 +213,40 @@ const DocumentList: React.FC<DocumentListProps> = ({
       ) : (
         <Stack tokens={{ childrenGap: 12 }}>
           {filteredDocuments.map((document) => (
-            <Card key={document.id} elevation={1} hoverable>
+            <Card
+              key={document.id}
+              styles={{
+                root: {
+                  backgroundColor: "white",
+                  border: "1px solid #edebe9",
+                  borderRadius: 0,
+                  boxShadow: "0 0 transparent",
+                },
+              }}
+            >
               <Stack horizontal horizontalAlign="space-between" verticalAlign="center">
-                <Stack horizontal tokens={{ childrenGap: 12 }} verticalAlign="center">
-                  {getFileIcon(document.type)}
+                <Stack horizontal tokens={{ childrenGap: 16 }} verticalAlign="center">
+                  <div
+                    style={{
+                      width: 48,
+                      height: 48,
+                      backgroundColor: "#f5f5f5",
+                      border: "1px solid #edebe9",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    {getFileIcon("docx")}
+                  </div>
                   <Stack tokens={{ childrenGap: 4 }}>
                     <Stack horizontal tokens={{ childrenGap: 8 }} verticalAlign="center">
                       <Text variant="medium" styles={{ root: { fontWeight: 600 } }}>
                         {document.title}
                       </Text>
-                      {document.isPasswordProtected && (
-                        <Shield size={14} style={{ color: "#0078d4" }} />
-                      )}
+                      {/* {document.isPasswordProtected && (
+                        <Shield size={14} style={{ color: "#005fb8" }} />
+                      )} */}
                     </Stack>
                     <Stack horizontal tokens={{ childrenGap: 8 }}>
                       <Text variant="small" styles={{ root: { color: "#605e5c" } }}>
