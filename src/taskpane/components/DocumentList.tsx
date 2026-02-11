@@ -132,7 +132,7 @@ const DocumentList: React.FC<DocumentListProps> = ({
   }
 
   return (
-    <Stack tokens={{ padding: 16, childrenGap: 16 }}>
+    <Stack tokens={{ padding: 16, childrenGap: 16 }} styles={{ root: { backgroundColor: "#f5f5f5", minHeight: "100%" } }}>
       <Stack horizontal horizontalAlign="space-between" verticalAlign="center">
         <Text variant="xLarge" styles={{ root: { fontWeight: 600 } }}>
           Your Documents
@@ -157,7 +157,7 @@ const DocumentList: React.FC<DocumentListProps> = ({
       {isLoadingDocuments ? (
         <Stack tokens={{ childrenGap: 12 }}>
           {[1, 2, 3].map((i) => (
-            <Card key={i} elevation={1}>
+            <Card key={i} elevation={0} styles={{ root: { backgroundColor: "white", border: "1px solid #edebe9" } }}>
               <Stack horizontal tokens={{ childrenGap: 12 }}>
                 <Spinner />
                 <Text>Loading documents...</Text>
@@ -166,7 +166,7 @@ const DocumentList: React.FC<DocumentListProps> = ({
           ))}
         </Stack>
       ) : filteredDocuments.length === 0 ? (
-        <Stack horizontalAlign="center" tokens={{ padding: 40, childrenGap: 12 }}>
+        <Stack horizontalAlign="center" tokens={{ padding: 40, childrenGap: 12 }} styles={{ root: { backgroundColor: "white", border: "1px solid #edebe9" } }}>
           <Icon iconName="FabricFolder" styles={{ root: { fontSize: 48, color: "#a19f9d" } }} />
           <Text variant="large" styles={{ root: { fontWeight: 600 } }}>
             {documents.length === 0 ? "No Documents Available" : "No Documents Found"}
