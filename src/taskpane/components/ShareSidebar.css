@@ -262,35 +262,59 @@
   width: 100%;
 }
 
+.phone-input-field .PhoneInput {
+  width: 100%;
+  display: flex;
+  border: 1px solid rgba(0, 0, 0, 0.0578);
+  border-radius: 4px;
+  overflow: hidden;
+  transition: border-color 0.08s ease;
+  background: white;
+}
+
+.phone-input-field .PhoneInput:focus-within {
+  border-color: #005fb8;
+  border-width: 2px;
+  outline: 1px solid #005fb8;
+}
+
+.phone-input-field .PhoneInputCountry {
+  border: none;
+  border-right: 1px solid #edebe9;
+  background: #faf9f8;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 90px;
+}
+
 .phone-input-field .PhoneInputInput {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid #d1d1d1;
-  border-radius: 6px;
+  border: none;
   font-size: 14px;
-  transition: all 0.2s ease;
-  height: 40px;
+  outline: none;
+  background: white;
+  color: #323130;
 }
 
-.phone-input-field .PhoneInputInput:focus {
-  outline: none;
-  border-color: #0078d4;
-  box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.2);
+.phone-input-field .PhoneInputInput::placeholder {
+  color: #a19f9d;
 }
 
 .phone-input-field .PhoneInputInput:disabled {
   background-color: #f3f2f1;
   cursor: not-allowed;
   opacity: 0.6;
-}
-
-.phone-input-field .PhoneInputCountry {
-  margin-right: 8px;
+  color: #a19f9d;
 }
 
 .phone-input-field .PhoneInputCountryIcon {
-  width: 20px;
-  height: 15px;
+  width: 24px;
+  height: 18px;
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
 }
 
 .action-buttons {
@@ -298,6 +322,34 @@
   gap: 10px;
   margin-top: 4px;
   padding-top: 8px;
+}
+
+.action-buttons .ms-Button {
+  flex: 1;
+  height: 44px;
+  border-radius: 4px;
+  font-weight: 600;
+  transition: all 0.08s ease;
+}
+
+.action-buttons .ms-Button--primary {
+  background: #005fb8 !important;
+  border: none !important;
+}
+
+.action-buttons .ms-Button--primary:hover:not(:disabled) {
+  background: #0067c0 !important;
+}
+
+.action-buttons .ms-Button--primary:active {
+  background: #004c8c !important;
+}
+
+.action-buttons .ms-Button--primary:disabled {
+  background: rgba(0, 0, 0, 0.0373) !important;
+  color: rgba(0, 0, 0, 0.3614) !important;
+  cursor: not-allowed;
+}
 }
 
 .spinning {

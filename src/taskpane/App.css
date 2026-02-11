@@ -24,6 +24,55 @@ body {
   background-color: #f5f5f5;
 }
 
+/* Fluent UI Button Overrides - Windows 11 Design System */
+.ms-Button--primary {
+  background-color: #005fb8 !important;
+  border-color: #005fb8 !important;
+  color: white !important;
+  border-radius: 4px !important;
+}
+
+.ms-Button--primary:hover {
+  background-color: #0067c0 !important;
+  border-color: #0067c0 !important;
+}
+
+.ms-Button--primary:active {
+  background-color: #004c8c !important;
+  border-color: #004c8c !important;
+}
+
+.ms-Button--primary:disabled,
+.ms-Button--primary.is-disabled {
+  background-color: rgba(0, 0, 0, 0.0373) !important;
+  border-color: transparent !important;
+  color: rgba(0, 0, 0, 0.3614) !important;
+  opacity: 1;
+}
+
+.ms-Button--default {
+  background-color: rgba(0, 0, 0, 0.0373) !important;
+  border: 1px solid rgba(0, 0, 0, 0.0578) !important;
+  color: rgba(0, 0, 0, 0.8956) !important;
+  border-radius: 4px !important;
+}
+
+.ms-Button--default:hover {
+  background-color: rgba(0, 0, 0, 0.0578) !important;
+  border-color: rgba(0, 0, 0, 0.0578) !important;
+}
+
+.ms-Button--default:active {
+  background-color: rgba(0, 0, 0, 0.0241) !important;
+  color: rgba(0, 0, 0, 0.6063) !important;
+}
+
+.ms-Button--default:disabled {
+  background-color: rgba(0, 0, 0, 0.0373) !important;
+  border-color: transparent !important;
+  color: rgba(0, 0, 0, 0.3614) !important;
+}
+
 /* Allow text selection in specific areas */
 input, textarea, [contenteditable="true"] {
   -webkit-user-select: text;
@@ -81,13 +130,36 @@ input, textarea, [contenteditable="true"] {
   align-items: center;
 }
 
+.error-banner {
+  background-color: #fef2f2;
+  border-left: 4px solid #ef4444;
+  color: #991b1b;
+  padding: 12px 16px;
+  margin: 16px;
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
 .error-close {
   background: none;
   border: none;
-  font-size: 18px;
+  font-size: 20px;
   cursor: pointer;
-  color: #742a2a;
+  color: #991b1b;
   padding: 0 4px;
+  line-height: 1;
+  font-weight: bold;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.error-close:hover {
+  opacity: 1;
 }
 
 /* Spinner Animations */
