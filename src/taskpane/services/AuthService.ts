@@ -46,8 +46,18 @@ interface StoredAuth {
 export class AuthService {
   private static readonly STORAGE_KEY = "docuid_auth";
   private static readonly logger = Logger.getInstance().createContextLogger("AuthService");
-  // Always use relative URLs — proxied by webpack dev-server (dev) and Vercel rewrites (prod)
-  private static readonly API_BASE_URL = "";
+  
+  /**
+   * Get API base URL based on environment
+   * - Development: Use webpack proxy (localhost:3000/api/docuid -> dev.docuid.net)
+   * - Production: Call dev.docuid.net directly
+   */
+  private static getApiBaseUrl(): string {
+    if (process.env.NODE_ENV === "development") {
+      return ""; // Relative URLs will be proxied by webpack
+    }
+    return "https://dev.docuid.net";
+  }
 
   /**
    * Authenticate user with phone number via biometric verification
@@ -105,14 +115,19 @@ export class AuthService {
   private static async requestBiometricAuth(phoneNumber: string): Promise<void> {
     try {
       const startTime = Date.now();
+      const apiBaseUrl = this.getApiBaseUrl();
+      const path = process.env.NODE_ENV === "development"
+        ? "/api/docuid/biometric/auth-request"
+        : "/api/biometric/auth-request";
+      const url = `${apiBaseUrl}${path}`;
 
-      this.logger.logApiRequest("POST", "/api/docuid/biometric/auth-request", {
+      this.logger.logApiRequest("POST", url, {
         mobile: phoneNumber.substring(0, 3) + "***",
         requestFrom: "DocuID",
       });
 
       const response = await axios.post(
-        `${this.API_BASE_URL}/api/docuid/biometric/auth-request`,
+        url,
         {
           mobile: phoneNumber,
           requestFrom: "DocuID",
@@ -122,17 +137,12 @@ export class AuthService {
             "Content-Type": "application/json",
             "x-api-key": "PKIqfASvBfaKQxsg6DVn92ANw7bLsWXSalEsg5Bz",
           },
-          withCredentials: true, // Enable cookie-based session handling
+          withCredentials: false, // Don't use cookies - use Bearer token instead
         }
       );
 
       const responseTime = Date.now() - startTime;
-      this.logger.logApiResponse(
-        "POST",
-        "/api/docuid/biometric/auth-request",
-        response.status,
-        responseTime
-      );
+      this.logger.logApiResponse("POST", path, response.status, responseTime);
 
       this.logger.debug("Auth request response status", { status: response.data.data.status });
 
@@ -148,7 +158,7 @@ export class AuthService {
         const responseTime = Date.now() - startTime;
         this.logger.logApiResponse(
           "POST",
-          "/api/docuid/biometric/auth-request",
+          "/api/biometric/auth-request",
           error.response?.status || 0,
           responseTime
         );
@@ -184,9 +194,15 @@ export class AuthService {
       this.logger.debug(`Polling attempt ${attempt + 1}/${maxAttempts}`);
       const startTime = Date.now();
       try {
-        this.logger.logApiRequest("pollAuthResult", "POST", "/api/docuid/biometric/auth-result");
+        const apiBaseUrl = this.getApiBaseUrl();
+        const path = process.env.NODE_ENV === "development"
+          ? "/api/docuid/biometric/auth-result"
+          : "/api/biometric/auth-result";
+        const url = `${apiBaseUrl}${path}`;
+
+        this.logger.logApiRequest("pollAuthResult", "POST", path);
         const response = await axios.post(
-          `${this.API_BASE_URL}/api/docuid/biometric/auth-result`,
+          url,
           {
             mobile: phoneNumber,
           },
@@ -195,17 +211,12 @@ export class AuthService {
               "Content-Type": "application/json",
               "x-api-key": "PKIqfASvBfaKQxsg6DVn92ANw7bLsWXSalEsg5Bz",
             },
-            withCredentials: true, // Enable cookie-based session handling
+            withCredentials: false, // Don't use cookies - use Bearer token instead
           }
         );
 
         const responseTime = Date.now() - startTime;
-        this.logger.logApiResponse(
-          "POST",
-          "/api/docuid/biometric/auth-result",
-          response.status,
-          responseTime
-        );
+        this.logger.logApiResponse("POST", path, response.status, responseTime);
         this.logger.debug("API Response details", {
           status: response.status,
           statusText: response.statusText,
@@ -261,7 +272,7 @@ export class AuthService {
 
           this.logger.logApiResponse(
             "POST",
-            "/api/docuid/biometric/auth-result",
+            "/api/biometric/auth-result",
             status || 0,
             responseTime
           );
