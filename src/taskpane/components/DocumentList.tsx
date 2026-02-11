@@ -7,8 +7,7 @@ import {
   Stack,
   Text,
 } from "@fluentui/react";
-import { FileText, FolderOpen, RefreshCw } from "lucide-react";
-import { Shield, RefreshCw } from "lucide-react";
+import { FileText, FolderOpen, RefreshCw, Shield } from "lucide-react";
 import { Card } from "./shared/Card";
 import ShareSidebar from "./ShareSidebar";
 import ShareSuccessModal from "./ShareSuccessModal";
