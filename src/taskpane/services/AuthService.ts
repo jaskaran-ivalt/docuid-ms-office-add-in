@@ -1,5 +1,6 @@
 import axios from "axios";
 import { Logger } from "./Logger";
+import { BIOMETRIC_ROUTES, API_CONFIG } from "../../config/apiRoutes";
 
 interface AuthResponse {
   success: boolean;
@@ -46,18 +47,6 @@ interface StoredAuth {
 export class AuthService {
   private static readonly STORAGE_KEY = "docuid_auth";
   private static readonly logger = Logger.getInstance().createContextLogger("AuthService");
-  
-  /**
-   * Get API base URL based on environment
-   * - Development: Use webpack proxy (localhost:3000/api/docuid -> dev.docuid.net)
-   * - Production: Call dev.docuid.net directly
-   */
-  private static getApiBaseUrl(): string {
-    if (process.env.NODE_ENV === "development") {
-      return ""; // Relative URLs will be proxied by webpack
-    }
-    return "https://dev.docuid.net";
-  }
 
   /**
    * Authenticate user with phone number via biometric verification
@@ -115,34 +104,29 @@ export class AuthService {
   private static async requestBiometricAuth(phoneNumber: string): Promise<void> {
     try {
       const startTime = Date.now();
-      const apiBaseUrl = this.getApiBaseUrl();
-      const path = process.env.NODE_ENV === "development"
-        ? "/api/docuid/biometric/auth-request"
-        : "/api/biometric/auth-request";
-      const url = `${apiBaseUrl}${path}`;
 
-      this.logger.logApiRequest("POST", url, {
+      this.logger.logApiRequest("POST", BIOMETRIC_ROUTES.AUTH_REQUEST, {
         mobile: phoneNumber.substring(0, 3) + "***",
         requestFrom: "DocuID",
       });
 
       const response = await axios.post(
-        url,
+        BIOMETRIC_ROUTES.AUTH_REQUEST,
         {
           mobile: phoneNumber,
           requestFrom: "DocuID",
         },
         {
           headers: {
-            "Content-Type": "application/json",
-            "x-api-key": "PKIqfASvBfaKQxsg6DVn92ANw7bLsWXSalEsg5Bz",
+            "Content-Type": API_CONFIG.HEADERS.CONTENT_TYPE,
+            "x-api-key": API_CONFIG.HEADERS.API_KEY,
           },
-          withCredentials: false, // Don't use cookies - use Bearer token instead
+          withCredentials: API_CONFIG.WITH_CREDENTIALS,
         }
       );
 
       const responseTime = Date.now() - startTime;
-      this.logger.logApiResponse("POST", path, response.status, responseTime);
+      this.logger.logApiResponse("POST", BIOMETRIC_ROUTES.AUTH_REQUEST, response.status, responseTime);
 
       this.logger.debug("Auth request response status", { status: response.data.data.status });
 
@@ -194,29 +178,23 @@ export class AuthService {
       this.logger.debug(`Polling attempt ${attempt + 1}/${maxAttempts}`);
       const startTime = Date.now();
       try {
-        const apiBaseUrl = this.getApiBaseUrl();
-        const path = process.env.NODE_ENV === "development"
-          ? "/api/docuid/biometric/auth-result"
-          : "/api/biometric/auth-result";
-        const url = `${apiBaseUrl}${path}`;
-
-        this.logger.logApiRequest("pollAuthResult", "POST", path);
+        this.logger.logApiRequest("pollAuthResult", "POST", BIOMETRIC_ROUTES.AUTH_RESULT);
         const response = await axios.post(
-          url,
+          BIOMETRIC_ROUTES.AUTH_RESULT,
           {
             mobile: phoneNumber,
           },
           {
             headers: {
-              "Content-Type": "application/json",
-              "x-api-key": "PKIqfASvBfaKQxsg6DVn92ANw7bLsWXSalEsg5Bz",
+              "Content-Type": API_CONFIG.HEADERS.CONTENT_TYPE,
+              "x-api-key": API_CONFIG.HEADERS.API_KEY,
             },
-            withCredentials: false, // Don't use cookies - use Bearer token instead
+            withCredentials: API_CONFIG.WITH_CREDENTIALS,
           }
         );
 
         const responseTime = Date.now() - startTime;
-        this.logger.logApiResponse("POST", path, response.status, responseTime);
+        this.logger.logApiResponse("POST", BIOMETRIC_ROUTES.AUTH_RESULT, response.status, responseTime);
         this.logger.debug("API Response details", {
           status: response.status,
           statusText: response.statusText,
