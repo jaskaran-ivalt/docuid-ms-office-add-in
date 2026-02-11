@@ -1,11 +1,9 @@
 /* Documents Styles */
 .documents-container {
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  border: 1px solid #f0f0f0;
+  border: 1px solid #edebe9;
   overflow: hidden;
-  transition: all 0.3s ease;
+  transition: all 0.08s ease;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -13,8 +11,7 @@
 }
 
 .documents-container:hover {
-  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.12);
-  transform: translateY(-1px);
+  border-color: #d0d0d0;
 }
 
 .documents-header {
