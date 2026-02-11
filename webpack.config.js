@@ -10,7 +10,7 @@ const urlProd = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}/` 
   : process.env.PRODUCTION_URL 
     ? process.env.PRODUCTION_URL 
-    : "https://docuid-ms-office-add-in.vercel.app/";
+    : "https://addon.docuid.net/";
 
 // ============================================================
 // API BACKEND CONFIGURATION

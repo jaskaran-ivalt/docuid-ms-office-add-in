@@ -63,7 +63,7 @@ Production manifest with Vercel URLs. After deployment:
 
 1. **Add Domain in Vercel**
    - Go to Project → Settings → Domains
-   - Add your custom domain (e.g., `addin.docuid.net`)
+   - Add your custom domain (e.g., `addon.docuid.net`)
 
 2. **Update Manifest URLs**
    - Replace `https://docuid-ms-office-add-in.vercel.app/` with your domain in `manifest-production.xml`

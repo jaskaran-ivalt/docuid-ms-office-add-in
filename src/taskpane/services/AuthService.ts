@@ -1,5 +1,6 @@
 import axios from "axios";
 import { Logger } from "./Logger";
+import { BIOMETRIC_ROUTES, API_CONFIG } from "../../config/apiRoutes";
 
 interface AuthResponse {
   success: boolean;
@@ -46,8 +47,6 @@ interface StoredAuth {
 export class AuthService {
   private static readonly STORAGE_KEY = "docuid_auth";
   private static readonly logger = Logger.getInstance().createContextLogger("AuthService");
-  // Always use relative URLs — proxied by webpack dev-server (dev) and Vercel rewrites (prod)
-  private static readonly API_BASE_URL = "";
 
   /**
    * Authenticate user with phone number via biometric verification
@@ -106,33 +105,28 @@ export class AuthService {
     try {
       const startTime = Date.now();
 
-      this.logger.logApiRequest("POST", "/api/docuid/biometric/auth-request", {
+      this.logger.logApiRequest("POST", BIOMETRIC_ROUTES.AUTH_REQUEST, {
         mobile: phoneNumber.substring(0, 3) + "***",
         requestFrom: "DocuID",
       });
 
       const response = await axios.post(
-        `${this.API_BASE_URL}/api/docuid/biometric/auth-request`,
+        BIOMETRIC_ROUTES.AUTH_REQUEST,
         {
           mobile: phoneNumber,
           requestFrom: "DocuID",
         },
         {
           headers: {
-            "Content-Type": "application/json",
-            "x-api-key": "PKIqfASvBfaKQxsg6DVn92ANw7bLsWXSalEsg5Bz",
+            "Content-Type": API_CONFIG.HEADERS.CONTENT_TYPE,
+            "x-api-key": API_CONFIG.HEADERS.API_KEY,
           },
-          withCredentials: true, // Enable cookie-based session handling
+          withCredentials: API_CONFIG.WITH_CREDENTIALS,
         }
       );
 
       const responseTime = Date.now() - startTime;
-      this.logger.logApiResponse(
-        "POST",
-        "/api/docuid/biometric/auth-request",
-        response.status,
-        responseTime
-      );
+      this.logger.logApiResponse("POST", BIOMETRIC_ROUTES.AUTH_REQUEST, response.status, responseTime);
 
       this.logger.debug("Auth request response status", { status: response.data.data.status });
 
@@ -148,7 +142,7 @@ export class AuthService {
         const responseTime = Date.now() - startTime;
         this.logger.logApiResponse(
           "POST",
-          "/api/docuid/biometric/auth-request",
+          "/api/biometric/auth-request",
           error.response?.status || 0,
           responseTime
         );
@@ -184,28 +178,23 @@ export class AuthService {
       this.logger.debug(`Polling attempt ${attempt + 1}/${maxAttempts}`);
       const startTime = Date.now();
       try {
-        this.logger.logApiRequest("pollAuthResult", "POST", "/api/docuid/biometric/auth-result");
+        this.logger.logApiRequest("pollAuthResult", "POST", BIOMETRIC_ROUTES.AUTH_RESULT);
         const response = await axios.post(
-          `${this.API_BASE_URL}/api/docuid/biometric/auth-result`,
+          BIOMETRIC_ROUTES.AUTH_RESULT,
           {
             mobile: phoneNumber,
           },
           {
             headers: {
-              "Content-Type": "application/json",
-              "x-api-key": "PKIqfASvBfaKQxsg6DVn92ANw7bLsWXSalEsg5Bz",
+              "Content-Type": API_CONFIG.HEADERS.CONTENT_TYPE,
+              "x-api-key": API_CONFIG.HEADERS.API_KEY,
             },
-            withCredentials: true, // Enable cookie-based session handling
+            withCredentials: API_CONFIG.WITH_CREDENTIALS,
           }
         );
 
         const responseTime = Date.now() - startTime;
-        this.logger.logApiResponse(
-          "POST",
-          "/api/docuid/biometric/auth-result",
-          response.status,
-          responseTime
-        );
+        this.logger.logApiResponse("POST", BIOMETRIC_ROUTES.AUTH_RESULT, response.status, responseTime);
         this.logger.debug("API Response details", {
           status: response.status,
           statusText: response.statusText,
@@ -261,7 +250,7 @@ export class AuthService {
 
           this.logger.logApiResponse(
             "POST",
-            "/api/docuid/biometric/auth-result",
+            "/api/biometric/auth-result",
             status || 0,
             responseTime
           );
