@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Stack, Persona, PersonaSize, IconButton, Callout, DirectionalHint } from "@fluentui/react";
-import { User, Settings, LogOut, Bug } from "lucide-react";
 import "./Header.css";
 
 interface HeaderProps {
@@ -51,13 +50,16 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile, on
     return `${localPart.substring(0, 12)}...@${domain.substring(0, 8)}...`;
   };
 
-  // Dummy user data based on the image
-  const dummyUser = {
-    name: "Jaskaran Singh",
-    email: "jaskaran@ivalt.com",
-    phone: user?.phone || "+91 98765 43210",
-    plan: "PRO",
+  // Format phone number for display
+  const formatPhone = (phone: string) => {
+    if (!phone) return "";
+    // Remove + and format as needed
+    return phone;
   };
+
+  // Use actual user data
+  const displayName = user?.phone ? `User ${user.phone.slice(-4)}` : "User";
+  const displayEmail = user?.phone || "";
 
   return (
     <div className="header">
@@ -76,7 +78,7 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile, on
         {user && (
           <div className="header-user-section">
             {/* Debug Button */}
-            {onToggleDebug && (
+            {/* {onToggleDebug && (
               <button
                 className="debug-button"
                 onClick={onToggleDebug}
@@ -87,22 +89,24 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile, on
                   cursor: "pointer",
                   padding: "8px",
                   borderRadius: "4px",
-                  color: "#666",
+                  color: "rgba(255, 255, 255, 0.8)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   marginRight: "8px",
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = "#f0f0f0";
+                  e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.1)";
+                  e.currentTarget.style.color = "white";
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.backgroundColor = "transparent";
+                  e.currentTarget.style.color = "rgba(255, 255, 255, 0.8)";
                 }}
               >
                 <Bug size={16} />
               </button>
-            )}
+            )} */}
 
             {/* Search Icon */}
             {/* <div className="search-icon-wrapper">
@@ -112,12 +116,14 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile, on
             {/* User Profile Dropdown */}
             <div className="user-profile-dropdown" ref={dropdownRef}>
               <Persona
-                text={dummyUser.name}
-                secondaryText={truncateEmail(dummyUser.email)}
+                text={displayName}
+                secondaryText={formatPhone(displayEmail)}
                 size={PersonaSize.size32}
                 onClick={toggleDropdown}
                 styles={{
                   root: { cursor: "pointer" },
+                  primaryText: { color: "white" },
+                  secondaryText: { color: "rgba(255, 255, 255, 0.8)" },
                 }}
               />
 
@@ -134,8 +140,8 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile, on
                   <Stack tokens={{ padding: 16, childrenGap: 8 }}>
                     <Stack horizontal tokens={{ childrenGap: 12 }}>
                       <Persona
-                        text={dummyUser.name}
-                        secondaryText={dummyUser.email}
+                        text={displayName}
+                        secondaryText={displayEmail}
                         size={PersonaSize.size40}
                       />
                     </Stack>
