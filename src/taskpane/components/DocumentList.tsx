@@ -6,8 +6,8 @@ import {
   DefaultButton,
   Stack,
   Text,
-  Icon,
 } from "@fluentui/react";
+import { FileText, FolderOpen, RefreshCw } from "lucide-react";
 import { Shield, RefreshCw } from "lucide-react";
 import { Card } from "./shared/Card";
 import ShareSidebar from "./ShareSidebar";
@@ -95,27 +95,18 @@ const DocumentList: React.FC<DocumentListProps> = ({
   const getFileIcon = (type: string) => {
     switch (type.toLowerCase()) {
       case "pdf":
-        return <Icon iconName="PDF" styles={{ root: { fontSize: 32, color: "#d32f2f" } }} />;
+        return <FileText size={32} color="#dc3545" />;
       case "docx":
       case "doc":
-        return (
-          <Icon iconName="WordDocument" styles={{ root: { fontSize: 32, color: "#2b579a" } }} />
-        );
+        return <FileText size={32} color="#0d6efd" />;
       case "xlsx":
       case "xls":
-        return (
-          <Icon iconName="ExcelDocument" styles={{ root: { fontSize: 32, color: "#217346" } }} />
-        );
+        return <FileText size={32} color="#198754" />;
       case "pptx":
       case "ppt":
-        return (
-          <Icon
-            iconName="PowerPointDocument"
-            styles={{ root: { fontSize: 32, color: "#d24726" } }}
-          />
-        );
+        return <FileText size={32} color="#fd7e14" />;
       default:
-        return <Icon iconName="Page" styles={{ root: { fontSize: 32, color: "#605e5c" } }} />;
+        return <FileText size={32} color="#6c757d" />;
     }
   };
 
@@ -159,10 +150,10 @@ const DocumentList: React.FC<DocumentListProps> = ({
         </Text>
         {onReload && (
           <DefaultButton
-            iconProps={{ iconName: "Refresh" }}
             text={isReloading ? "Reloading..." : "Reload"}
             onClick={handleReload}
             disabled={isReloading || isLoadingDocuments}
+            onRenderIcon={() => <RefreshCw size={16} style={{ marginRight: 4 }} />}
           />
         )}
       </Stack>
@@ -200,7 +191,7 @@ const DocumentList: React.FC<DocumentListProps> = ({
           tokens={{ padding: 40, childrenGap: 12 }}
           styles={{ root: { backgroundColor: "white", border: "1px solid #edebe9" } }}
         >
-          <Icon iconName="FabricFolder" styles={{ root: { fontSize: 48, color: "#a19f9d" } }} />
+          <FolderOpen size={48} color="#a19f9d" />
           <Text variant="large" styles={{ root: { fontWeight: 600 } }}>
             {documents.length === 0 ? "No Documents Available" : "No Documents Found"}
           </Text>
@@ -237,16 +228,13 @@ const DocumentList: React.FC<DocumentListProps> = ({
                       justifyContent: "center",
                     }}
                   >
-                    {getFileIcon("docx")}
+                    {getFileIcon(document.type)}
                   </div>
                   <Stack tokens={{ childrenGap: 4 }}>
                     <Stack horizontal tokens={{ childrenGap: 8 }} verticalAlign="center">
                       <Text variant="medium" styles={{ root: { fontWeight: 600 } }}>
                         {document.title}
                       </Text>
-                      {/* {document.isPasswordProtected && (
-                        <Shield size={14} style={{ color: "#005fb8" }} />
-                      )} */}
                     </Stack>
                     <Stack horizontal tokens={{ childrenGap: 8 }}>
                       <Text variant="small" styles={{ root: { color: "#605e5c" } }}>
