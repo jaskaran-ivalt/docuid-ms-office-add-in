@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
-import { DefaultButton, Stack } from "@fluentui/react";
-import { Phone, User, Settings, LogOut, ChevronDown, Search, Crown, Bug } from "lucide-react";
+import { Stack, Persona, PersonaSize, IconButton, Callout, DirectionalHint } from "@fluentui/react";
+import { User, Settings, LogOut, Bug } from "lucide-react";
 import "./Header.css";
 
 interface HeaderProps {
@@ -111,72 +111,60 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile, on
 
             {/* User Profile Dropdown */}
             <div className="user-profile-dropdown" ref={dropdownRef}>
-              <button
-                className="user-profile-trigger"
+              <Persona
+                text={dummyUser.name}
+                secondaryText={truncateEmail(dummyUser.email)}
+                size={PersonaSize.size32}
                 onClick={toggleDropdown}
-                aria-expanded={isDropdownOpen}
-              >
-                <div className="user-avatar">
-                  <div className="avatar-initials">{getInitials(dummyUser.name)}</div>
-                </div>
-                <div className="user-info">
-                  <div className="user-name">{dummyUser.name}</div>
-                  <div className="user-email" title={dummyUser.email}>
-                    {truncateEmail(dummyUser.email)}
-                  </div>
-                </div>
-                {/* <div className="plan-badge">
-                  <Crown size={12} />
-                  <span>{dummyUser.plan}</span>
-                </div> */}
-                <ChevronDown
-                  size={16}
-                  className={`dropdown-chevron ${isDropdownOpen ? "rotated" : ""}`}
-                />
-              </button>
+                styles={{
+                  root: { cursor: "pointer" },
+                }}
+              />
 
               {/* Dropdown Menu */}
               {isDropdownOpen && (
-                <div className="dropdown-menu">
-                  {/* User Info Section */}
-                  <div className="dropdown-user-info">
-                    <div className="dropdown-avatar">
-                      <div className="avatar-initials">{getInitials(dummyUser.name)}</div>
-                    </div>
-                    <div className="dropdown-user-details">
-                      <div className="dropdown-user-name">{dummyUser.name}</div>
-                      <div className="dropdown-user-email">{dummyUser.email}</div>
-                    </div>
-                    <div className="dropdown-plan-badge">
-                      <Crown size={12} />
-                      <span>{dummyUser.plan}</span>
-                    </div>
-                  </div>
-
-                  {/* Menu Items */}
-                  <div className="dropdown-menu-items">
-                    {onNavigateToProfile && (
-                      <button
-                        className="dropdown-menu-item"
-                        onClick={() => {
-                          onNavigateToProfile();
-                          setIsDropdownOpen(false);
-                        }}
-                      >
-                        <User size={16} />
-                        <span>Profile</span>
-                      </button>
-                    )}
-                    <button className="dropdown-menu-item">
-                      <Settings size={16} />
-                      <span>Settings</span>
-                    </button>
-                    <button className="dropdown-menu-item logout-item" onClick={onLogout}>
-                      <LogOut size={16} />
-                      <span>Logout</span>
-                    </button>
-                  </div>
-                </div>
+                <Callout
+                  target={dropdownRef.current}
+                  onDismiss={() => setIsDropdownOpen(false)}
+                  directionalHint={DirectionalHint.bottomRightEdge}
+                  styles={{
+                    root: { padding: 0 },
+                  }}
+                >
+                  <Stack tokens={{ padding: 16, childrenGap: 8 }}>
+                    <Stack horizontal tokens={{ childrenGap: 12 }}>
+                      <Persona
+                        text={dummyUser.name}
+                        secondaryText={dummyUser.email}
+                        size={PersonaSize.size40}
+                      />
+                    </Stack>
+                    <Stack tokens={{ childrenGap: 4 }}>
+                      {onNavigateToProfile && (
+                        <IconButton
+                          text="Profile"
+                          iconProps={{ iconName: "Contact" }}
+                          onClick={() => {
+                            onNavigateToProfile();
+                            setIsDropdownOpen(false);
+                          }}
+                          styles={{ root: { width: "100%", justifyContent: "flex-start" } }}
+                        />
+                      )}
+                      <IconButton
+                        text="Settings"
+                        iconProps={{ iconName: "Settings" }}
+                        styles={{ root: { width: "100%", justifyContent: "flex-start" } }}
+                      />
+                      <IconButton
+                        text="Logout"
+                        iconProps={{ iconName: "SignOut" }}
+                        onClick={onLogout}
+                        styles={{ root: { width: "100%", justifyContent: "flex-start" } }}
+                      />
+                    </Stack>
+                  </Stack>
+                </Callout>
               )}
             </div>
           </div>

@@ -1,16 +1,7 @@
 import React, { useState } from "react";
-import { TextField, Spinner, DefaultButton, Stack } from "@fluentui/react";
-import {
-  FileText,
-  Search,
-  Folder,
-  File,
-  FileSpreadsheet,
-  Presentation,
-  Loader2,
-  Shield,
-  RefreshCw,
-} from "lucide-react";
+import { SearchBox, Spinner, PrimaryButton, DefaultButton, Stack, Text, Icon } from "@fluentui/react";
+import { Shield, RefreshCw } from "lucide-react";
+import { Card } from "./shared/Card";
 import ShareSidebar from "./ShareSidebar";
 import ShareSuccessModal from "./ShareSuccessModal";
 import "./DocumentList.css";
@@ -96,178 +87,155 @@ const DocumentList: React.FC<DocumentListProps> = ({
   const getFileIcon = (type: string) => {
     switch (type.toLowerCase()) {
       case "pdf":
-        return (
-          <img
-            src="assets/pdf.png"
-            alt="PDF"
-            style={{ marginTop: "10px", width: "40px", height: "40px", objectFit: "contain" }}
-          />
-        );
+        return <Icon iconName="PDF" styles={{ root: { fontSize: 40, color: "#d32f2f" } }} />;
       case "docx":
       case "doc":
-        return (
-          <img
-            src="assets/docx.png"
-            alt="Word Document"
-            style={{ marginTop: "10px", width: "40px", height: "40px", objectFit: "contain" }}
-          />
-        );
+        return <Icon iconName="WordDocument" styles={{ root: { fontSize: 40, color: "#2b579a" } }} />;
       case "xlsx":
       case "xls":
-        return <FileSpreadsheet size={24} style={{ color: "#217346" }} />;
+        return <Icon iconName="ExcelDocument" styles={{ root: { fontSize: 40, color: "#217346" } }} />;
       case "pptx":
       case "ppt":
-        return <Presentation size={24} style={{ color: "#d24726" }} />;
+        return <Icon iconName="PowerPointDocument" styles={{ root: { fontSize: 40, color: "#d24726" } }} />;
       default:
-        return <File size={24} style={{ color: "#605e5c" }} />;
+        return <Icon iconName="Page" styles={{ root: { fontSize: 40, color: "#605e5c" } }} />;
     }
   };
 
   // Skeleton loading component
   const DocumentSkeleton = () => (
-    <div className="document-skeleton">
-      <div className="skeleton-icon"></div>
-      <div className="skeleton-content">
-        <div className="skeleton-title"></div>
-        <div className="skeleton-meta">
-          <div className="skeleton-badge"></div>
-          <div className="skeleton-text"></div>
-          <div className="skeleton-text"></div>
-        </div>
-      </div>
-      <div className="skeleton-actions">
-        <div className="skeleton-button"></div>
-        <div className="skeleton-button"></div>
-      </div>
-    </div>
+    <Card elevation={1}>
+      <Stack horizontal tokens={{ childrenGap: 12 }}>
+        <Spinner />
+        <Text>Loading...</Text>
+      </Stack>
+    </Card>
   );
 
   if (isLoadingDocuments) {
     return (
-      <div className="documents-container">
-        <div className="documents-header">
-          <h2>Your Documents</h2>
-          <div className="search-container">
-            <Search size={16} className="search-icon" />
-            <div className="skeleton-search"></div>
-          </div>
-        </div>
-
-        <div className="documents-list">
+      <Stack tokens={{ padding: 16, childrenGap: 16 }}>
+        <Text variant="xLarge" styles={{ root: { fontWeight: 600 } }}>
+          Your Documents
+        </Text>
+        <SearchBox placeholder="Search documents..." disabled />
+        <Stack tokens={{ childrenGap: 12 }}>
           {[1, 2, 3, 4, 5].map((index) => (
             <DocumentSkeleton key={index} />
           ))}
-        </div>
-      </div>
+        </Stack>
+      </Stack>
     );
   }
 
   return (
-    <div className="documents-container">
-      <div className="documents-header">
-        <div className="documents-header-top">
-          <h2>Your Documents</h2>
-          {onReload && (
-            <button
-              className="reload-button"
-              onClick={handleReload}
-              disabled={isReloading || isLoadingDocuments}
-              title="Reload documents"
-            >
-              <RefreshCw size={18} className={isReloading ? "spinning" : ""} />
-              <span>{isReloading ? "Reloading..." : "Reload"}</span>
-            </button>
-          )}
-        </div>
-        <div className="search-container">
-          <Search size={16} className="search-icon" />
-          <TextField
-            placeholder="Search documents..."
-            value={searchTerm}
-            onChange={(_, v) => setSearchTerm(v || "")}
-            styles={{
-              root: { width: 220 },
-              field: { paddingLeft: 36 },
-            }}
-            borderless
-            underlined
+    <Stack tokens={{ padding: 16, childrenGap: 16 }}>
+      <Stack horizontal horizontalAlign="space-between" verticalAlign="center">
+        <Text variant="xLarge" styles={{ root: { fontWeight: 600 } }}>
+          Your Documents
+        </Text>
+        {onReload && (
+          <DefaultButton
+            iconProps={{ iconName: "Refresh" }}
+            text={isReloading ? "Reloading..." : "Reload"}
+            onClick={handleReload}
+            disabled={isReloading || isLoadingDocuments}
           />
-        </div>
-      </div>
+        )}
+      </Stack>
 
-      {filteredDocuments.length === 0 ? (
-        <div className="no-documents">
-          {documents.length === 0 ? (
-            <>
-              <Folder size={48} className="no-docs-icon" />
-              <h3>No Documents Available</h3>
-              <p>You don't have any documents available at the moment.</p>
-            </>
-          ) : (
-            <>
-              <Search size={48} className="no-docs-icon" />
-              <h3>No Documents Found</h3>
-              <p>No documents match your search criteria.</p>
-            </>
-          )}
-        </div>
-      ) : (
-        <div className="documents-list">
-          {filteredDocuments.map((document) => (
-            <div key={document.id} className="document-item">
-              <div className="document-icon">{getFileIcon(document.type)}</div>
-              <div className="document-info">
-                <h3 className="document-title">
-                  {document.title}
-                  {document.isPasswordProtected && (
-                    <Shield size={14} className="document-protected-icon" />
-                  )}
-                </h3>
-                <div className="document-meta">
-                  <span className="document-type">{document.type.toUpperCase()}</span>
-                  <span className="document-separator">•</span>
-                  <span>{document.size}</span>
-                  <span className="document-separator">•</span>
-                  <span>{document.dateModified}</span>
-                </div>
-              </div>
-              <div className="document-actions">
-                <button
-                  className="document-open-btn"
-                  onClick={() => onDocumentOpen(document)}
-                  disabled={
-                    isLoadingDocuments ||
-                    openingDocumentId === document.id ||
-                    closingDocumentId === document.id
-                  }
-                >
-                  {openingDocumentId === document.id ? (
-                    <>
-                      <Loader2 size={14} className="spinning" />
-                      <span>Opening...</span>
-                    </>
-                  ) : (
-                    "Open"
-                  )}
-                </button>
-                <button
-                  className="document-share-btn"
-                  onClick={() => {
-                    setSelectedDocument(document);
-                    setIsShareSidebarOpen(true);
-                  }}
-                  disabled={
-                    isLoadingDocuments ||
-                    openingDocumentId === document.id ||
-                    closingDocumentId === document.id
-                  }
-                >
-                  Share
-                </button>
-              </div>
-            </div>
+      <SearchBox
+        placeholder="Search documents..."
+        value={searchTerm}
+        onChange={(_, value) => setSearchTerm(value || "")}
+        onClear={() => setSearchTerm("")}
+      />
+
+      {isLoadingDocuments ? (
+        <Stack tokens={{ childrenGap: 12 }}>
+          {[1, 2, 3].map((i) => (
+            <Card key={i} elevation={1}>
+              <Stack horizontal tokens={{ childrenGap: 12 }}>
+                <Spinner />
+                <Text>Loading documents...</Text>
+              </Stack>
+            </Card>
           ))}
-        </div>
+        </Stack>
+      ) : filteredDocuments.length === 0 ? (
+        <Stack horizontalAlign="center" tokens={{ padding: 40, childrenGap: 12 }}>
+          <Icon iconName="FabricFolder" styles={{ root: { fontSize: 48, color: "#a19f9d" } }} />
+          <Text variant="large" styles={{ root: { fontWeight: 600 } }}>
+            {documents.length === 0 ? "No Documents Available" : "No Documents Found"}
+          </Text>
+          <Text variant="medium" styles={{ root: { color: "#605e5c" } }}>
+            {documents.length === 0
+              ? "You don't have any documents available at the moment."
+              : "No documents match your search criteria."}
+          </Text>
+        </Stack>
+      ) : (
+        <Stack tokens={{ childrenGap: 12 }}>
+          {filteredDocuments.map((document) => (
+            <Card key={document.id} elevation={1} hoverable>
+              <Stack horizontal horizontalAlign="space-between" verticalAlign="center">
+                <Stack horizontal tokens={{ childrenGap: 12 }} verticalAlign="center">
+                  {getFileIcon(document.type)}
+                  <Stack tokens={{ childrenGap: 4 }}>
+                    <Stack horizontal tokens={{ childrenGap: 8 }} verticalAlign="center">
+                      <Text variant="medium" styles={{ root: { fontWeight: 600 } }}>
+                        {document.title}
+                      </Text>
+                      {document.isPasswordProtected && (
+                        <Shield size={14} style={{ color: "#0078d4" }} />
+                      )}
+                    </Stack>
+                    <Stack horizontal tokens={{ childrenGap: 8 }}>
+                      <Text variant="small" styles={{ root: { color: "#605e5c" } }}>
+                        {document.type.toUpperCase()}
+                      </Text>
+                      <Text variant="small" styles={{ root: { color: "#a19f9d" } }}>
+                        •
+                      </Text>
+                      <Text variant="small" styles={{ root: { color: "#605e5c" } }}>
+                        {document.size}
+                      </Text>
+                      <Text variant="small" styles={{ root: { color: "#a19f9d" } }}>
+                        •
+                      </Text>
+                      <Text variant="small" styles={{ root: { color: "#605e5c" } }}>
+                        {document.dateModified}
+                      </Text>
+                    </Stack>
+                  </Stack>
+                </Stack>
+                <Stack horizontal tokens={{ childrenGap: 8 }}>
+                  <PrimaryButton
+                    text={openingDocumentId === document.id ? "Opening..." : "Open"}
+                    onClick={() => onDocumentOpen(document)}
+                    disabled={
+                      isLoadingDocuments ||
+                      openingDocumentId === document.id ||
+                      closingDocumentId === document.id
+                    }
+                  />
+                  <DefaultButton
+                    text="Share"
+                    onClick={() => {
+                      setSelectedDocument(document);
+                      setIsShareSidebarOpen(true);
+                    }}
+                    disabled={
+                      isLoadingDocuments ||
+                      openingDocumentId === document.id ||
+                      closingDocumentId === document.id
+                    }
+                  />
+                </Stack>
+              </Stack>
+            </Card>
+          ))}
+        </Stack>
       )}
 
       <ShareSidebar
@@ -280,13 +248,9 @@ const DocumentList: React.FC<DocumentListProps> = ({
         onShare={async (shareData) => {
           if (onDocumentShare) {
             return await onDocumentShare(shareData);
-          } else {
-            // Default implementation - you can customize this
-            console.log("Sharing document:", shareData);
-            // Simulate API call
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-            return { message: "Document shared successfully" };
           }
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          return { message: "Document shared successfully" };
         }}
         onCloseDocument={onCloseDocument}
         onShareSuccess={handleShareSuccess}
@@ -306,12 +270,12 @@ const DocumentList: React.FC<DocumentListProps> = ({
                 recipientEmail: shareResponse.recipientEmail,
                 recipientMobile: shareResponse.recipientMobile,
                 message: shareResponse.customMessage,
-                expiryDate: undefined, // Will be populated from API response if needed
+                expiryDate: undefined,
               }
             : null
         }
       />
-    </div>
+    </Stack>
   );
 };
 

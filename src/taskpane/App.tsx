@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { ThemeProvider } from "@fluentui/react";
 import LoginForm from "@/taskpane/components/LoginForm";
 import DocumentList from "@/taskpane/components/DocumentList";
 import Header from "@/taskpane/components/Header";
@@ -7,7 +8,7 @@ import DebugPanel from "@/taskpane/components/DebugPanel";
 import { AuthService } from "@/taskpane/services/AuthService";
 import { DocuIdApiService } from "@/taskpane/services/DocuIdApiService";
 import { DocumentService } from "@/taskpane/services/DocumentService";
-import { DocuIdThemeProvider } from "./components/DesignSystem";
+import { docuIdTheme } from "./theme/fluentTheme";
 import { logger } from "@/taskpane/services/Logger";
 import "./App.css";
 
@@ -216,6 +217,21 @@ const App: React.FC = () => {
             <div className="error-message">
               {error}
               <button onClick={() => setError("")} className="error-close">
+  return (
+    <ThemeProvider theme={docuIdTheme}>
+      <div className="app-container">
+        <Header
+          user={user}
+          onLogout={handleLogout}
+          onNavigateToProfile={handleNavigateToProfile}
+          onToggleDebug={() => setDebugPanelOpen(!debugPanelOpen)}
+        />
+
+        <main className="app-main">
+          {error && (
+            <div className="error-banner">
+              <span>{error}</span>
+              <button onClick={() => setError("")} className="error-close">
                 ×
               </button>
             </div>
@@ -241,7 +257,7 @@ const App: React.FC = () => {
 
         <DebugPanel isOpen={debugPanelOpen} onClose={() => setDebugPanelOpen(false)} />
       </div>
-    </DocuIdThemeProvider>
+    </ThemeProvider>
   );
 };
 
