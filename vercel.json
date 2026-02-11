@@ -11,6 +11,22 @@
     {
       "source": "/index.html",
       "destination": "/taskpane.html"
+    },
+    {
+      "source": "/api/biometric/:path*",
+      "destination": "https://dev.docuid.net/api/biometric/:path*"
+    },
+    {
+      "source": "/api/documents/:id/download",
+      "destination": "https://dev.docuid.net/api/documents/:id/download"
+    },
+    {
+      "source": "/api/documents/:id/content",
+      "destination": "https://dev.docuid.net/api/documents/:id/content"
+    },
+    {
+      "source": "/api/dashboard/:path*",
+      "destination": "https://dev.docuid.net/api/dashboard/:path*"
     }
   ],
   "headers": [
@@ -27,7 +43,7 @@
         },
         {
           "key": "Access-Control-Allow-Headers",
-          "value": "Content-Type, Authorization"
+          "value": "Content-Type, Authorization, x-api-key"
         }
       ]
     }
