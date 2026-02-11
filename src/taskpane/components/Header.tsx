@@ -1,5 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Stack, Persona, PersonaSize, IconButton, Callout, DirectionalHint } from "@fluentui/react";
+import {
+  Stack,
+  Persona,
+  PersonaSize,
+  IconButton,
+  Callout,
+  DirectionalHint,
+  Text,
+} from "@fluentui/react";
 import "./Header.css";
 
 interface HeaderProps {
