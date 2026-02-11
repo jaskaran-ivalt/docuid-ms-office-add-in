@@ -8,6 +8,7 @@ import {
   DirectionalHint,
   Text,
 } from "@fluentui/react";
+import { User, Settings, LogOut, Bug } from "lucide-react";
 import "./Header.css";
 
 interface HeaderProps {
@@ -213,36 +214,84 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile, on
                     </Stack>
                     <Stack tokens={{ childrenGap: 4 }}>
                       {onNavigateToProfile && (
-                        <IconButton
-                          text="Profile"
-                          iconProps={{ iconName: "Contact" }}
+                        <button
                           onClick={() => {
                             onNavigateToProfile();
                             setIsDropdownOpen(false);
                           }}
-                          styles={{
-                            root: { width: "100%", justifyContent: "flex-start" },
-                            label: { color: "#323130" },
+                          style={{
+                            width: "100%",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                            padding: "8px 12px",
+                            border: "none",
+                            background: "transparent",
+                            cursor: "pointer",
+                            fontSize: "14px",
+                            color: "#323130",
+                            textAlign: "left",
                           }}
-                        />
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = "#f3f2f1";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = "transparent";
+                          }}
+                        >
+                          <User size={16} />
+                          <span>Profile</span>
+                        </button>
                       )}
-                      <IconButton
-                        text="Settings"
-                        iconProps={{ iconName: "Settings" }}
-                        styles={{
-                          root: { width: "100%", justifyContent: "flex-start" },
-                          label: { color: "#323130" },
+                      <button
+                        style={{
+                          width: "100%",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "8px",
+                          padding: "8px 12px",
+                          border: "none",
+                          background: "transparent",
+                          cursor: "pointer",
+                          fontSize: "14px",
+                          color: "#323130",
+                          textAlign: "left",
                         }}
-                      />
-                      <IconButton
-                        text="Logout"
-                        iconProps={{ iconName: "SignOut" }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = "#f3f2f1";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = "transparent";
+                        }}
+                      >
+                        <Settings size={16} />
+                        <span>Settings</span>
+                      </button>
+                      <button
                         onClick={onLogout}
-                        styles={{
-                          root: { width: "100%", justifyContent: "flex-start" },
-                          label: { color: "#323130" },
+                        style={{
+                          width: "100%",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "8px",
+                          padding: "8px 12px",
+                          border: "none",
+                          background: "transparent",
+                          cursor: "pointer",
+                          fontSize: "14px",
+                          color: "#323130",
+                          textAlign: "left",
                         }}
-                      />
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = "#f3f2f1";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = "transparent";
+                        }}
+                      >
+                        <LogOut size={16} />
+                        <span>Logout</span>
+                      </button>
                     </Stack>
                   </Stack>
                 </Callout>
