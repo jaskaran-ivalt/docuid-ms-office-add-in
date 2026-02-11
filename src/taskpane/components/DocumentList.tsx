@@ -105,9 +105,12 @@ const DocumentList: React.FC<DocumentListProps> = ({
   // Skeleton loading component
   const DocumentSkeleton = () => (
     <Card elevation={1}>
-      <Stack horizontal tokens={{ childrenGap: 12 }}>
-        <Spinner />
-        <Text>Loading...</Text>
+      <Stack horizontal tokens={{ childrenGap: 12 }} verticalAlign="center">
+        <div style={{ width: 40, height: 40, backgroundColor: '#f3f2f1', borderRadius: 4 }} />
+        <Stack tokens={{ childrenGap: 4 }} styles={{ root: { flex: 1 } }}>
+          <div style={{ width: '60%', height: 16, backgroundColor: '#f3f2f1', borderRadius: 2 }} />
+          <div style={{ width: '40%', height: 12, backgroundColor: '#f3f2f1', borderRadius: 2 }} />
+        </Stack>
       </Stack>
     </Card>
   );
@@ -120,7 +123,7 @@ const DocumentList: React.FC<DocumentListProps> = ({
         </Text>
         <SearchBox placeholder="Search documents..." disabled />
         <Stack tokens={{ childrenGap: 12 }}>
-          {[1, 2, 3, 4, 5].map((index) => (
+          {[1, 2, 3].map((index) => (
             <DocumentSkeleton key={index} />
           ))}
         </Stack>
