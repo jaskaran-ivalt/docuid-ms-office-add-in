@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## AI Assistant Rules
+
+**IMPORTANT**: Never use emojis in code, comments, commit messages, or PR descriptions. Use clear, professional language instead.
+
 ## Development Commands
 
 ### Primary Development Commands
