@@ -203,21 +203,6 @@ const App: React.FC = () => {
   };
 
   return (
-    <DocuIdThemeProvider>
-      <div className="app-container">
-        <Header
-          user={user}
-          onLogout={handleLogout}
-          onNavigateToProfile={isAuthenticated ? handleNavigateToProfile : undefined}
-          onToggleDebug={() => setDebugPanelOpen((prev) => !prev)}
-        />
-
-        <main className="main-content">
-          {error && (
-            <div className="error-message">
-              {error}
-              <button onClick={() => setError("")} className="error-close">
-  return (
     <ThemeProvider theme={docuIdTheme}>
       <div className="app-container">
         <Header
