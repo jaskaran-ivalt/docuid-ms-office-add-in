@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { PrimaryButton, Spinner, Stack } from "@fluentui/react";
-import { Lock, Shield } from "lucide-react";
+import { PrimaryButton, Spinner, Stack, TextField, Text } from "@fluentui/react";
+import { Shield } from "lucide-react";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import "./LoginForm.css";
@@ -23,99 +23,75 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
   const isValidPhone = phoneNumber && phoneNumber.length >= 10;
 
   return (
-    <div className="login-container">
-      <div className="login-card">
+    <Stack tokens={{ padding: 24, childrenGap: 24 }} styles={{ root: { height: "100vh", justifyContent: "center" } }}>
+      <Stack tokens={{ childrenGap: 16 }} styles={{ root: { maxWidth: 400, margin: "0 auto", width: "100%" } }}>
         {/* Header Section */}
-        <div className="login-header">
-          <div className="flex items-center justify-center">
-            <img
-              src="assets/logo-transparent-bg.png"
-              alt="DocuID Logo"
-              style={{ width: "140px", objectFit: "contain" }}
-            />
-          </div>
-          <h1 className="login-title">DocuID™ Security Platform</h1>
-          <p className="login-subtitle">
+        <Stack horizontalAlign="center" tokens={{ childrenGap: 12 }}>
+          <img
+            src="assets/logo-transparent-bg.png"
+            alt="DocuID Logo"
+            style={{ width: "140px", objectFit: "contain" }}
+          />
+          <Text variant="xLarge" styles={{ root: { fontWeight: 600 } }}>
+            DocuID™ Security Platform
+          </Text>
+          <Text variant="medium" styles={{ root: { textAlign: "center", color: "#605e5c" } }}>
             Secure your digital assets with our advanced file identity and verification system
             powered by iVALT technology
-          </p>
-        </div>
+          </Text>
+        </Stack>
 
         {/* Form Section */}
-        <form onSubmit={handleSubmit} className="login-form">
-          <div className="form-group">
-            <label htmlFor="phone" className="form-label">
-              Mobile Number
-            </label>
-            <PhoneInput
-              id="phone"
-              international
-              defaultCountry="IN"
-              value={phoneNumber}
-              onChange={(value) => setPhoneNumber(value || "")}
-              placeholder="Enter your mobile number"
-              disabled={isLoading}
-              className="phone-input-field"
-            />
-          </div>
+        <form onSubmit={handleSubmit}>
+          <Stack tokens={{ childrenGap: 16 }}>
+            <Stack.Item>
+              <Text variant="medium" styles={{ root: { fontWeight: 600, marginBottom: 8 } }}>
+                Mobile Number
+              </Text>
+              <PhoneInput
+                id="phone"
+                international
+                defaultCountry="IN"
+                value={phoneNumber}
+                onChange={(value) => setPhoneNumber(value || "")}
+                placeholder="Enter your mobile number"
+                disabled={isLoading}
+                className="phone-input-field"
+              />
+            </Stack.Item>
 
-          <PrimaryButton
-            type="submit"
-            disabled={!isValidPhone || isLoading}
-            text={isLoading ? "Authenticating..." : "Login with Biometrics"}
-            iconProps={{ iconName: undefined }}
-            className="login-button"
-            style={{
-              width: "100%",
-              height: "40px",
-              fontSize: "16px",
-              fontWeight: "300",
-              borderRadius: "6px",
-              border: "none",
-              background:
-                isValidPhone && !isLoading
-                  ? "linear-gradient(135deg, #0078d4 0%, #106ebe 100%)"
-                  : "#f3f2f1",
-              color: isValidPhone && !isLoading ? "white" : "#605e5c",
-              cursor: isValidPhone && !isLoading ? "pointer" : "not-allowed",
-              transition: "all 0.2s ease",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "8px",
-              marginTop: "8px",
-            }}
-            onMouseEnter={(e) => {
-              if (isValidPhone && !isLoading) {
-                const target = e.currentTarget as HTMLElement;
-                target.style.transform = "translateY(-1px)";
-                target.style.boxShadow = "0 4px 12px rgba(0, 120, 212, 0.3)";
-              }
-            }}
-            onMouseLeave={(e) => {
-              const target = e.currentTarget as HTMLElement;
-              target.style.transform = "translateY(0)";
-              target.style.boxShadow = "none";
-            }}
-          >
-            {isLoading ? <Spinner size={1} /> : null}
-          </PrimaryButton>
+            <PrimaryButton
+              type="submit"
+              disabled={!isValidPhone || isLoading}
+              text={isLoading ? "Authenticating..." : "Login with Biometrics"}
+              styles={{
+                root: {
+                  height: 40,
+                  borderRadius: 4,
+                },
+              }}
+            >
+              {isLoading && <Spinner size={1} />}
+            </PrimaryButton>
+          </Stack>
         </form>
 
         {/* Secure Process Section */}
-        <div className="secure-process">
-          <div className="secure-process-header">
-            <Shield size={18} className="shield-icon" />
-            <h3 className="secure-process-title">Secure Process:</h3>
-          </div>
-          <ol className="secure-process-steps">
-            <li>Enter your iVALT registered mobile number</li>
-            <li>Complete biometric verification on your device</li>
-            <li>Access your documents securely</li>
-          </ol>
-        </div>
-      </div>
-    </div>
+        <Stack tokens={{ childrenGap: 8 }} styles={{ root: { padding: 16, backgroundColor: "#f3f2f1", borderRadius: 4 } }}>
+          <Stack horizontal tokens={{ childrenGap: 8 }} verticalAlign="center">
+            <Shield size={18} />
+            <Text variant="medium" styles={{ root: { fontWeight: 600 } }}>
+              Secure Process:
+            </Text>
+          </Stack>
+          <Stack as="ol" tokens={{ childrenGap: 4 }} styles={{ root: { paddingLeft: 20, margin: 0 } }}>
+            <Text as="li" variant="small">Enter your iVALT registered mobile number</Text>
+            <Text as="li" variant="small">Complete biometric verification on your device</Text>
+            <Text as="li" variant="small">Access your documents securely</Text>
+          </Stack>
+        </Stack>
+      </Stack>
+    </Stack>
   );
 };
 
