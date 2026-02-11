@@ -23,8 +23,23 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
   const isValidPhone = phoneNumber && phoneNumber.length >= 10;
 
   return (
-    <Stack tokens={{ padding: 24, childrenGap: 24 }} styles={{ root: { height: "100vh", justifyContent: "center" } }}>
-      <Stack tokens={{ childrenGap: 16 }} styles={{ root: { maxWidth: 400, margin: "0 auto", width: "100%" } }}>
+    <Stack
+      tokens={{ padding: 24, childrenGap: 24 }}
+      styles={{ root: { justifyContent: "center", backgroundColor: "#f5f5f5" } }}
+    >
+      <Stack
+        tokens={{ childrenGap: 16 }}
+        styles={{
+          root: {
+            maxWidth: 400,
+            margin: "0 auto",
+            width: "100%",
+            backgroundColor: "white",
+            padding: "32px",
+            border: "1px solid #edebe9",
+          },
+        }}
+      >
         {/* Header Section */}
         <Stack horizontalAlign="center" tokens={{ childrenGap: 12 }}>
           <img
@@ -77,17 +92,32 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
         </form>
 
         {/* Secure Process Section */}
-        <Stack tokens={{ childrenGap: 8 }} styles={{ root: { padding: 16, backgroundColor: "#f3f2f1", borderRadius: 4 } }}>
+        <Stack
+          tokens={{ childrenGap: 8 }}
+          styles={{
+            root: { padding: 16, backgroundColor: "#faf9f8", border: "1px solid #edebe9" },
+          }}
+        >
           <Stack horizontal tokens={{ childrenGap: 8 }} verticalAlign="center">
             <Shield size={18} />
             <Text variant="medium" styles={{ root: { fontWeight: 600 } }}>
               Secure Process:
             </Text>
           </Stack>
-          <Stack as="ol" tokens={{ childrenGap: 4 }} styles={{ root: { paddingLeft: 20, margin: 0 } }}>
-            <Text as="li" variant="small">Enter your iVALT registered mobile number</Text>
-            <Text as="li" variant="small">Complete biometric verification on your device</Text>
-            <Text as="li" variant="small">Access your documents securely</Text>
+          <Stack
+            as="ol"
+            tokens={{ childrenGap: 4 }}
+            styles={{ root: { paddingLeft: 20, margin: 0 } }}
+          >
+            <Text as="li" variant="small">
+              Enter your iVALT registered mobile number
+            </Text>
+            <Text as="li" variant="small">
+              Complete biometric verification on your device
+            </Text>
+            <Text as="li" variant="small">
+              Access your documents securely
+            </Text>
           </Stack>
         </Stack>
       </Stack>

@@ -350,7 +350,6 @@
   color: rgba(0, 0, 0, 0.3614) !important;
   cursor: not-allowed;
 }
-}
 
 .spinning {
   animation: spin 1s linear infinite;
