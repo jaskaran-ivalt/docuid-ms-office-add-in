@@ -1,9 +1,17 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Stack, Persona, PersonaSize, IconButton, Callout, DirectionalHint } from "@fluentui/react";
+import {
+  Stack,
+  Persona,
+  PersonaSize,
+  IconButton,
+  Callout,
+  DirectionalHint,
+  Text,
+} from "@fluentui/react";
 import "./Header.css";
 
 interface HeaderProps {
-  user: { phone: string } | null;
+  user: { name: string; phone: string; email: string } | null;
   onLogout: () => void;
   onNavigateToProfile?: () => void;
   onToggleDebug?: () => void;
@@ -58,8 +66,8 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile, on
   };
 
   // Use actual user data
-  const displayName = user?.phone ? `User ${user.phone.slice(-4)}` : "User";
-  const displayEmail = user?.phone || "";
+  const displayName = user?.name ? user?.name : "User";
+  const displayEmail = user?.email || "";
 
   return (
     <div className="header">
@@ -115,17 +123,49 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile, on
 
             {/* User Profile Dropdown */}
             <div className="user-profile-dropdown" ref={dropdownRef}>
-              <Persona
-                text={displayName}
-                secondaryText={formatPhone(displayEmail)}
-                size={PersonaSize.size32}
+              <div
                 onClick={toggleDropdown}
-                styles={{
-                  root: { cursor: "pointer" },
-                  primaryText: { color: "white" },
-                  secondaryText: { color: "rgba(255, 255, 255, 0.8)" },
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  cursor: "pointer",
+                  padding: "4px 8px",
+                  borderRadius: "4px",
+                  transition: "background-color 0.08s",
                 }}
-              />
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.1)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "transparent";
+                }}
+              >
+                <div
+                  style={{
+                    width: "32px",
+                    height: "32px",
+                    borderRadius: "50%",
+                    backgroundColor: "rgba(255, 255, 255, 0.2)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "white",
+                    fontWeight: "600",
+                    fontSize: "14px",
+                  }}
+                >
+                  {getInitials(user?.name || "User")}
+                </div>
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  <span style={{ color: "white", fontSize: "14px", fontWeight: "600" }}>
+                    {displayName}
+                  </span>
+                  <span style={{ color: "rgba(255, 255, 255, 0.8)", fontSize: "12px" }}>
+                    {truncateEmail(displayEmail)}
+                  </span>
+                </div>
+              </div>
 
               {/* Dropdown Menu */}
               {isDropdownOpen && (
@@ -138,12 +178,38 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile, on
                   }}
                 >
                   <Stack tokens={{ padding: 16, childrenGap: 8 }}>
-                    <Stack horizontal tokens={{ childrenGap: 12 }}>
-                      <Persona
-                        text={displayName}
-                        secondaryText={displayEmail}
-                        size={PersonaSize.size40}
-                      />
+                    <Stack
+                      horizontal
+                      tokens={{ childrenGap: 12 }}
+                      styles={{ root: { paddingBottom: 8, borderBottom: "1px solid #edebe9" } }}
+                    >
+                      <div
+                        style={{
+                          width: "40px",
+                          height: "40px",
+                          borderRadius: "50%",
+                          backgroundColor: "#f3f2f1",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          color: "#323130",
+                          fontWeight: "600",
+                          fontSize: "16px",
+                        }}
+                      >
+                        {displayName.charAt(0)}
+                      </div>
+                      <Stack tokens={{ childrenGap: 2 }}>
+                        <Text
+                          variant="medium"
+                          styles={{ root: { fontWeight: 600, color: "#323130" } }}
+                        >
+                          {displayName}
+                        </Text>
+                        <Text variant="small" styles={{ root: { color: "#605e5c" } }}>
+                          {displayEmail}
+                        </Text>
+                      </Stack>
                     </Stack>
                     <Stack tokens={{ childrenGap: 4 }}>
                       {onNavigateToProfile && (
@@ -154,19 +220,28 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile, on
                             onNavigateToProfile();
                             setIsDropdownOpen(false);
                           }}
-                          styles={{ root: { width: "100%", justifyContent: "flex-start" } }}
+                          styles={{
+                            root: { width: "100%", justifyContent: "flex-start" },
+                            label: { color: "#323130" },
+                          }}
                         />
                       )}
                       <IconButton
                         text="Settings"
                         iconProps={{ iconName: "Settings" }}
-                        styles={{ root: { width: "100%", justifyContent: "flex-start" } }}
+                        styles={{
+                          root: { width: "100%", justifyContent: "flex-start" },
+                          label: { color: "#323130" },
+                        }}
                       />
                       <IconButton
                         text="Logout"
                         iconProps={{ iconName: "SignOut" }}
                         onClick={onLogout}
-                        styles={{ root: { width: "100%", justifyContent: "flex-start" } }}
+                        styles={{
+                          root: { width: "100%", justifyContent: "flex-start" },
+                          label: { color: "#323130" },
+                        }}
                       />
                     </Stack>
                   </Stack>
