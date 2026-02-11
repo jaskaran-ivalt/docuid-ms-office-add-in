@@ -133,16 +133,30 @@ export class DocuIdApiService {
   private static readonly apiLogger = logger.createContextLogger("DocuIdApiService");
 
   /**
+   * Get API base URL based on environment
+   * - Development: Use webpack proxy (localhost:3000/api/docuid -> dev.docuid.net)
+   * - Production: Call dev.docuid.net directly
+   */
+  private static getBaseURL(): string {
+    // In development, use webpack proxy
+    if (process.env.NODE_ENV === "development") {
+      return ""; // Relative URLs will be proxied by webpack
+    }
+    // In production, call API directly
+    return "https://dev.docuid.net";
+  }
+
+  /**
    * Get or create axios instance with auth configuration
    */
   private static getApiInstance(): AxiosInstance {
     if (!this.instance) {
       this.instance = axios.create({
-        baseURL: "", // Always use relative URLs - proxied via webpack (dev) or Vercel rewrites (prod)
+        baseURL: this.getBaseURL(),
         headers: {
           "Content-Type": "application/json",
         },
-        withCredentials: true, // Important for cookie-based auth
+        withCredentials: false, // Don't use cookies - use Bearer token instead
       });
 
       // Add request interceptor for auth token
@@ -196,7 +210,12 @@ export class DocuIdApiService {
       if (options?.offset) params.append("offset", options.offset.toString());
 
       const queryString = params.toString();
-      const url = `/api/docuid/documents/word-files${queryString ? `?${queryString}` : ""}`;
+      // Development: /api/docuid/documents/word-files (proxied)
+      // Production: /api/dashboard/documents/word-files (direct to dev.docuid.net)
+      const path = process.env.NODE_ENV === "development" 
+        ? "/api/docuid/documents/word-files"
+        : "/api/dashboard/documents/word-files";
+      const url = `${path}${queryString ? `?${queryString}` : ""}`;
 
       this.apiLogger.logApiRequest("GET", url, { options });
 
@@ -217,7 +236,7 @@ export class DocuIdApiService {
       const responseTime = Date.now() - startTime;
       this.apiLogger.logApiResponse(
         "GET",
-        "/api/docuid/documents/word-files",
+        "/api/dashboard/documents/word-files",
         (error as AxiosError).response?.status || 0,
         responseTime
       );
@@ -231,16 +250,18 @@ export class DocuIdApiService {
    */
   static async getDocumentAccess(documentId: number): Promise<DocumentAccess> {
     const startTime = Date.now();
-    const url = `/api/docuid/documents/${documentId}/access`;
+    const path = process.env.NODE_ENV === "development"
+      ? `/api/docuid/documents/${documentId}/access`
+      : `/api/dashboard/documents/${documentId}/access`;
 
     try {
-      this.apiLogger.logApiRequest("GET", url, { documentId });
+      this.apiLogger.logApiRequest("GET", path, { documentId });
 
       const response =
-        await this.getApiInstance().get<ApiResponse<{ document: DocumentAccess }>>(url);
+        await this.getApiInstance().get<ApiResponse<{ document: DocumentAccess }>>(path);
 
       const responseTime = Date.now() - startTime;
-      this.apiLogger.logApiResponse("GET", url, response.status, responseTime);
+      this.apiLogger.logApiResponse("GET", path, response.status, responseTime);
 
       if (response.data.success) {
         this.apiLogger.info("Document access info retrieved", { documentId });
@@ -252,7 +273,7 @@ export class DocuIdApiService {
       const responseTime = Date.now() - startTime;
       this.apiLogger.logApiResponse(
         "GET",
-        url,
+        path,
         (error as AxiosError).response?.status || 0,
         responseTime
       );
@@ -266,22 +287,24 @@ export class DocuIdApiService {
    */
   static async getDocument(documentId: number): Promise<DocuIdDocument> {
     const startTime = Date.now();
-    const url = `/api/docuid/documents/${documentId}`;
+    const path = process.env.NODE_ENV === "development"
+      ? `/api/docuid/documents/${documentId}`
+      : `/api/dashboard/documents/${documentId}`;
 
     try {
-      this.apiLogger.logApiRequest("GET", url, { documentId });
+      this.apiLogger.logApiRequest("GET", path, { documentId });
 
-      const response = await this.getApiInstance().get<{ document: DocuIdDocument }>(url);
+      const response = await this.getApiInstance().get<{ document: DocuIdDocument }>(path);
 
       const responseTime = Date.now() - startTime;
-      this.apiLogger.logApiResponse("GET", url, response.status, responseTime);
+      this.apiLogger.logApiResponse("GET", path, response.status, responseTime);
 
       return response.data.document;
     } catch (error) {
       const responseTime = Date.now() - startTime;
       this.apiLogger.logApiResponse(
         "GET",
-        url,
+        path,
         (error as AxiosError).response?.status || 0,
         responseTime
       );
@@ -297,20 +320,22 @@ export class DocuIdApiService {
     const startTime = Date.now();
 
     try {
-      // Convert absolute backend URL to relative proxy URL to avoid CORS issues
-      // The access URL might be something like: http://localhost:3001/api/documents/123/download
-      // We need to route it through our proxy: /api/docuid/documents/123/download
+      // In production, the accessUrl from backend is already the full URL to dev.docuid.net
+      // In development, we need to route through our webpack proxy
       let downloadUrl = accessUrl;
 
-      // Check if this is a backend URL that needs to go through our proxy
-      if (accessUrl.includes("/api/documents/")) {
-        // Extract the path after /api/documents/
-        const match = accessUrl.match(/\/api\/documents\/(.+)/);
-        if (match) {
-          // Route through our proxy
-          downloadUrl = `/api/docuid/documents/${match[1]}`;
+      if (process.env.NODE_ENV === "development") {
+        // Check if this is a backend URL that needs to go through our proxy
+        if (accessUrl.includes("/api/documents/")) {
+          // Extract the path after /api/documents/
+          const match = accessUrl.match(/\/api\/documents\/(.+)/);
+          if (match) {
+            // Route through our webpack proxy
+            downloadUrl = `/api/docuid/documents/${match[1]}`;
+          }
         }
       }
+      // In production, use the URL as-is (full URL to dev.docuid.net)
 
       this.apiLogger.logApiRequest("GET", downloadUrl, {
         type: "download",
@@ -378,29 +403,31 @@ export class DocuIdApiService {
       allowPrint: true,
     });
 
-    const url = "/api/docuid/shares/optimized";
+    const path = process.env.NODE_ENV === "development"
+      ? "/api/docuid/shares/optimized"
+      : "/api/dashboard/shares/optimized";
 
     try {
-      this.apiLogger.logApiRequest("POST", url, {
+      this.apiLogger.logApiRequest("POST", path, {
         documentId: parsed.documentId,
         hasEmail: !!parsed.email,
         hasMobile: !!parsed.mobile,
       });
 
       const response = await this.getApiInstance().post<ApiResponse<ShareApiResponse>>(
-        url,
+        path,
         shareRequest
       );
 
       const responseTime = Date.now() - startTime;
-      this.apiLogger.logApiResponse("POST", url, response.status, responseTime);
+      this.apiLogger.logApiResponse("POST", path, response.status, responseTime);
 
       return response.data;
     } catch (error) {
       const responseTime = Date.now() - startTime;
       this.apiLogger.logApiResponse(
         "POST",
-        url,
+        path,
         (error as AxiosError).response?.status || 0,
         responseTime
       );
