@@ -3,11 +3,13 @@
  * 
  * Manages all API endpoints with environment-aware URL construction.
  * - Development: Uses webpack proxy (relative URLs)
- * - Production: Calls dev.docuid.net directly
+ * - Production: Uses Vercel rewrites (relative URLs) until backend CORS is configured
  */
 
 const isDevelopment = process.env.NODE_ENV === "development";
-const API_BASE_URL = isDevelopment ? "" : "https://dev.docuid.net";
+// TODO: Switch to direct calls once backend adds CORS for addon.docuid.net
+// const API_BASE_URL = isDevelopment ? "" : "https://dev.docuid.net";
+const API_BASE_URL = ""; // Always use relative URLs (proxied in both dev and prod)
 
 /**
  * Get full API URL based on environment
@@ -20,8 +22,8 @@ const getApiUrl = (path: string): string => {
  * Biometric Authentication Routes
  */
 export const BIOMETRIC_ROUTES = {
-  AUTH_REQUEST: getApiUrl(isDevelopment ? "/api/docuid/biometric/auth-request" : "/api/biometric/auth-request"),
-  AUTH_RESULT: getApiUrl(isDevelopment ? "/api/docuid/biometric/auth-result" : "/api/biometric/auth-result"),
+  AUTH_REQUEST: getApiUrl("/api/biometric/auth-request"),
+  AUTH_RESULT: getApiUrl("/api/biometric/auth-result"),
 } as const;
 
 /**
@@ -29,9 +31,9 @@ export const BIOMETRIC_ROUTES = {
  */
 export const DOCUMENT_ROUTES = {
   // List and metadata endpoints
-  WORD_FILES: getApiUrl(isDevelopment ? "/api/docuid/documents/word-files" : "/api/dashboard/documents/word-files"),
-  GET_DOCUMENT: (id: number) => getApiUrl(isDevelopment ? `/api/docuid/documents/${id}` : `/api/dashboard/documents/${id}`),
-  DOCUMENT_ACCESS: (id: number) => getApiUrl(isDevelopment ? `/api/docuid/documents/${id}/access` : `/api/dashboard/documents/${id}/access`),
+  WORD_FILES: getApiUrl("/api/dashboard/documents/word-files"),
+  GET_DOCUMENT: (id: number) => getApiUrl(`/api/dashboard/documents/${id}`),
+  DOCUMENT_ACCESS: (id: number) => getApiUrl(`/api/dashboard/documents/${id}/access`),
   
   // Download and content endpoints (different base path)
   DOWNLOAD: (id: number) => getApiUrl(`/api/documents/${id}/download`),
@@ -42,7 +44,7 @@ export const DOCUMENT_ROUTES = {
  * Share Management Routes
  */
 export const SHARE_ROUTES = {
-  OPTIMIZED: getApiUrl(isDevelopment ? "/api/docuid/shares/optimized" : "/api/dashboard/shares/optimized"),
+  OPTIMIZED: getApiUrl("/api/dashboard/shares/optimized"),
 } as const;
 
 /**
