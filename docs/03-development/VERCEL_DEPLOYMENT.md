@@ -66,7 +66,7 @@ Production manifest with Vercel URLs. After deployment:
    - Add your custom domain (e.g., `addon.docuid.net`)
 
 2. **Update Manifest URLs**
-   - Replace `https://docuid-ms-office-add-in.vercel.app/` with your domain in `manifest-production.xml`
+   - Replace `https://addon.docuid.net/` with your domain in `manifest-production.xml`
    - Or set `PRODUCTION_URL` environment variable in Vercel
 
 3. **Update vercel.json** (if needed)
@@ -105,7 +105,7 @@ Set these in Vercel Dashboard → Project → Settings → Environment Variables
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `PRODUCTION_URL` | Custom production URL with trailing slash | `https://docuid-ms-office-add-in.vercel.app/` |
+| `PRODUCTION_URL` | Custom production URL with trailing slash | `https://addon.docuid.net/` |
 | `VERCEL_URL` | Auto-set by Vercel (don't set manually) | - |
 
 ## Installing the Production Add-in
