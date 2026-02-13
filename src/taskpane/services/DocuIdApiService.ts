@@ -308,9 +308,11 @@ export class DocuIdApiService {
         const match = accessUrl.match(/\/api\/documents\/(\d+)\/(download|content)/);
         if (match) {
           const [, id, action] = match;
-          downloadUrl = action === "download"
-            ? `/api/docuid/documents/${id}/download`
-            : `/api/docuid/documents/${id}/content`;
+          const documentId = Number(id);
+          downloadUrl =
+            action === "download"
+              ? DOCUMENT_ROUTES.DOWNLOAD(documentId)
+              : DOCUMENT_ROUTES.CONTENT(documentId);
         }
       }
 
