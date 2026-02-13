@@ -309,10 +309,10 @@ export class DocuIdApiService {
           const match = accessUrl.match(/\/api\/documents\/(\d+)\/(download|content)/);
           if (match) {
             const [, id, action] = match;
-            // Route through our webpack proxy
-            downloadUrl = action === "download" 
-              ? DOCUMENT_ROUTES.DOWNLOAD(parseInt(id))
-              : DOCUMENT_ROUTES.CONTENT(parseInt(id));
+            // Route through our webpack proxy (must use /api/docuid/documents to match proxy context)
+            downloadUrl = action === "download"
+              ? `/api/docuid/documents/${id}/download`
+              : `/api/docuid/documents/${id}/content`;
           }
         }
       }
