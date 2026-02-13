@@ -142,7 +142,7 @@ export class AuthService {
         const responseTime = Date.now() - startTime;
         this.logger.logApiResponse(
           "POST",
-          "/api/biometric/auth-request",
+          BIOMETRIC_ROUTES.AUTH_REQUEST,
           error.response?.status || 0,
           responseTime
         );
@@ -250,7 +250,7 @@ export class AuthService {
 
           this.logger.logApiResponse(
             "POST",
-            "/api/biometric/auth-result",
+            BIOMETRIC_ROUTES.AUTH_RESULT,
             status || 0,
             responseTime
           );
