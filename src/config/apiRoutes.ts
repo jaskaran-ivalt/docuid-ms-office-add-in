@@ -61,7 +61,7 @@ export const SHARE_ROUTES = {
 export const API_CONFIG = {
   BASE_URL: API_BASE_URL,
   DEV_PREFIX: DEV_PREFIX,
-  IS_DEVELOPMENT: isDevelopment,
+  IS_DEVELOPMENT: false,
   WITH_CREDENTIALS: false, // Use Bearer token, not cookies
   HEADERS: {
     CONTENT_TYPE: "application/json",
