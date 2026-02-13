@@ -298,27 +298,21 @@ export class DocuIdApiService {
     const startTime = Date.now();
 
     try {
-      // In production, the accessUrl from backend is already the full URL to dev.docuid.net
-      // In development, we need to route through our webpack proxy
+
+      // Check if the URL needs to be proxied (has /api/documents/ path but not /api/docuid/)
       let downloadUrl = accessUrl;
 
-      if (API_CONFIG.IS_DEVELOPMENT) {
-        // Check if this is a backend URL that needs to go through our proxy
-        if (accessUrl.includes("/api/documents/")) {
-          // Extract the document ID from the URL
-          const match = accessUrl.match(/\/api\/documents\/(\d+)\/(download|content)/);
-          if (match) {
-            const [, id, action] = match;
-            // Route through our webpack proxy
-            // Dev: /api/docuid + /documents/274/download = /api/docuid/documents/274/download
-            // Webpack proxy matches /api/docuid/documents and rewrites to /api/documents
-            downloadUrl = action === "download"
-              ? `/api/docuid/documents/${id}/download`
-              : `/api/docuid/documents/${id}/content`;
-          }
+      // Check if this is a document download URL that needs to go through our proxy
+      if (accessUrl.includes("/api/documents/") && !accessUrl.includes("/api/docuid/")) {
+        // Extract the document ID from the URL
+        const match = accessUrl.match(/\/api\/documents\/(\d+)\/(download|content)/);
+        if (match) {
+          const [, id, action] = match;
+          downloadUrl = action === "download"
+            ? `/api/docuid/documents/${id}/download`
+            : `/api/docuid/documents/${id}/content`;
         }
       }
-      // In production, use the URL as-is (full URL to dev.docuid.net)
 
       this.apiLogger.logApiRequest("GET", downloadUrl, {
         type: "download",
