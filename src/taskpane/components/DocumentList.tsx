@@ -13,7 +13,7 @@ import ShareSidebar from "./ShareSidebar";
 import ShareSuccessModal from "./ShareSuccessModal";
 import "./DocumentList.css";
 
-import { Document, ShareApiResponse as ShareResponse } from "../types";
+import { Document, ShareApiResponse as ShareResponse } from "../common/types";
 
 interface ShareData {
   documentId: string;

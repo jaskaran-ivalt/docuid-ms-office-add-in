@@ -3,14 +3,14 @@ import { ThemeProvider } from "@fluentui/react";
 import LoginForm from "@/taskpane/components/LoginForm";
 import DocumentList from "@/taskpane/components/DocumentList";
 import Header from "@/taskpane/components/Header";
-import ProfilePage from "@/taskpane/components/ProfilePage";
+import ProfilePage from "@/taskpane/components/profile/ProfilePage";
 import DebugPanel from "@/taskpane/components/DebugPanel";
 import { AuthService } from "@/taskpane/services/AuthService";
 import { DocuIdApiService } from "@/taskpane/services/DocuIdApiService";
 import { DocumentService } from "@/taskpane/services/DocumentService";
 import { docuIdTheme } from "./theme/fluentTheme";
 import { logger } from "@/taskpane/services/Logger";
-import { Document } from "./types";
+import { Document } from "./common/types";
 import "./App.css";
 
 const App: React.FC = () => {
