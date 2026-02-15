@@ -9,21 +9,9 @@ import { AuthService } from "@/taskpane/services/AuthService";
 import { DocuIdApiService } from "@/taskpane/services/DocuIdApiService";
 import { DocumentService } from "@/taskpane/services/DocumentService";
 import { docuIdTheme } from "./theme/fluentTheme";
-import { logger } from "@/taskpane/services/Logger";
+import { Logger } from "@/taskpane/services/Logger";
+import { Document, User } from "./types";
 import "./App.css";
-
-interface Document {
-  id: string;
-  title: string;
-  type: string;
-  dateModified: string;
-  size: string;
-  // Extended fields from DocuID API
-  documentId?: number;
-  isPasswordProtected?: boolean;
-  isEncrypted?: boolean;
-  description?: string | null;
-}
 
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -31,58 +19,54 @@ const App: React.FC = () => {
   const [isLoadingLogin, setIsLoadingLogin] = useState(false);
   const [isOpeningDocument, setIsOpeningDocument] = useState<string | null>(null);
   const [isClosingDocument, setIsClosingDocument] = useState<string | null>(null);
+  const [isSavingDocument, setIsSavingDocument] = useState<string | null>(null);
   const [documents, setDocuments] = useState<Document[]>([]);
-  const [user, setUser] = useState<{ phone: string; name?: string; email?: string } | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [error, setError] = useState<string>("");
+  const [successMessage, setSuccessMessage] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<"documents" | "profile">("documents");
   const [debugPanelOpen, setDebugPanelOpen] = useState(false);
+  const logger = Logger.getInstance().createContextLogger("App");
 
   useEffect(() => {
-    // Check if user is already authenticated
     const savedAuth = AuthService.getStoredAuth();
-    const savedUser = AuthService.getStoredUser();
     if (savedAuth) {
       setIsAuthenticated(true);
-      setUser({
-        phone: savedAuth.phone,
-        name: savedUser?.name,
-        email: savedUser?.email,
-      });
+      setUser(savedAuth.user || null);
       loadDocuments();
     }
 
-    // Add keyboard shortcut for debug panel (Ctrl+Shift+D)
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.ctrlKey && event.shiftKey && event.key === "D") {
         event.preventDefault();
         setDebugPanelOpen((prev) => !prev);
-        logger.createContextLogger("App").info("Debug panel toggled", { open: !debugPanelOpen });
+        logger.info("Debug panel toggled", { open: !debugPanelOpen });
       }
     };
 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [debugPanelOpen]);
+  }, []);
+
+  const handleError = (err: any, defaultMessage: string) => {
+    if (err?.response?.status === 401) {
+      handleLogout();
+      setError("Session expired. Please login again.");
+      return;
+    }
+    setError(err instanceof Error ? err.message : defaultMessage);
+  };
 
   const handleLogin = async (phoneNumber: string) => {
     setIsLoadingLogin(true);
     setError("");
-
     try {
       await AuthService.login(phoneNumber);
       setIsAuthenticated(true);
-
-      // Get user data from stored auth
-      const savedUser = AuthService.getStoredUser();
-      setUser({
-        phone: phoneNumber,
-        name: savedUser?.name,
-        email: savedUser?.email,
-      });
-
+      setUser(AuthService.getStoredAuth()?.user || null);
       await loadDocuments();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Login failed");
+      handleError(err, "Login failed");
     } finally {
       setIsLoadingLogin(false);
     }
@@ -91,20 +75,9 @@ const App: React.FC = () => {
   const loadDocuments = async () => {
     try {
       setIsLoadingDocuments(true);
-      const docs = await DocumentService.getDocuments();
-      setDocuments(docs);
+      setDocuments(await DocumentService.getDocuments());
     } catch (err) {
-      // Check if it's a 401 Unauthorized error
-      if (err && typeof err === "object" && "response" in err) {
-        const axiosError = err as { response?: { status?: number } };
-        if (axiosError.response?.status === 401) {
-          // Session expired or invalid - logout and show login screen
-          handleLogout();
-          setError("Session expired. Please login again.");
-          return;
-        }
-      }
-      setError("Failed to load documents");
+      handleError(err, "Failed to load documents");
     } finally {
       setIsLoadingDocuments(false);
     }
@@ -116,90 +89,62 @@ const App: React.FC = () => {
     setUser(null);
     setDocuments([]);
     setError("");
+    setCurrentPage("documents");
   };
 
-  const handleDocumentOpen = async (document: Document) => {
+  const handleDocumentOpen = async (doc: Document) => {
     try {
-      setIsOpeningDocument(document.id);
-      await DocumentService.openDocument(document.id);
+      setIsOpeningDocument(doc.id);
+      await DocumentService.openDocument(doc.id);
     } catch (err) {
-      // Check if it's a 401 Unauthorized error
-      if (err && typeof err === "object" && "response" in err) {
-        const axiosError = err as { response?: { status?: number } };
-        if (axiosError.response?.status === 401) {
-          handleLogout();
-          setError("Session expired. Please login again.");
-          return;
-        }
-      }
-      setError("Failed to open document");
+      handleError(err, "Failed to open document");
     } finally {
       setIsOpeningDocument(null);
     }
   };
 
-  const handleDocumentClose = async (documentId: string) => {
+  const handleDocumentClose = async (id: string) => {
     try {
-      setIsClosingDocument(documentId);
-      await DocumentService.closeDocument(documentId);
-      // Remove the document from the list
-      setDocuments((prev) => prev.filter((doc) => doc.id !== documentId));
+      setIsClosingDocument(id);
+      await DocumentService.closeDocument(id);
+      setDocuments((prev) => prev.filter((d) => d.id !== id));
     } catch (err) {
-      // Check if it's a 401 Unauthorized error
-      if (err && typeof err === "object" && "response" in err) {
-        const axiosError = err as { response?: { status?: number } };
-        if (axiosError.response?.status === 401) {
-          handleLogout();
-          setError("Session expired. Please login again.");
-          return;
-        }
-      }
-      setError("Failed to close document");
+      handleError(err, "Failed to close document");
     } finally {
       setIsClosingDocument(null);
     }
   };
 
-  const handleDocumentShare = async (shareData: {
-    documentId: string;
-    email?: string;
-    countryCode?: string;
-    mobile?: string;
-    message?: string;
-  }) => {
-    // Share loading is handled internally in ShareSidebar
-    const parsedDocumentId = Number(shareData.documentId);
+  const handleDocumentShare = async (data: any) => {
+    const id = Number(data.documentId);
+    if (isNaN(id)) throw new Error("Invalid document ID");
 
-    if (Number.isNaN(parsedDocumentId)) {
-      throw new Error("Invalid document ID");
-    }
-
-    const response = await DocuIdApiService.shareDocument({
-      documentId: parsedDocumentId,
-      email: shareData.email,
-      countryCode: shareData.countryCode,
-      mobile: shareData.mobile,
-      message: shareData.message,
+    const resp = await DocuIdApiService.shareDocument({
+      documentId: id,
+      email: data.email,
+      countryCode: data.countryCode,
+      mobile: data.mobile,
+      message: data.message,
     });
 
-    if (!response.success) {
-      throw new Error(response.message || "Failed to share document");
+    if (!resp.success) throw new Error(resp.message || "Failed to share document");
+    return { shareLink: resp.data?.shareLink, shareId: resp.data?.shareId, message: resp.message };
+  };
+
+  const handleDocumentSave = async (doc: Document) => {
+    try {
+      setIsSavingDocument(doc.id);
+      setError("");
+      setSuccessMessage("");
+      const result = await DocumentService.saveDocumentToServer(doc.id, doc.title);
+      setSuccessMessage(`Document saved successfully as "${result.fileName}"`);
+      setTimeout(() => setSuccessMessage(""), 4000);
+      await loadDocuments();
+    } catch (err) {
+      handleError(err, "Failed to save document to server");
+    } finally {
+      setIsSavingDocument(null);
     }
-
-    // Return share response for success modal
-    return {
-      shareLink: response.data?.shareLink,
-      shareId: response.data?.shareId,
-      message: response.message,
-    };
-  };
-
-  const handleNavigateToProfile = () => {
-    setCurrentPage("profile");
-  };
-
-  const handleNavigateToDocuments = () => {
-    setCurrentPage("documents");
   };
 
   return (
@@ -208,7 +153,7 @@ const App: React.FC = () => {
         <Header
           user={user}
           onLogout={handleLogout}
-          onNavigateToProfile={handleNavigateToProfile}
+          onNavigateToProfile={() => setCurrentPage("profile")}
           onToggleDebug={() => setDebugPanelOpen(!debugPanelOpen)}
         />
 
@@ -216,25 +161,32 @@ const App: React.FC = () => {
           {error && (
             <div className="error-banner">
               <span>{error}</span>
-              <button onClick={() => setError("")} className="error-close">
-                ×
-              </button>
+              <button onClick={() => setError("")} className="error-close">×</button>
+            </div>
+          )}
+
+          {successMessage && (
+            <div className="success-banner">
+              <span>{successMessage}</span>
+              <button onClick={() => setSuccessMessage("")} className="success-close">×</button>
             </div>
           )}
 
           {!isAuthenticated ? (
             <LoginForm onLogin={handleLogin} isLoading={isLoadingLogin} />
           ) : currentPage === "profile" ? (
-            <ProfilePage onBack={handleNavigateToDocuments} />
+            <ProfilePage onBack={() => setCurrentPage("documents")} />
           ) : (
             <DocumentList
               documents={documents}
               onDocumentOpen={handleDocumentOpen}
               onDocumentShare={handleDocumentShare}
+              onDocumentSave={handleDocumentSave}
               onCloseDocument={handleDocumentClose}
               isLoadingDocuments={isLoadingDocuments}
               openingDocumentId={isOpeningDocument}
               closingDocumentId={isClosingDocument}
+              savingDocumentId={isSavingDocument}
               onReload={loadDocuments}
             />
           )}

@@ -7,31 +7,12 @@ import {
   Stack,
   Text,
 } from "@fluentui/react";
-import { FileText, FolderOpen, RefreshCw, Shield } from "lucide-react";
+import { FileText, FolderOpen, RefreshCw, Save } from "lucide-react";
 import { Card } from "./shared/Card";
 import ShareSidebar from "./ShareSidebar";
 import ShareSuccessModal from "./ShareSuccessModal";
+import { Document } from "../types";
 import "./DocumentList.css";
-
-interface Document {
-  id: string;
-  title: string;
-  type: string;
-  dateModified: string;
-  size: string;
-  // Extended fields from DocuID API
-  documentId?: number;
-  isPasswordProtected?: boolean;
-  isEncrypted?: boolean;
-  description?: string | null;
-}
-
-interface ShareData {
-  documentId: string;
-  email?: string;
-  mobile?: string;
-  message?: string;
-}
 
 interface ShareResponse {
   shareLink?: string;
@@ -45,11 +26,13 @@ interface ShareResponse {
 interface DocumentListProps {
   documents: Document[];
   onDocumentOpen: (document: Document) => Promise<void>;
-  onDocumentShare?: (shareData: ShareData) => Promise<ShareResponse>;
+  onDocumentShare?: (shareData: any) => Promise<ShareResponse>;
+  onDocumentSave?: (document: Document) => Promise<void>;
   onCloseDocument?: (documentId: string) => Promise<void>;
   isLoadingDocuments: boolean;
   openingDocumentId: string | null;
   closingDocumentId: string | null;
+  savingDocumentId: string | null;
   onReload?: () => Promise<void>;
 }
 
@@ -57,10 +40,12 @@ const DocumentList: React.FC<DocumentListProps> = ({
   documents,
   onDocumentOpen,
   onDocumentShare,
+  onDocumentSave,
   onCloseDocument,
   isLoadingDocuments,
   openingDocumentId,
   closingDocumentId,
+  savingDocumentId,
   onReload,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -86,73 +71,41 @@ const DocumentList: React.FC<DocumentListProps> = ({
     }
   };
 
-  const handleShareSuccess = (response: ShareResponse) => {
-    setShareResponse(response);
-    setIsSuccessModalOpen(true);
-  };
-
   const getFileIcon = (type: string) => {
-    switch (type.toLowerCase()) {
-      case "pdf":
-        return <FileText size={32} color="#dc3545" />;
-      case "docx":
-      case "doc":
-        return <FileText size={32} color="#0d6efd" />;
-      case "xlsx":
-      case "xls":
-        return <FileText size={32} color="#198754" />;
-      case "pptx":
-      case "ppt":
-        return <FileText size={32} color="#fd7e14" />;
-      default:
-        return <FileText size={32} color="#6c757d" />;
-    }
+    const colors: Record<string, string> = {
+      pdf: "#dc3545",
+      docx: "#0d6efd",
+      doc: "#0d6efd",
+      xlsx: "#198754",
+      xls: "#198754",
+      pptx: "#fd7e14",
+      ppt: "#fd7e14",
+    };
+    return <FileText size={32} color={colors[type.toLowerCase()] || "#6c757d"} />;
   };
 
-  // Skeleton loading component
-  const DocumentSkeleton = () => (
-    <Card elevation={1}>
-      <Stack horizontal tokens={{ childrenGap: 12 }} verticalAlign="center">
-        <div style={{ width: 40, height: 40, backgroundColor: "#f3f2f1", borderRadius: 4 }} />
-        <Stack tokens={{ childrenGap: 4 }} styles={{ root: { flex: 1 } }}>
-          <div style={{ width: "60%", height: 16, backgroundColor: "#f3f2f1", borderRadius: 2 }} />
-          <div style={{ width: "40%", height: 12, backgroundColor: "#f3f2f1", borderRadius: 2 }} />
-        </Stack>
-      </Stack>
-    </Card>
-  );
-
-  if (isLoadingDocuments) {
+  if (isLoadingDocuments && documents.length === 0) {
     return (
       <Stack tokens={{ padding: 16, childrenGap: 16 }}>
-        <Text variant="xLarge" styles={{ root: { fontWeight: 600 } }}>
-          Your Documents
-        </Text>
+        <Text variant="xLarge" styles={{ root: { fontWeight: 600 } }}>Your Documents</Text>
         <SearchBox placeholder="Search documents..." disabled />
-        <Stack tokens={{ childrenGap: 12 }}>
-          {[1, 2, 3].map((index) => (
-            <DocumentSkeleton key={index} />
-          ))}
+        <Stack horizontalAlign="center" tokens={{ padding: 40 }}>
+          <Spinner size={3} label="Loading your documents..." />
         </Stack>
       </Stack>
     );
   }
 
   return (
-    <Stack
-      tokens={{ padding: 16, childrenGap: 16 }}
-      styles={{ root: { backgroundColor: "#f5f5f5", minHeight: "100%" } }}
-    >
+    <Stack tokens={{ padding: 16, childrenGap: 16 }} className="document-list-container">
       <Stack horizontal horizontalAlign="space-between" verticalAlign="center">
-        <Text variant="xLarge" styles={{ root: { fontWeight: 600 } }}>
-          Your Documents
-        </Text>
+        <Text variant="xLarge" styles={{ root: { fontWeight: 600 } }}>Your Documents</Text>
         {onReload && (
           <DefaultButton
             text={isReloading ? "Reloading..." : "Reload"}
             onClick={handleReload}
             disabled={isReloading || isLoadingDocuments}
-            onRenderIcon={() => <RefreshCw size={16} style={{ marginRight: 4 }} />}
+            onRenderIcon={() => <RefreshCw size={16} />}
           />
         )}
       </Stack>
@@ -164,117 +117,52 @@ const DocumentList: React.FC<DocumentListProps> = ({
         onClear={() => setSearchTerm("")}
       />
 
-      {isLoadingDocuments ? (
-        <Stack tokens={{ childrenGap: 12 }}>
-          {[1, 2, 3].map((i) => (
-            <Card
-              key={i}
-              styles={{
-                root: {
-                  backgroundColor: "white",
-                  border: "1px solid #edebe9",
-                  boxShadow: "0 0 transparent",
-                },
-              }}
-            >
-              <Stack horizontal tokens={{ childrenGap: 12 }}>
-                <Spinner />
-                <Text>Loading documents...</Text>
-              </Stack>
-            </Card>
-          ))}
-        </Stack>
-      ) : filteredDocuments.length === 0 ? (
-        <Stack
-          horizontalAlign="center"
-          tokens={{ padding: 40, childrenGap: 12 }}
-          styles={{ root: { backgroundColor: "white", border: "1px solid #edebe9" } }}
-        >
+      {filteredDocuments.length === 0 ? (
+        <Stack horizontalAlign="center" tokens={{ padding: 40, childrenGap: 12 }} className="empty-state">
           <FolderOpen size={48} color="#a19f9d" />
           <Text variant="large" styles={{ root: { fontWeight: 600 } }}>
             {documents.length === 0 ? "No Documents Available" : "No Documents Found"}
           </Text>
           <Text variant="medium" styles={{ root: { color: "#605e5c" } }}>
-            {documents.length === 0
-              ? "You don't have any documents available at the moment."
-              : "No documents match your search criteria."}
+            {documents.length === 0 ? "You don't have any documents available." : "No documents match your search."}
           </Text>
         </Stack>
       ) : (
         <Stack tokens={{ childrenGap: 12 }}>
-          {filteredDocuments.map((document) => (
-            <Card
-              key={document.id}
-              styles={{
-                root: {
-                  backgroundColor: "white",
-                  border: "1px solid #edebe9",
-                  borderRadius: 0,
-                  boxShadow: "0 0 transparent",
-                },
-              }}
-            >
+          {filteredDocuments.map((doc) => (
+            <Card key={doc.id} className="document-card">
               <Stack horizontal horizontalAlign="space-between" verticalAlign="center">
                 <Stack horizontal tokens={{ childrenGap: 16 }} verticalAlign="center">
-                  <div
-                    style={{
-                      width: 48,
-                      height: 48,
-                      backgroundColor: "#f5f5f5",
-                      border: "1px solid #edebe9",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    {getFileIcon(document.type)}
-                  </div>
+                  <div className="file-icon-container">{getFileIcon(doc.type)}</div>
                   <Stack tokens={{ childrenGap: 4 }}>
-                    <Stack horizontal tokens={{ childrenGap: 8 }} verticalAlign="center">
-                      <Text variant="medium" styles={{ root: { fontWeight: 600 } }}>
-                        {document.title}
-                      </Text>
-                    </Stack>
+                    <Text variant="medium" styles={{ root: { fontWeight: 600 } }}>{doc.title}</Text>
                     <Stack horizontal tokens={{ childrenGap: 8 }}>
-                      <Text variant="small" styles={{ root: { color: "#605e5c" } }}>
-                        {document.type.toUpperCase()}
-                      </Text>
-                      <Text variant="small" styles={{ root: { color: "#a19f9d" } }}>
-                        •
-                      </Text>
-                      <Text variant="small" styles={{ root: { color: "#605e5c" } }}>
-                        {document.size}
-                      </Text>
-                      <Text variant="small" styles={{ root: { color: "#a19f9d" } }}>
-                        •
-                      </Text>
-                      <Text variant="small" styles={{ root: { color: "#605e5c" } }}>
-                        {document.dateModified}
-                      </Text>
+                      <Text variant="small" styles={{ root: { color: "#605e5c" } }}>{doc.type.toUpperCase()}</Text>
+                      <Text variant="small" styles={{ root: { color: "#a19f9d" } }}>•</Text>
+                      <Text variant="small" styles={{ root: { color: "#605e5c" } }}>{doc.size}</Text>
+                      <Text variant="small" styles={{ root: { color: "#a19f9d" } }}>•</Text>
+                      <Text variant="small" styles={{ root: { color: "#605e5c" } }}>{doc.dateModified}</Text>
                     </Stack>
                   </Stack>
                 </Stack>
                 <Stack horizontal tokens={{ childrenGap: 8 }}>
                   <PrimaryButton
-                    text={openingDocumentId === document.id ? "Opening..." : "Open"}
-                    onClick={() => onDocumentOpen(document)}
-                    disabled={
-                      isLoadingDocuments ||
-                      openingDocumentId === document.id ||
-                      closingDocumentId === document.id
-                    }
+                    text={openingDocumentId === doc.id ? "Opening..." : "Open"}
+                    onClick={() => onDocumentOpen(doc)}
+                    disabled={!!openingDocumentId || !!closingDocumentId || !!savingDocumentId}
                   />
+                  {onDocumentSave && (
+                    <DefaultButton
+                      text={savingDocumentId === doc.id ? "Saving..." : "Save"}
+                      onClick={() => onDocumentSave(doc)}
+                      disabled={!!openingDocumentId || !!closingDocumentId || !!savingDocumentId}
+                      onRenderIcon={() => <Save size={14} />}
+                    />
+                  )}
                   <DefaultButton
                     text="Share"
-                    onClick={() => {
-                      setSelectedDocument(document);
-                      setIsShareSidebarOpen(true);
-                    }}
-                    disabled={
-                      isLoadingDocuments ||
-                      openingDocumentId === document.id ||
-                      closingDocumentId === document.id
-                    }
+                    onClick={() => { setSelectedDocument(doc); setIsShareSidebarOpen(true); }}
+                    disabled={!!openingDocumentId || !!closingDocumentId || !!savingDocumentId}
                   />
                 </Stack>
               </Stack>
@@ -285,40 +173,23 @@ const DocumentList: React.FC<DocumentListProps> = ({
 
       <ShareSidebar
         isOpen={isShareSidebarOpen}
-        onDismiss={() => {
-          setIsShareSidebarOpen(false);
-          setSelectedDocument(null);
-        }}
+        onDismiss={() => { setIsShareSidebarOpen(false); setSelectedDocument(null); }}
         document={selectedDocument}
-        onShare={async (shareData) => {
-          if (onDocumentShare) {
-            return await onDocumentShare(shareData);
-          }
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-          return { message: "Document shared successfully" };
-        }}
+        onShare={onDocumentShare}
         onCloseDocument={onCloseDocument}
-        onShareSuccess={handleShareSuccess}
+        onShareSuccess={(resp) => { setShareResponse(resp); setIsSuccessModalOpen(true); }}
       />
 
       <ShareSuccessModal
         isOpen={isSuccessModalOpen}
-        onDismiss={() => {
-          setIsSuccessModalOpen(false);
-          setShareResponse(null);
-        }}
+        onDismiss={() => { setIsSuccessModalOpen(false); setShareResponse(null); }}
         document={selectedDocument}
-        shareDetails={
-          shareResponse
-            ? {
-                shareLink: shareResponse.shareLink,
-                recipientEmail: shareResponse.recipientEmail,
-                recipientMobile: shareResponse.recipientMobile,
-                message: shareResponse.customMessage,
-                expiryDate: undefined,
-              }
-            : null
-        }
+        shareDetails={shareResponse ? {
+          shareLink: shareResponse.shareLink,
+          recipientEmail: shareResponse.recipientEmail,
+          recipientMobile: shareResponse.recipientMobile,
+          message: shareResponse.customMessage,
+        } : null}
       />
     </Stack>
   );
