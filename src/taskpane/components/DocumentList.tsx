@@ -13,33 +13,13 @@ import ShareSidebar from "./ShareSidebar";
 import ShareSuccessModal from "./ShareSuccessModal";
 import "./DocumentList.css";
 
-interface Document {
-  id: string;
-  title: string;
-  type: string;
-  dateModified: string;
-  size: string;
-  // Extended fields from DocuID API
-  documentId?: number;
-  isPasswordProtected?: boolean;
-  isEncrypted?: boolean;
-  description?: string | null;
-}
+import { Document, ShareApiResponse as ShareResponse } from "../types";
 
 interface ShareData {
   documentId: string;
   email?: string;
   mobile?: string;
   message?: string;
-}
-
-interface ShareResponse {
-  shareLink?: string;
-  shareId?: number;
-  message?: string;
-  recipientEmail?: string;
-  recipientMobile?: string;
-  customMessage?: string;
 }
 
 interface DocumentListProps {
