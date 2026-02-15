@@ -13,7 +13,7 @@ import {
   IChoiceGroupOption,
 } from "@fluentui/react";
 import {
-  User,
+  User as UserIcon,
   Mail,
   Phone,
   MapPin,
@@ -29,31 +29,11 @@ import {
   Smartphone,
 } from "lucide-react";
 import { AuthService } from "../services/AuthService";
+import { User as UserProfile } from "../types";
 import "./ProfilePage.css";
 
 interface ProfilePageProps {
   onBack: () => void;
-}
-
-interface UserProfile {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  mobile: string;
-  country_code: string;
-  address: string;
-  latitude?: number;
-  longitude?: number;
-  imei?: string;
-  message?: string;
-  timestamp?: string;
-  preferences: {
-    notifications: boolean;
-    language: string;
-    theme: string;
-    privacy: string;
-  };
 }
 
 const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
@@ -69,31 +49,8 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
     const loadUserData = () => {
       const storedAuth = AuthService.getStoredAuth();
       if (storedAuth?.user) {
-        const userProfile: UserProfile = {
-          id: storedAuth.user.id.toString(),
-          name: storedAuth.user.name || "N/A",
-          email: storedAuth.user.email || "N/A",
-          phone: formatPhoneNumber(
-            storedAuth.user.country_code || "",
-            storedAuth.user.mobile || ""
-          ),
-          mobile: storedAuth.user.mobile || "N/A",
-          country_code: storedAuth.user.country_code || "N/A",
-          address: storedAuth.user.address || "N/A",
-          latitude: storedAuth.user.latitude,
-          longitude: storedAuth.user.longitude,
-          imei: storedAuth.user.imei || "N/A",
-          message: storedAuth.message || "N/A",
-          timestamp: storedAuth.timestamp || "N/A",
-          preferences: {
-            notifications: true,
-            language: "en",
-            theme: "light",
-            privacy: "public",
-          },
-        };
-        setProfile(userProfile);
-        setFormData(userProfile);
+        setProfile(storedAuth.user);
+        setFormData(storedAuth.user);
       }
     };
 
@@ -355,13 +312,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
             <div className="profile-info">
               <h2 className="profile-name">{profile.name}</h2>
               <p className="profile-position">{profile.email}</p>
-              <p className="profile-company">{profile.phone}</p>
-              {profile.timestamp && profile.timestamp !== "N/A" && (
-                <p className="profile-timestamp">
-                  <Calendar size={14} style={{ marginRight: "4px" }} />
-                  Last Activity: {formatTimestamp(profile.timestamp)}
-                </p>
-              )}
+              <p className="profile-company">{formatPhoneNumber(profile.country_code, profile.mobile)}</p>
             </div>
           </div>
         </div>
@@ -369,7 +320,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
         {/* Personal Information */}
         <div className="profile-section">
           <h3 className="section-title">
-            <User size={18} />
+            <UserIcon size={18} />
             Personal Information
           </h3>
 
@@ -471,6 +422,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
                   },
                   fieldGroup: {
                     border: "none",
+                    background: "white",
                   },
                 }}
               />
@@ -498,102 +450,6 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
           </div>
         </div>
 
-        {/* Device Information */}
-        {/* 
-        <div className="profile-section">
-          <h3 className="section-title">
-            <Smartphone size={18} />
-            Device Information
-          </h3>
-
-          <div className="form-grid">
-            <div className="form-group">
-              <Label className="form-label">Device IMEI</Label>
-              <TextField
-                value={formData.imei || "N/A"}
-                disabled={true}
-                styles={{
-                  field: {
-                    fontSize: "14px",
-                    border: "1px solid #d1d1d1",
-                    borderRadius: "6px",
-                    height: "40px",
-                    backgroundColor: "#f8f9fa",
-                  },
-                  fieldGroup: {
-                    border: "none",
-                  },
-                }}
-              />
-            </div>
-          </div>
-        </div>
- */}
-
-        {/* Preferences */}
-        {/*
-        <div className="profile-section">
-          <h3 className="section-title">
-            <Shield size={18} />
-            Preferences
-          </h3>
-
-          <div className="preferences-grid">
-            <div className="preference-item">
-              <div className="preference-header">
-                <Bell size={16} />
-                <span>Notifications</span>
-              </div>
-              <Toggle
-                checked={formData.preferences.notifications}
-                onText="On"
-                offText="Off"
-                onChange={(_, checked) => handlePreferenceChange("notifications", checked)}
-                disabled={!isEditing}
-              />
-            </div>
-
-            <div className="preference-item">
-              <div className="preference-header">
-                <Globe size={16} />
-                <span>Language</span>
-              </div>
-              <ChoiceGroup
-                selectedKey={formData.preferences.language}
-                options={languageOptions}
-                onChange={(_, option) => option && handlePreferenceChange("language", option.key)}
-                disabled={!isEditing}
-              />
-            </div>
-
-            <div className="preference-item">
-              <div className="preference-header">
-                <Globe size={16} />
-                <span>Theme</span>
-              </div>
-              <ChoiceGroup
-                selectedKey={formData.preferences.theme}
-                options={themeOptions}
-                onChange={(_, option) => option && handlePreferenceChange("theme", option.key)}
-                disabled={!isEditing}
-              />
-            </div>
-
-            <div className="preference-item">
-              <div className="preference-header">
-                <Shield size={16} />
-                <span>Privacy</span>
-              </div>
-              <ChoiceGroup
-                selectedKey={formData.preferences.privacy}
-                options={privacyOptions}
-                onChange={(_, option) => option && handlePreferenceChange("privacy", option.key)}
-                disabled={!isEditing}
-              />
-            </div>
-          </div>
-        </div>
-    */}
         {/* Account Information */}
         <div className="profile-section">
           <h3 className="section-title">
@@ -608,18 +464,12 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
             </div>
             <div className="info-item">
               <span className="info-label">Phone Number:</span>
-              <span className="info-value">{profile.phone}</span>
+              <span className="info-value">{formatPhoneNumber(profile.country_code, profile.mobile)}</span>
             </div>
             <div className="info-item">
               <span className="info-label">Account Status:</span>
               <span className="info-value status-active">Active</span>
             </div>
-            {profile.timestamp && profile.timestamp !== "N/A" && (
-              <div className="info-item">
-                <span className="info-label">Last Activity:</span>
-                <span className="info-value">{formatTimestamp(profile.timestamp)}</span>
-              </div>
-            )}
           </div>
         </div>
 
