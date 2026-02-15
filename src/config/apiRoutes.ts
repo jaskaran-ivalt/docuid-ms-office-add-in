@@ -46,6 +46,10 @@ export const DOCUMENT_ROUTES = {
   // Download and content endpoints (backend: /api/documents/)
   DOWNLOAD: (id: number) => getApiUrl(`/documents/${id}/download`),
   CONTENT: (id: number) => getApiUrl(`/documents/${id}/content`),
+  UPDATE_CONTENT: (id: number) => getApiUrl(`/documents/${id}/update-content`),
+
+  // Upload endpoint (backend: /api/upload/document)
+  UPLOAD_DOCUMENT: getApiUrl("/upload/document"),
 } as const;
 
 /**

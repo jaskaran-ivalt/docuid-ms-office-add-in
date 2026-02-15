@@ -626,4 +626,131 @@ Party B: _________________ Date: _________`,
     // Download using the presigned URL
     return DocuIdApiService.downloadDocumentContent(accessInfo.access.url);
   }
+
+  /**
+   * Get the current Word document content as a Blob (OOXML / .docx format).
+   * Uses Office.context.document.getFileAsync with FileType.Compressed.
+   */
+  private static async getWordFileBlob(): Promise<Blob> {
+    const docLogger = logger.createContextLogger("DocumentService.Save");
+
+    return new Promise<Blob>((resolve, reject) => {
+      const sliceSize = 4 * 1024 * 1024; // 4 MB slices
+
+      Office.context.document.getFileAsync(
+        Office.FileType.Compressed,
+        { sliceSize },
+        (result: Office.AsyncResult<Office.File>) => {
+          if (result.status !== Office.AsyncResultStatus.Succeeded) {
+            docLogger.error("getFileAsync failed", result.error as unknown as Error);
+            reject(new Error(result.error?.message || "Failed to get document file"));
+            return;
+          }
+
+          const file = result.value;
+          const sliceCount = file.sliceCount;
+          const slices: Uint8Array[] = [];
+          let slicesReceived = 0;
+
+          docLogger.debug("Reading document slices", { sliceCount, fileSize: file.size });
+
+          const readSlice = (index: number) => {
+            file.getSliceAsync(index, (sliceResult: Office.AsyncResult<Office.Slice>) => {
+              if (sliceResult.status !== Office.AsyncResultStatus.Succeeded) {
+                file.closeAsync();
+                reject(new Error(sliceResult.error?.message || `Failed to read slice ${index}`));
+                return;
+              }
+
+              slices[index] = new Uint8Array(sliceResult.value.data as ArrayBuffer);
+              slicesReceived++;
+
+              if (slicesReceived === sliceCount) {
+                file.closeAsync();
+
+                // Combine all slices into a single blob
+                const blob = new Blob(slices, {
+                  type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                });
+                docLogger.info("Document extracted successfully", { blobSize: blob.size });
+                resolve(blob);
+              } else {
+                readSlice(index + 1);
+              }
+            });
+          };
+
+          if (sliceCount > 0) {
+            readSlice(0);
+          } else {
+            file.closeAsync();
+            reject(new Error("Document has no content"));
+          }
+        }
+      );
+    });
+  }
+
+  /**
+   * Save the current Word document to DocuID server.
+   * Updates the existing document in-place by replacing its file content.
+   *
+   * @param documentId - The backend document ID (numeric)
+   * @param fileName - The file name to use for the uploaded document
+   * @returns The updated document metadata from the server
+   */
+  static async saveDocumentToServer(
+    documentId: string,
+    fileName: string,
+  ): Promise<{ documentId: number; fileName: string }> {
+    const docLogger = logger.createContextLogger("DocumentService.Save");
+
+    try {
+      const numericId = parseInt(documentId);
+      if (isNaN(numericId)) {
+        throw new Error("Invalid document ID — cannot save without a valid backend document ID");
+      }
+
+      docLogger.info(`Saving document to server: ${numericId}`, { fileName });
+
+      // Step 1: Extract the current document content from Word
+      docLogger.debug("Extracting document content from Word");
+      const blob = await this.getWordFileBlob();
+
+      // Step 2: Create a File object with the proper name
+      const file = new File([blob], fileName, {
+        type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      });
+
+      docLogger.debug("File prepared for upload", {
+        fileName: file.name,
+        fileSize: file.size,
+        fileType: file.type,
+      });
+
+      // Step 3: Update the document content on DocuID server (in-place update)
+      docLogger.debug("Updating document content on DocuID server");
+      const response = await DocuIdApiService.updateDocumentContent(numericId, file);
+
+      if (!response.success) {
+        throw new Error("Update failed - server returned unsuccessful response");
+      }
+
+      docLogger.info("Document saved to server successfully", {
+        documentId: response.document.documentId,
+        fileName: response.document.fileName,
+      });
+
+      return {
+        documentId: response.document.documentId,
+        fileName: response.document.fileName,
+      };
+    } catch (error) {
+      docLogger.error(
+        `Failed to save document to server: ${documentId}`,
+        error instanceof Error ? error : new Error(String(error))
+      );
+      throw error;
+    }
+  }
 }

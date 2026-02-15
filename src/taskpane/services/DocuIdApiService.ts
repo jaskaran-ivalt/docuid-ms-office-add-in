@@ -4,6 +4,14 @@ import { AuthService } from "./AuthService";
 import { logger } from "./Logger";
 import { DOCUMENT_ROUTES, SHARE_ROUTES, API_CONFIG } from "../../config/apiRoutes";
 
+/**
+ * Upload document response from DocuID API
+ */
+export interface UploadDocumentResponse {
+  success: boolean;
+  document: DocuIdDocument;
+}
+
 /* global */
 
 /**
@@ -409,6 +417,123 @@ export class DocuIdApiService {
         responseTime
       );
       this.apiLogger.error("Failed to share document", error as Error);
+      throw error;
+    }
+  }
+
+  /**
+   * Upload (save) a document to DocuID server
+   */
+  static async uploadDocument(
+    file: File,
+    options?: { folderId?: number; description?: string }
+  ): Promise<UploadDocumentResponse> {
+    const startTime = Date.now();
+    const path = DOCUMENT_ROUTES.UPLOAD_DOCUMENT;
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      if (options?.folderId != null) {
+        formData.append("folderId", options.folderId.toString());
+      }
+      if (options?.description) {
+        formData.append("description", options.description);
+      }
+
+      this.apiLogger.logApiRequest("POST", path, {
+        fileName: file.name,
+        fileSize: file.size,
+        fileType: file.type,
+        folderId: options?.folderId,
+      });
+
+      const response = await this.getApiInstance().post<UploadDocumentResponse>(
+        path,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      const responseTime = Date.now() - startTime;
+      this.apiLogger.logApiResponse("POST", path, response.status, responseTime);
+
+      if (response.data.success) {
+        this.apiLogger.info("Document uploaded successfully", {
+          documentId: response.data.document.documentId,
+          fileName: response.data.document.fileName,
+        });
+      }
+
+      return response.data;
+    } catch (error) {
+      const responseTime = Date.now() - startTime;
+      this.apiLogger.logApiResponse(
+        "POST",
+        path,
+        (error as AxiosError).response?.status || 0,
+        responseTime
+      );
+      this.apiLogger.error("Failed to upload document", error as Error);
+      throw error;
+    }
+  }
+
+  /**
+   * Update the file content of an existing document on DocuID server
+   */
+  static async updateDocumentContent(
+    documentId: number,
+    file: File
+  ): Promise<UploadDocumentResponse> {
+    const startTime = Date.now();
+    const path = DOCUMENT_ROUTES.UPDATE_CONTENT(documentId);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      this.apiLogger.logApiRequest("PUT", path, {
+        documentId,
+        fileName: file.name,
+        fileSize: file.size,
+        fileType: file.type,
+      });
+
+      const response = await this.getApiInstance().put<UploadDocumentResponse>(
+        path,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      const responseTime = Date.now() - startTime;
+      this.apiLogger.logApiResponse("PUT", path, response.status, responseTime);
+
+      if (response.data.success) {
+        this.apiLogger.info("Document content updated successfully", {
+          documentId,
+          fileName: response.data.document.fileName,
+        });
+      }
+
+      return response.data;
+    } catch (error) {
+      const responseTime = Date.now() - startTime;
+      this.apiLogger.logApiResponse(
+        "PUT",
+        path,
+        (error as AxiosError).response?.status || 0,
+        responseTime
+      );
+      this.apiLogger.error("Failed to update document content", error as Error);
       throw error;
     }
   }

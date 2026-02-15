@@ -7,7 +7,7 @@ import {
   Stack,
   Text,
 } from "@fluentui/react";
-import { FileText, FolderOpen, RefreshCw, Shield } from "lucide-react";
+import { FileText, FolderOpen, RefreshCw, Shield, Save } from "lucide-react";
 import { Card } from "./shared/Card";
 import ShareSidebar from "./ShareSidebar";
 import ShareSuccessModal from "./ShareSuccessModal";
@@ -46,10 +46,12 @@ interface DocumentListProps {
   documents: Document[];
   onDocumentOpen: (document: Document) => Promise<void>;
   onDocumentShare?: (shareData: ShareData) => Promise<ShareResponse>;
+  onDocumentSave?: (document: Document) => Promise<void>;
   onCloseDocument?: (documentId: string) => Promise<void>;
   isLoadingDocuments: boolean;
   openingDocumentId: string | null;
   closingDocumentId: string | null;
+  savingDocumentId?: string | null;
   onReload?: () => Promise<void>;
 }
 
@@ -57,10 +59,12 @@ const DocumentList: React.FC<DocumentListProps> = ({
   documents,
   onDocumentOpen,
   onDocumentShare,
+  onDocumentSave,
   onCloseDocument,
   isLoadingDocuments,
   openingDocumentId,
   closingDocumentId,
+  savingDocumentId,
   onReload,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -261,9 +265,24 @@ const DocumentList: React.FC<DocumentListProps> = ({
                     disabled={
                       isLoadingDocuments ||
                       openingDocumentId === document.id ||
-                      closingDocumentId === document.id
+                      closingDocumentId === document.id ||
+                      savingDocumentId === document.id
                     }
                   />
+                  {onDocumentSave && (
+                    <DefaultButton
+                      text={savingDocumentId === document.id ? "Saving..." : "Save"}
+                      onClick={() => onDocumentSave(document)}
+                      disabled={
+                        isLoadingDocuments ||
+                        openingDocumentId === document.id ||
+                        closingDocumentId === document.id ||
+                        savingDocumentId === document.id
+                      }
+                      onRenderIcon={() => <Save size={14} style={{ marginRight: 4 }} />}
+                      className={savingDocumentId === document.id ? "save-btn-saving" : "save-btn"}
+                    />
+                  )}
                   <DefaultButton
                     text="Share"
                     onClick={() => {
@@ -273,7 +292,8 @@ const DocumentList: React.FC<DocumentListProps> = ({
                     disabled={
                       isLoadingDocuments ||
                       openingDocumentId === document.id ||
-                      closingDocumentId === document.id
+                      closingDocumentId === document.id ||
+                      savingDocumentId === document.id
                     }
                   />
                 </Stack>

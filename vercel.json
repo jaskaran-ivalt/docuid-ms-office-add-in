@@ -25,6 +25,10 @@
       "destination": "https://dev.docuid.net/api/documents/:id/content"
     },
     {
+      "source": "/api/docuid/documents/:id/update-content",
+      "destination": "https://dev.docuid.net/api/documents/:id/update-content"
+    },
+    {
       "source": "/api/docuid/documents/:path*",
       "destination": "https://dev.docuid.net/api/dashboard/documents/:path*"
     },
@@ -35,6 +39,14 @@
     {
       "source": "/api/documents/:id/content",
       "destination": "https://dev.docuid.net/api/documents/:id/content"
+    },
+    {
+      "source": "/api/documents/:id/update-content",
+      "destination": "https://dev.docuid.net/api/documents/:id/update-content"
+    },
+    {
+      "source": "/api/upload/:path*",
+      "destination": "https://dev.docuid.net/api/upload/:path*"
     },
     {
       "source": "/api/dashboard/:path*",

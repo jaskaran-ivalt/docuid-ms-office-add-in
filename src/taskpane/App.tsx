@@ -34,8 +34,10 @@ const App: React.FC = () => {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [user, setUser] = useState<{ phone: string; name?: string; email?: string } | null>(null);
   const [error, setError] = useState<string>("");
+  const [successMessage, setSuccessMessage] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<"documents" | "profile">("documents");
   const [debugPanelOpen, setDebugPanelOpen] = useState(false);
+  const [isSavingDocument, setIsSavingDocument] = useState<string | null>(null);
 
   useEffect(() => {
     // Check if user is already authenticated
@@ -202,6 +204,40 @@ const App: React.FC = () => {
     setCurrentPage("documents");
   };
 
+  const handleDocumentSave = async (document: Document) => {
+    try {
+      setIsSavingDocument(document.id);
+      setError("");
+      setSuccessMessage("");
+
+      const result = await DocumentService.saveDocumentToServer(
+        document.id,
+        document.title,
+      );
+
+      setSuccessMessage(`Document saved successfully as "${result.fileName}"`);
+      // Auto-hide success message after 4 seconds
+      setTimeout(() => setSuccessMessage(""), 4000);
+
+      // Reload document list to show the new document
+      await loadDocuments();
+    } catch (err) {
+      if (err && typeof err === "object" && "response" in err) {
+        const axiosError = err as { response?: { status?: number } };
+        if (axiosError.response?.status === 401) {
+          handleLogout();
+          setError("Session expired. Please login again.");
+          return;
+        }
+      }
+      setError(
+        err instanceof Error ? err.message : "Failed to save document to server"
+      );
+    } finally {
+      setIsSavingDocument(null);
+    }
+  };
+
   return (
     <ThemeProvider theme={docuIdTheme}>
       <div className="app-container">
@@ -222,6 +258,15 @@ const App: React.FC = () => {
             </div>
           )}
 
+          {successMessage && (
+            <div className="success-banner">
+              <span>{successMessage}</span>
+              <button onClick={() => setSuccessMessage("")} className="success-close">
+                ×
+              </button>
+            </div>
+          )}
+
           {!isAuthenticated ? (
             <LoginForm onLogin={handleLogin} isLoading={isLoadingLogin} />
           ) : currentPage === "profile" ? (
@@ -231,10 +276,12 @@ const App: React.FC = () => {
               documents={documents}
               onDocumentOpen={handleDocumentOpen}
               onDocumentShare={handleDocumentShare}
+              onDocumentSave={handleDocumentSave}
               onCloseDocument={handleDocumentClose}
               isLoadingDocuments={isLoadingDocuments}
               openingDocumentId={isOpeningDocument}
               closingDocumentId={isClosingDocument}
+              savingDocumentId={isSavingDocument}
               onReload={loadDocuments}
             />
           )}

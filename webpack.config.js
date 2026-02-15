@@ -167,8 +167,8 @@ module.exports = async (env, options) => {
           secure: apiTarget.secure,
           pathRewrite: (path, req) => {
             console.log(`📡 Proxy pathRewrite: ${path}`);
-            // Check if this is a download or content endpoint
-            if (path.match(/\/api\/docuid\/documents\/\d+\/(download|content)$/)) {
+            // Check if this is a download, content, or update-content endpoint
+            if (path.match(/\/api\/docuid\/documents\/\d+\/(download|content|update-content)$/)) {
               const newPath = path.replace('/api/docuid/documents', '/api/documents');
               console.log(`   → Rewriting to: ${newPath} (download/content)`);
               return newPath;
@@ -188,6 +188,17 @@ module.exports = async (env, options) => {
           secure: apiTarget.secure,
           pathRewrite: {
             '^/api/docuid/shares': '/api/dashboard/shares'
+          },
+          logLevel: 'debug'
+        },
+        // Upload endpoints: /api/docuid/upload/* -> /api/upload/*
+        {
+          context: ['/api/docuid/upload'],
+          target: apiTarget.url,
+          changeOrigin: true,
+          secure: apiTarget.secure,
+          pathRewrite: {
+            '^/api/docuid/upload': '/api/upload'
           },
           logLevel: 'debug'
         }
