@@ -13,7 +13,8 @@ export class AuthService {
   static async login(phoneNumber: string): Promise<void> {
     try {
       this.authLogger.info("Starting biometric authentication", {
-        phoneNumber: phoneNumber.substring(0, 3) + "***" + phoneNumber.substring(phoneNumber.length - 3),
+        phoneNumber:
+          phoneNumber.substring(0, 3) + "***" + phoneNumber.substring(phoneNumber.length - 3),
       });
 
       // Initiate biometric authentication request
@@ -72,7 +73,12 @@ export class AuthService {
       );
 
       const responseTime = Date.now() - startTime;
-      this.authLogger.logApiResponse("POST", BIOMETRIC_ROUTES.AUTH_REQUEST, response.status, responseTime);
+      this.authLogger.logApiResponse(
+        "POST",
+        BIOMETRIC_ROUTES.AUTH_REQUEST,
+        response.status,
+        responseTime
+      );
 
       if (!response.data?.data?.status) {
         throw new Error("Failed to initiate biometric authentication");
@@ -88,7 +94,9 @@ export class AuthService {
   /**
    * Poll for biometric authentication result
    */
-  private static async pollAuthResult(phoneNumber: string): Promise<{ sessionToken: string; user: User }> {
+  private static async pollAuthResult(
+    phoneNumber: string
+  ): Promise<{ sessionToken: string; user: User }> {
     const maxAttempts = 60;
     const pollInterval = 2000;
 
@@ -127,7 +135,7 @@ export class AuthService {
             continue;
           }
         }
-        
+
         this.authLogger.warn(`Polling attempt ${attempt + 1} failed, retrying...`);
         await new Promise((resolve) => setTimeout(resolve, pollInterval));
       }

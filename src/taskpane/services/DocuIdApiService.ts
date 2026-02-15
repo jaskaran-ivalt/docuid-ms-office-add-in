@@ -2,12 +2,7 @@ import axios, { AxiosInstance, AxiosError } from "axios";
 import { AuthService } from "./AuthService";
 import { logger } from "./Logger";
 import { DOCUMENT_ROUTES, SHARE_ROUTES, API_CONFIG } from "../../config/apiRoutes";
-import { 
-  DocuIdDocument, 
-  DocumentAccess, 
-  ApiResponse, 
-  ShareApiResponse 
-} from "../common/types";
+import { DocuIdDocument, DocumentAccess, ApiResponse, ShareApiResponse } from "../common/types";
 
 /**
  * Service for communicating with DocuID dashboard APIs
@@ -62,8 +57,9 @@ export class DocuIdApiService {
     const url = DOCUMENT_ROUTES.WORD_FILES;
     try {
       this.apiLogger.logApiRequest("GET", url);
-      const response = await this.getApiInstance().get<ApiResponse<{ files: DocuIdDocument[] }>>(url);
-      
+      const response =
+        await this.getApiInstance().get<ApiResponse<{ files: DocuIdDocument[] }>>(url);
+
       if (response.data.success) {
         return response.data.data.files;
       }
@@ -81,7 +77,8 @@ export class DocuIdApiService {
     const url = DOCUMENT_ROUTES.DOCUMENT_ACCESS(documentId);
     try {
       this.apiLogger.logApiRequest("GET", url);
-      const response = await this.getApiInstance().get<ApiResponse<{ document: DocumentAccess }>>(url);
+      const response =
+        await this.getApiInstance().get<ApiResponse<{ document: DocumentAccess }>>(url);
 
       if (response.data.success) {
         return response.data.data.document;
@@ -120,7 +117,7 @@ export class DocuIdApiService {
     const url = SHARE_ROUTES.OPTIMIZED;
     try {
       this.apiLogger.logApiRequest("POST", url, { documentId: payload.documentId });
-      
+
       // Construct the share request based on requirements
       const shareRequest = {
         documentId: payload.documentId,
@@ -137,7 +134,10 @@ export class DocuIdApiService {
         allowPrint: true,
       };
 
-      const response = await this.getApiInstance().post<ApiResponse<ShareApiResponse>>(url, shareRequest);
+      const response = await this.getApiInstance().post<ApiResponse<ShareApiResponse>>(
+        url,
+        shareRequest
+      );
       return response.data;
     } catch (error) {
       this.apiLogger.error("Error sharing document", error as Error);
