@@ -1,7 +1,7 @@
 import { DocuIdApiService } from "./DocuIdApiService";
 import { logger } from "./Logger";
-import { Document, DocuIdDocument } from "../types";
-import { formatFileSize, getFileExtension, arrayBufferToBase64 } from "../utils";
+import { Document, DocuIdDocument } from "../common/types";
+import { formatFileSize, getFileExtension, arrayBufferToBase64 } from "../common/utils";
 
 /* global Word */
 

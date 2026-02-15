@@ -1,7 +1,7 @@
 import axios from "axios";
 import { logger } from "./Logger";
 import { BIOMETRIC_ROUTES, API_CONFIG } from "../../config/apiRoutes";
-import { User, StoredAuth } from "../types";
+import { User, StoredAuth } from "../common/types";
 
 export class AuthService {
   private static readonly STORAGE_KEY = "docuid_auth";

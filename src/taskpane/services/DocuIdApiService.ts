@@ -7,7 +7,7 @@ import {
   DocumentAccess, 
   ApiResponse, 
   ShareApiResponse 
-} from "../types";
+} from "../common/types";
 
 /**
  * Service for communicating with DocuID dashboard APIs
