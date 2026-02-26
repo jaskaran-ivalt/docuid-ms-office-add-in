@@ -132,6 +132,21 @@ module.exports = async (env, options) => {
         template: "./src/commands/commands.html",
         chunks: ["polyfill", "commands"],
       }),
+      new HtmlWebpackPlugin({
+        filename: "privacy-policy.html",
+        template: "./src/taskpane/privacy-policy.html",
+        chunks: ["polyfill"],
+      }),
+      new HtmlWebpackPlugin({
+        filename: "eula.html",
+        template: "./src/taskpane/eula.html",
+        chunks: ["polyfill"],
+      }),
+      new HtmlWebpackPlugin({
+        filename: "support.html",
+        template: "./src/taskpane/support.html",
+        chunks: ["polyfill"],
+      }),
     ],
     devServer: {
       headers: {

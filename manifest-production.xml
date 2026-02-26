@@ -8,7 +8,7 @@
   <Description DefaultValue="DocuID add-in for document management."/>
   <IconUrl DefaultValue="https://addon.docuid.net/assets/icon-32.png"/>
   <HighResolutionIconUrl DefaultValue="https://addon.docuid.net/assets/icon-64.png"/>
-  <SupportUrl DefaultValue="https://www.docuid.net"/>
+  <SupportUrl DefaultValue="https://addon.docuid.net/support.html"/>
   <AppDomains>
     <AppDomain>https://www.docuid.net</AppDomain>
     <AppDomain>https://addon.docuid.net</AppDomain>
