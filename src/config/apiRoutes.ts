@@ -1,6 +1,6 @@
 /**
  * Central API Routes Configuration
- * 
+ *
  * Manages all API endpoints with environment-aware URL construction.
  * - Development: Uses webpack proxy (relative URLs with /api/docuid prefix)
  * - Production: Uses Vercel rewrites (relative URLs) until backend CORS is configured
@@ -42,7 +42,7 @@ export const DOCUMENT_ROUTES = {
   WORD_FILES: getApiUrl("/dashboard/documents/word-files"),
   GET_DOCUMENT: (id: number) => getApiUrl(`/dashboard/documents/${id}`),
   DOCUMENT_ACCESS: (id: number) => getApiUrl(`/dashboard/documents/${id}/access`),
-  
+
   // Download and content endpoints (backend: /api/documents/)
   DOWNLOAD: (id: number) => getApiUrl(`/documents/${id}/download`),
   CONTENT: (id: number) => getApiUrl(`/documents/${id}/content`),

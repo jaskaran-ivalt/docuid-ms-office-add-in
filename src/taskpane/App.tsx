@@ -3,27 +3,15 @@ import { ThemeProvider } from "@fluentui/react";
 import LoginForm from "@/taskpane/components/LoginForm";
 import DocumentList from "@/taskpane/components/DocumentList";
 import Header from "@/taskpane/components/Header";
-import ProfilePage from "@/taskpane/components/ProfilePage";
+import ProfilePage from "@/taskpane/components/profile/ProfilePage";
 import DebugPanel from "@/taskpane/components/DebugPanel";
 import { AuthService } from "@/taskpane/services/AuthService";
 import { DocuIdApiService } from "@/taskpane/services/DocuIdApiService";
 import { DocumentService } from "@/taskpane/services/DocumentService";
 import { docuIdTheme } from "./theme/fluentTheme";
 import { logger } from "@/taskpane/services/Logger";
+import { Document } from "./common/types";
 import "./App.css";
-
-interface Document {
-  id: string;
-  title: string;
-  type: string;
-  dateModified: string;
-  size: string;
-  // Extended fields from DocuID API
-  documentId?: number;
-  isPasswordProtected?: boolean;
-  isEncrypted?: boolean;
-  description?: string | null;
-}
 
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -38,31 +26,30 @@ const App: React.FC = () => {
   const [debugPanelOpen, setDebugPanelOpen] = useState(false);
 
   useEffect(() => {
-    // Check if user is already authenticated
-    const savedAuth = AuthService.getStoredAuth();
-    const savedUser = AuthService.getStoredUser();
-    if (savedAuth) {
+    // Session management via custom events from DocuIdApiService
+    const handleUnauthorized = () => {
+      handleLogout();
+      setError("Session expired. Please login again.");
+    };
+
+    window.addEventListener("docuid-unauthorized", handleUnauthorized);
+
+    // Initial check for stored auth
+    const auth = AuthService.getStoredAuth();
+    if (auth) {
       setIsAuthenticated(true);
       setUser({
-        phone: savedAuth.phone,
-        name: savedUser?.name,
-        email: savedUser?.email,
+        phone: auth.phone,
+        name: auth.user?.name,
+        email: auth.user?.email,
       });
       loadDocuments();
     }
 
-    // Add keyboard shortcut for debug panel (Ctrl+Shift+D)
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.ctrlKey && event.shiftKey && event.key === "D") {
-        event.preventDefault();
-        setDebugPanelOpen((prev) => !prev);
-        logger.createContextLogger("App").info("Debug panel toggled", { open: !debugPanelOpen });
-      }
+    return () => {
+      window.removeEventListener("docuid-unauthorized", handleUnauthorized);
     };
-
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [debugPanelOpen]);
+  }, []);
 
   const handleLogin = async (phoneNumber: string) => {
     setIsLoadingLogin(true);
@@ -72,13 +59,14 @@ const App: React.FC = () => {
       await AuthService.login(phoneNumber);
       setIsAuthenticated(true);
 
-      // Get user data from stored auth
-      const savedUser = AuthService.getStoredUser();
-      setUser({
-        phone: phoneNumber,
-        name: savedUser?.name,
-        email: savedUser?.email,
-      });
+      const auth = AuthService.getStoredAuth();
+      if (auth) {
+        setUser({
+          phone: auth.phone,
+          name: auth.user?.name,
+          email: auth.user?.email,
+        });
+      }
 
       await loadDocuments();
     } catch (err) {
@@ -94,16 +82,6 @@ const App: React.FC = () => {
       const docs = await DocumentService.getDocuments();
       setDocuments(docs);
     } catch (err) {
-      // Check if it's a 401 Unauthorized error
-      if (err && typeof err === "object" && "response" in err) {
-        const axiosError = err as { response?: { status?: number } };
-        if (axiosError.response?.status === 401) {
-          // Session expired or invalid - logout and show login screen
-          handleLogout();
-          setError("Session expired. Please login again.");
-          return;
-        }
-      }
       setError("Failed to load documents");
     } finally {
       setIsLoadingDocuments(false);
@@ -123,15 +101,6 @@ const App: React.FC = () => {
       setIsOpeningDocument(document.id);
       await DocumentService.openDocument(document.id);
     } catch (err) {
-      // Check if it's a 401 Unauthorized error
-      if (err && typeof err === "object" && "response" in err) {
-        const axiosError = err as { response?: { status?: number } };
-        if (axiosError.response?.status === 401) {
-          handleLogout();
-          setError("Session expired. Please login again.");
-          return;
-        }
-      }
       setError("Failed to open document");
     } finally {
       setIsOpeningDocument(null);
@@ -142,40 +111,17 @@ const App: React.FC = () => {
     try {
       setIsClosingDocument(documentId);
       await DocumentService.closeDocument(documentId);
-      // Remove the document from the list
       setDocuments((prev) => prev.filter((doc) => doc.id !== documentId));
     } catch (err) {
-      // Check if it's a 401 Unauthorized error
-      if (err && typeof err === "object" && "response" in err) {
-        const axiosError = err as { response?: { status?: number } };
-        if (axiosError.response?.status === 401) {
-          handleLogout();
-          setError("Session expired. Please login again.");
-          return;
-        }
-      }
       setError("Failed to close document");
     } finally {
       setIsClosingDocument(null);
     }
   };
 
-  const handleDocumentShare = async (shareData: {
-    documentId: string;
-    email?: string;
-    countryCode?: string;
-    mobile?: string;
-    message?: string;
-  }) => {
-    // Share loading is handled internally in ShareSidebar
-    const parsedDocumentId = Number(shareData.documentId);
-
-    if (Number.isNaN(parsedDocumentId)) {
-      throw new Error("Invalid document ID");
-    }
-
+  const handleDocumentShare = async (shareData: any) => {
     const response = await DocuIdApiService.shareDocument({
-      documentId: parsedDocumentId,
+      documentId: Number(shareData.documentId),
       email: shareData.email,
       countryCode: shareData.countryCode,
       mobile: shareData.mobile,
@@ -186,20 +132,11 @@ const App: React.FC = () => {
       throw new Error(response.message || "Failed to share document");
     }
 
-    // Return share response for success modal
     return {
       shareLink: response.data?.shareLink,
       shareId: response.data?.shareId,
       message: response.message,
     };
-  };
-
-  const handleNavigateToProfile = () => {
-    setCurrentPage("profile");
-  };
-
-  const handleNavigateToDocuments = () => {
-    setCurrentPage("documents");
   };
 
   return (
@@ -208,7 +145,7 @@ const App: React.FC = () => {
         <Header
           user={user}
           onLogout={handleLogout}
-          onNavigateToProfile={handleNavigateToProfile}
+          onNavigateToProfile={() => setCurrentPage("profile")}
           onToggleDebug={() => setDebugPanelOpen(!debugPanelOpen)}
         />
 
@@ -216,16 +153,14 @@ const App: React.FC = () => {
           {error && (
             <div className="error-banner">
               <span>{error}</span>
-              <button onClick={() => setError("")} className="error-close">
-                ×
-              </button>
+              <button onClick={() => setError("")} className="error-close">×</button>
             </div>
           )}
 
           {!isAuthenticated ? (
             <LoginForm onLogin={handleLogin} isLoading={isLoadingLogin} />
           ) : currentPage === "profile" ? (
-            <ProfilePage onBack={handleNavigateToDocuments} />
+            <ProfilePage onBack={() => setCurrentPage("documents")} />
           ) : (
             <DocumentList
               documents={documents}
