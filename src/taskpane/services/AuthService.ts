@@ -17,6 +17,41 @@ export class AuthService {
           phoneNumber.substring(0, 3) + "***" + phoneNumber.substring(phoneNumber.length - 3),
       });
 
+      // --- DUMMY CREDENTIALS FOR DEMO ---
+      if (phoneNumber === "+919999999999" || phoneNumber === "9999999999") {
+        this.authLogger.info("Using dummy credentials for demo mode");
+        
+        const dummyUser: User = {
+          id: 999999,
+          name: "Demo User",
+          email: "demo@docuid.net",
+          mobile: "9999999999",
+          country_code: "91",
+          address: "Demo Location",
+          latitude: 0,
+          longitude: 0,
+          imei: "demo-device-imei"
+        };
+
+        const authData: StoredAuth = {
+          phone: phoneNumber,
+          sessionToken: "demo-session-token",
+          expiresAt: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
+          user: dummyUser,
+        };
+
+        window.localStorage.setItem(this.STORAGE_KEY, JSON.stringify(authData));
+
+        this.authLogger.info("Authentication successful (Demo)", {
+          userId: dummyUser.id,
+          userName: dummyUser.name,
+        });
+
+        this.authLogger.logAuthEvent("LOGIN_SUCCESS", dummyUser.id.toString());
+        return;
+      }
+      // ----------------------------------
+
       // Initiate biometric authentication request
       await this.requestBiometricAuth(phoneNumber);
 

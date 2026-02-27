@@ -57,6 +57,39 @@ export class DocuIdApiService {
     const url = DOCUMENT_ROUTES.WORD_FILES;
     try {
       this.apiLogger.logApiRequest("GET", url);
+
+      // --- DEMO MODE CHECK ---
+      if (AuthService.getSessionToken() === "demo-session-token") {
+        this.apiLogger.info("Returning demo documents");
+        return [
+          {
+            documentId: 1001,
+            fileName: "Demo Proposal.docx",
+            filePath: "/demo/Demo Proposal.docx",
+            fileType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            fileSize: 1024500,
+            description: "A sample proposal document for demonstration.",
+            folderId: null,
+            isPasswordProtected: false,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          },
+          {
+            documentId: 1002,
+            fileName: "Confidential Report.docx",
+            filePath: "/demo/Confidential Report.docx",
+            fileType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            fileSize: 2048000,
+            description: "Highly confidential Q4 report.",
+            folderId: null,
+            isPasswordProtected: true,
+            createdAt: new Date(Date.now() - 86400000).toISOString(),
+            updatedAt: new Date(Date.now() - 86400000).toISOString(),
+          }
+        ];
+      }
+      // -----------------------
+
       const response =
         await this.getApiInstance().get<ApiResponse<{ files: DocuIdDocument[] }>>(url);
 
@@ -77,6 +110,35 @@ export class DocuIdApiService {
     const url = DOCUMENT_ROUTES.DOCUMENT_ACCESS(documentId);
     try {
       this.apiLogger.logApiRequest("GET", url);
+
+      // --- DEMO MODE CHECK ---
+      if (AuthService.getSessionToken() === "demo-session-token") {
+        this.apiLogger.info(`Returning demo document access for doc: ${documentId}`);
+        const fileName = documentId === 1001 ? "Demo Proposal.docx" : "Confidential Report.docx";
+        const isProtected = documentId === 1002;
+        return {
+          documentId: documentId,
+          fileName: fileName,
+          fileType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          fileSize: 1024500,
+          description: "Demo document access",
+          folderId: null,
+          isPasswordProtected: isProtected,
+          isEncrypted: false,
+          status: "active",
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          access: {
+            url: "demo-document-content-url",
+            previewUrl: "demo-document-content-url",
+            expiresIn: 3600,
+            method: "GET",
+            headers: {}
+          }
+        };
+      }
+      // -----------------------
+
       const response =
         await this.getApiInstance().get<ApiResponse<{ document: DocumentAccess }>>(url);
 
@@ -95,6 +157,14 @@ export class DocuIdApiService {
    */
   static async downloadDocumentContent(accessUrl: string): Promise<Blob> {
     try {
+      // --- DEMO MODE CHECK ---
+      if (AuthService.getSessionToken() === "demo-session-token" || accessUrl === "demo-document-content-url") {
+        this.apiLogger.info("Returning demo document blob content");
+        const content = "This is a demo document generated for the DocuID Office Add-in preview.\n\nAll features are unlocked in demo mode. Document generated on: " + new Date().toLocaleString();
+        return new Blob([content], { type: "text/plain" });
+      }
+      // -----------------------
+
       // Check if the URL is a relative dashboard URL that needs the API instance
       if (accessUrl.startsWith("/") || accessUrl.includes(window.location.host)) {
         const response = await this.getApiInstance().get(accessUrl, { responseType: "blob" });
@@ -117,6 +187,21 @@ export class DocuIdApiService {
     const url = SHARE_ROUTES.OPTIMIZED;
     try {
       this.apiLogger.logApiRequest("POST", url, { documentId: payload.documentId });
+
+      // --- DEMO MODE CHECK ---
+      if (AuthService.getSessionToken() === "demo-session-token") {
+        this.apiLogger.info("Returning demo share response");
+        return {
+          success: true,
+          data: {
+            shareId: 999,
+            shareLink: "https://demo.docuid.net/s/demolink",
+            message: "Document shared successfully in demo mode."
+          },
+          message: "Success"
+        };
+      }
+      // -----------------------
 
       // Construct the share request based on requirements
       const shareRequest = {
