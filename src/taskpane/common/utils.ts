@@ -51,6 +51,22 @@ export function validatePhone(phone: string): boolean {
 }
 
 /**
+ * Format phone number
+ */
+export function formatPhoneNumber(countryCode: string, mobile: string): string {
+  if (!mobile) return "";
+  const cleanedMobile = mobile.replace(/\D/g, "");
+  const code = countryCode ? countryCode.replace("+", "") : "";
+  
+  if (code && cleanedMobile.startsWith(code)) {
+    return `+${code} ${cleanedMobile.slice(code.length)}`;
+  } else if (code) {
+    return `+${code} ${cleanedMobile}`;
+  }
+  return `+${cleanedMobile}`;
+}
+
+/**
  * Validate IMEI
  */
 export function validateIMEI(imei: string): boolean {

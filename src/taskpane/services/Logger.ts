@@ -43,10 +43,10 @@ export class Logger {
    */
   private loadSettings(): void {
     try {
-      const storedLevel = localStorage.getItem("docuid_log_level");
-      const storedConsole = localStorage.getItem("docuid_console_logging");
+      const storedLevel = window.localStorage.getItem("docuid_log_level");
+      const storedConsole = window.localStorage.getItem("docuid_console_logging");
 
-      if (storedLevel) {
+      if (storedLevel !== null) {
         const level = parseInt(storedLevel, 10);
         if (level >= LogLevel.DEBUG && level <= LogLevel.ERROR) {
           this.logLevel = level;
@@ -71,7 +71,11 @@ export class Logger {
    */
   public setLogLevel(level: LogLevel): void {
     this.logLevel = level;
-    localStorage.setItem("docuid_log_level", level.toString());
+    try {
+      window.localStorage.setItem("docuid_log_level", level.toString());
+    } catch (e) {
+      // Ignore storage errors
+    }
   }
 
   /**
@@ -79,7 +83,11 @@ export class Logger {
    */
   public setConsoleOutput(enabled: boolean): void {
     this.enableConsoleOutput = enabled;
-    localStorage.setItem("docuid_console_logging", enabled.toString());
+    try {
+      window.localStorage.setItem("docuid_console_logging", enabled.toString());
+    } catch (e) {
+      // Ignore storage errors
+    }
   }
 
   /**
