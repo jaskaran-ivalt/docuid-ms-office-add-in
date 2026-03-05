@@ -58,14 +58,14 @@ export class AuthService {
       // Poll for authentication result
       const authResult = await this.pollAuthResult(phoneNumber);
 
-      if (!authResult.sessionToken) {
-        throw new Error("No session token received from server");
-      }
+      // if (!authResult.sessionToken) {
+      //   throw new Error("No session token received from server");
+      // }
 
       // Store authentication data
       const authData: StoredAuth = {
         phone: phoneNumber,
-        sessionToken: authResult.sessionToken,
+        sessionToken: authResult.sessionToken || "",
         expiresAt: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
         user: authResult.user,
       };
