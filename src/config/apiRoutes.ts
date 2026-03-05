@@ -8,7 +8,7 @@
 
 const isDevelopment = process.env.NODE_ENV === "development";
 // TODO: Switch to direct calls once backend adds CORS for addon.docuid.net
-// const API_BASE_URL = isDevelopment ? "" : "https://dev.docuid.net";
+// const API_BASE_URL = isDevelopment ? "" : "https://www.docuid.net";
 const API_BASE_URL = ""; // Always use relative URLs (proxied in both dev and prod)
 
 // Development prefix for webpack proxy - must match webpack.config.js proxy context
