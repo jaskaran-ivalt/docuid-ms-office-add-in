@@ -25,7 +25,7 @@ const API_TARGETS = {
     secure: false
   },
   remote: {
-    url: 'https://dev.docuid.net',
+    url: 'https://www.docuid.net',
     secure: true
   }
 };
