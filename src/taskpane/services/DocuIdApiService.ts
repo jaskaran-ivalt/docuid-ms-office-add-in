@@ -210,7 +210,7 @@ export class DocuIdApiService {
         recipients: {
           email: payload.email || undefined,
           mobile: payload.mobile || undefined,
-          countryCallingCode: payload.countryCode ? `+${payload.countryCode}` : undefined,
+          countryCallingCode: payload.countryCode || undefined,
         },
         accessLevel: "download",
         requiresPassword: false,
