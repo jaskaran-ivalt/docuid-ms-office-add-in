@@ -165,14 +165,40 @@ export class DocuIdApiService {
       }
       // -----------------------
 
+      let finalUrl = accessUrl;
+
+      // Fix backend returning absolute URLs (like localhost or docuid.net) 
+      // which causes CORS or incorrect routing. Rewrite to proxied paths.
+      if (finalUrl.includes("localhost:") || /^https?:\/\/(dev\.|www\.)?docuid\.net/i.test(finalUrl)) {
+        try {
+          const urlObj = new URL(finalUrl);
+          const matchDownload = urlObj.pathname.match(/\/documents\/(\d+)\/download/);
+          const matchContent = urlObj.pathname.match(/\/documents\/(\d+)\/content/);
+          
+          if (matchDownload && matchDownload[1]) {
+            finalUrl = DOCUMENT_ROUTES.DOWNLOAD(parseInt(matchDownload[1]));
+            this.apiLogger.info(`Rewrote absolute URL to: ${finalUrl}`);
+          } else if (matchContent && matchContent[1]) {
+            finalUrl = DOCUMENT_ROUTES.CONTENT(parseInt(matchContent[1]));
+            this.apiLogger.info(`Rewrote absolute URL to: ${finalUrl}`);
+          } else {
+            // Fallback: use relative path
+            finalUrl = urlObj.pathname + urlObj.search;
+            this.apiLogger.info(`Rewrote absolute URL to relative path: ${finalUrl}`);
+          }
+        } catch (e) {
+          // Ignore parse errors, keep original URL
+        }
+      }
+
       // Check if the URL is a relative dashboard URL that needs the API instance
-      if (accessUrl.startsWith("/") || accessUrl.includes(window.location.host)) {
-        const response = await this.getApiInstance().get(accessUrl, { responseType: "blob" });
+      if (finalUrl.startsWith("/") || finalUrl.includes(window.location.host)) {
+        const response = await this.getApiInstance().get(finalUrl, { responseType: "blob" });
         return response.data;
       }
 
       // If it's a direct presigned URL (S3), we can fetch it directly
-      const response = await axios.get(accessUrl, { responseType: "blob" });
+      const response = await axios.get(finalUrl, { responseType: "blob" });
       return response.data;
     } catch (error) {
       this.apiLogger.error("Error downloading content", error as Error);
