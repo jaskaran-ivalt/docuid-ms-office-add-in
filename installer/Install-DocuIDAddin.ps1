@@ -40,8 +40,8 @@ $activeSetupRegPath = "HKLM:\SOFTWARE\Microsoft\Active Setup\Installed Component
 $stubPath = "powershell.exe -NoProfile -ExecutionPolicy Bypass -File `"$currentUserSetupScriptPath`" -ManifestPath `"$manifestPath`""
 
 New-Item -Path $activeSetupRegPath -Force | Out-Null
-New-ItemProperty -Path $activeSetupRegPath -Name "(Default)" -PropertyType String -Value "DocuID Office Add-in User Bootstrap" -Force | Out-Null
-New-ItemProperty -Path $activeSetupRegPath -Name "Version" -PropertyType String -Value "1,0,0,0" -Force | Out-Null
+New-ItemProperty -Path $activeSetupRegPath -Name "(Default)" -PropertyType String -Value "iVALT Docuid Office Add-in User Bootstrap" -Force | Out-Null
+New-ItemProperty -Path $activeSetupRegPath -Name "Version" -PropertyType String -Value "1,0,2,0" -Force | Out-Null
 New-ItemProperty -Path $activeSetupRegPath -Name "StubPath" -PropertyType String -Value $stubPath -Force | Out-Null
 New-ItemProperty -Path $activeSetupRegPath -Name "IsInstalled" -PropertyType DWord -Value 1 -Force | Out-Null
 
@@ -58,13 +58,15 @@ foreach ($profile in $userProfiles) {
     continue
   }
 
-  $profileWefPath = Join-Path -Path $profileLocalAppData -ChildPath "Microsoft\Office\16.0\Wef"
-  New-Item -Path $profileWefPath -ItemType Directory -Force | Out-Null
-  $profileManifestTarget = Join-Path -Path $profileWefPath -ChildPath $manifestFileName
-  Copy-Item -LiteralPath $manifestPath -Destination $profileManifestTarget -Force
+  foreach ($officeVersion in @("15.0", "16.0")) {
+    $profileWefPath = Join-Path -Path $profileLocalAppData -ChildPath "Microsoft\Office\$officeVersion\Wef"
+    New-Item -Path $profileWefPath -ItemType Directory -Force | Out-Null
+    $profileManifestTarget = Join-Path -Path $profileWefPath -ChildPath $manifestFileName
+    Copy-Item -LiteralPath $manifestPath -Destination $profileManifestTarget -Force
+  }
 }
 
 # Ensure the add-in is available for the installing user immediately.
 & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $currentUserSetupScriptPath -ManifestPath $manifestPath
 
-Write-Output "DocuID add-in installation completed successfully."
+Write-Output "iVALT Docuid add-in installation completed successfully."
