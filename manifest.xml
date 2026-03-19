@@ -4,8 +4,8 @@
   <Version>1.0.1.0</Version>
   <ProviderName>iVALT</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
-  <DisplayName DefaultValue="iVALT Docuid"/>
-  <Description DefaultValue="iVALT Docuid add-in for document management."/>
+  <DisplayName DefaultValue="Docuid"/>
+  <Description DefaultValue="Docuid add-in for document management."/>
   <IconUrl DefaultValue="https://addon.docuid.net/assets/icon-32.png"/>
   <HighResolutionIconUrl DefaultValue="https://addon.docuid.net/assets/icon-64.png"/>
   <SupportUrl DefaultValue="https://addon.docuid.net/support.html"/>
@@ -73,13 +73,13 @@
         <bt:Url id="Taskpane.Url" DefaultValue="https://addon.docuid.net/taskpane.html"/>
       </bt:Urls>
       <bt:ShortStrings>
-        <bt:String id="GetStarted.Title" DefaultValue="Get started with iVALT Docuid!"/>
-        <bt:String id="CommandsGroup.Label" DefaultValue="iVALT Docuid"/>
-        <bt:String id="TaskpaneButton.Label" DefaultValue="iVALT Docuid"/>
+        <bt:String id="GetStarted.Title" DefaultValue="Get started with Docuid!"/>
+        <bt:String id="CommandsGroup.Label" DefaultValue="Docuid"/>
+        <bt:String id="TaskpaneButton.Label" DefaultValue="Docuid"/>
       </bt:ShortStrings>
       <bt:LongStrings>
-        <bt:String id="GetStarted.Description" DefaultValue="iVALT Docuid loaded successfully. Go to the HOME tab and click the 'iVALT Docuid' button to get started."/>
-        <bt:String id="TaskpaneButton.Tooltip" DefaultValue="Click to open iVALT Docuid"/>
+        <bt:String id="GetStarted.Description" DefaultValue="Docuid loaded successfully. Go to the HOME tab and click the 'Docuid' button to get started."/>
+        <bt:String id="TaskpaneButton.Tooltip" DefaultValue="Click to open Docuid"/>
       </bt:LongStrings>
     </Resources>
   </VersionOverrides>
