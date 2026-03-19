@@ -27,6 +27,8 @@
     "stop": "office-addin-debugging stop manifest.xml",
     "validate": "office-addin-manifest validate manifest.xml",
     "validate:prod": "office-addin-manifest validate manifest-production.xml",
+    "installer:build": "powershell -NoProfile -ExecutionPolicy Bypass -File ./installer/Build-Installer.ps1",
+    "installer:package": "pnpm run validate:prod && pnpm run installer:build",
     "watch": "webpack --mode development --watch",
     "vercel-build": "npm run build"
   },
