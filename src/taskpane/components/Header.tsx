@@ -75,11 +75,11 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile, on
       <div className="header-content">
         <div className="header-brand">
           <div className="brand-logo">
-            <img src="assets/logo-transparent.png" alt="DocuID Logo" />
+            <img src="assets/logo-transparent.png" alt="iVALT Docuid" />
           </div>
           <div className="brand-text">
-            <h1 className="brand-title">DocuID</h1>
-            <span className="brand-subtitle">Powered by iVALT</span>
+            <h1 className="brand-title">iVALT Docuid</h1>
+            <span className="brand-subtitle">Document management</span>
             {/* <span className="brand-subtitle">Secure Document Access</span> */}
           </div>
         </div>
