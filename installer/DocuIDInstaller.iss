@@ -1,5 +1,5 @@
 #define MyAppName "iVALT Docuid Word Add-in"
-#define MyAppVersion "1.0.1"
+#define MyAppVersion "1.0.2"
 #define MyAppPublisher "iVALT"
 #define MyAppExeName "iVALTDocuidInstaller.exe"
 
@@ -12,7 +12,7 @@ DefaultDirName={commonappdata}\DocuID\OfficeAddin
 DisableDirPage=yes
 DisableProgramGroupPage=yes
 OutputDir=..\dist\installer
-OutputBaseFilename=iVALT-Docuid-WordAddin-Installer
+OutputBaseFilename=iVALT-Docuid-WordAddin-Installer-{#MyAppVersion}
 Compression=lzma
 SolidCompression=yes
 ArchitecturesInstallIn64BitMode=x64compatible
@@ -29,6 +29,8 @@ Source: "Register-ForCurrentUser.ps1"; DestDir: "{commonappdata}\DocuID\OfficeAd
 
 [Run]
 Filename: "{sys}\WindowsPowerShell\v1.0\powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -File ""{commonappdata}\DocuID\OfficeAddin\Install-DocuIDAddin.ps1"" -ManifestSourcePath ""{commonappdata}\DocuID\OfficeAddin\manifest-production.xml"" -SharedInstallRoot ""{commonappdata}\DocuID\OfficeAddin"""; Flags: runhidden waituntilterminated
+; Per-user registry (HKCU) for whoever launched setup — needed when the admin step above targeted a different account.
+Filename: "{sys}\WindowsPowerShell\v1.0\powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -File ""{commonappdata}\DocuID\OfficeAddin\Register-ForCurrentUser.ps1"""; Flags: postinstall runasoriginaluser waituntilterminated; Description: "Register the add-in for the account that ran this installer (recommended)"
 
 [UninstallRun]
 Filename: "{sys}\WindowsPowerShell\v1.0\powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -File ""{commonappdata}\DocuID\OfficeAddin\Uninstall-DocuIDAddin.ps1"" -SharedInstallRoot ""{commonappdata}\DocuID\OfficeAddin"""; Flags: runhidden waituntilterminated
