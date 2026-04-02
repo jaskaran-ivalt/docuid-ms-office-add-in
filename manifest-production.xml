@@ -4,7 +4,7 @@
   <Version>1.0.1.0</Version>
   <ProviderName>iVALT</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
-  <DisplayName DefaultValue="iVALT Docuid"/>
+  <DisplayName DefaultValue="iVALT Docuid v1.0.2"/>
   <Description DefaultValue="iVALT Docuid add-in for document management."/>
   <IconUrl DefaultValue="https://addon.docuid.net/assets/icon-32.png"/>
   <HighResolutionIconUrl DefaultValue="https://addon.docuid.net/assets/icon-64.png"/>
