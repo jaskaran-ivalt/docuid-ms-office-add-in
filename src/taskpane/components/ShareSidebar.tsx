@@ -217,7 +217,8 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({
     <Panel
       isOpen={isOpen}
       onDismiss={handleDismiss}
-      type={PanelType.medium}
+      type={PanelType.custom}
+      customWidth="85%"
       headerText="Share Document"
       closeButtonAriaLabel="Close"
       onRenderHeader={() => (
