@@ -53,9 +53,6 @@
                   <Action xsi:type="ShowTaskpane">
                     <TaskpaneId>ButtonId1</TaskpaneId>
                     <SourceLocation resid="Taskpane.Url"/>
-                    <TaskpaneSize>
-                      <Width>450</Width>
-                    </TaskpaneSize>
                   </Action>
                 </Control>
               </Group>
