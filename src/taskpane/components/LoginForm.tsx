@@ -65,21 +65,23 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
                 </Text>
                 <div ref={infoButtonRef}>
                   <IconButton
-                    iconProps={{ iconName: "Info" }}
                     onClick={() => setIsInfoPopupOpen(!isInfoPopupOpen)}
                     styles={{
                       root: {
-                        width: 28,
-                        height: 28,
+                        width: 24,
+                        height: 24,
                         marginBottom: 8,
-                        animation: "glow 2s ease-in-out infinite",
+                        borderRadius: "50%",
+                        backgroundColor: "#e8f4fd",
+                        color: "#0078d4",
+                        border: "1px solid #b3e5fc",
                       },
-                      icon: {
-                        fontSize: 16,
+                      rootHovered: {
+                        backgroundColor: "#b3e5fc",
                       },
                     }}
                   >
-                    <Info size={16} />
+                    <Info size={14} />
                   </IconButton>
                 </div>
               </Stack>
