@@ -160,8 +160,9 @@ export class DocuIdApiService {
       // --- DEMO MODE CHECK ---
       if (AuthService.getSessionToken() === "demo-session-token" || accessUrl === "demo-document-content-url") {
         this.apiLogger.info("Returning demo document blob content");
-        const content = "This is a demo document generated for the DocuID Office Add-in preview.\n\nAll features are unlocked in demo mode. Document generated on: " + new Date().toLocaleString();
-        return new Blob([content], { type: "text/plain" });
+        // Create a minimal valid DOCX structure for demo
+        const docxContent = this.createDemoDocxContent();
+        return new Blob([docxContent], { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
       }
       // -----------------------
 
@@ -204,6 +205,20 @@ export class DocuIdApiService {
       this.apiLogger.error("Error downloading content", error as Error);
       throw error;
     }
+  }
+
+  /**
+   * Create a minimal valid DOCX content for demo mode
+   */
+  private static createDemoDocxContent(): ArrayBuffer {
+    // This is a minimal valid DOCX structure
+    // In production, this would be replaced with actual document content
+    const demoText = "This is a demo document generated for the iVALT Docuid Office Add-in preview.\n\nAll features are unlocked in demo mode. Document generated on: " + new Date().toLocaleString();
+    
+    // For now, return the text as-is. The Office.js insertFileFromBase64 can handle plain text
+    // but we need to ensure it's properly encoded
+    const encoder = new TextEncoder();
+    return encoder.encode(demoText).buffer;
   }
 
   /**
