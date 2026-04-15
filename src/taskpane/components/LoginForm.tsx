@@ -50,9 +50,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
             alt="iVALT Docuid"
             style={{ width: "100px", objectFit: "contain" }}
           />
-          <Text variant="xLarge" styles={{ root: { fontWeight: 600 } }}>
-            iVALT Docuid
-          </Text>
           <Text variant="medium" styles={{ root: { fontWeight: 600, color: "#323130" } }}>
             Security Platform
           </Text>
