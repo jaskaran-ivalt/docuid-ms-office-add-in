@@ -60,7 +60,7 @@ const DocumentList: React.FC<DocumentListProps> = ({
     try {
       await onReload();
     } catch (error) {
-      console.error("Failed to reload documents:", error);
+      // Error handled silently for production
     } finally {
       setIsReloading(false);
     }
