@@ -59,6 +59,41 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
           </Text>
         </Stack>
 
+        {/* Instructions Section */}
+        <Stack
+          tokens={{ childrenGap: 8 }}
+          styles={{
+            root: {
+              padding: 12,
+              backgroundColor: "#e8f4fd",
+              border: "1px solid #b3e5fc",
+              borderRadius: 6,
+            },
+          }}
+        >
+          <Text variant="small" styles={{ root: { fontWeight: 600, color: "#01579b" } }}>
+            How to get started:
+          </Text>
+          <Stack
+            as="ol"
+            tokens={{ childrenGap: 4 }}
+            styles={{ root: { paddingLeft: 20, margin: 0, color: "#0277bd" } }}
+          >
+            <Text as="li" variant="small">
+              Download the iVALT app from the links below
+            </Text>
+            <Text as="li" variant="small">
+              Register your mobile number in the app
+            </Text>
+            <Text as="li" variant="small">
+              Enter the same mobile number here to login
+            </Text>
+            <Text as="li" variant="small">
+              Complete biometric verification on your phone
+            </Text>
+          </Stack>
+        </Stack>
+
         {/* Form Section */}
         <form onSubmit={handleSubmit}>
           <Stack tokens={{ childrenGap: 16 }}>
@@ -188,22 +223,25 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
           <Stack horizontal tokens={{ childrenGap: 8 }} verticalAlign="center">
             <Shield size={18} />
             <Text variant="medium" styles={{ root: { fontWeight: 600 } }}>
-              Secure Process:
+              Security Features:
             </Text>
           </Stack>
           <Stack
-            as="ol"
+            as="ul"
             tokens={{ childrenGap: 4 }}
             styles={{ root: { paddingLeft: 20, margin: 0 } }}
           >
             <Text as="li" variant="small">
-              Enter your iVALT registered mobile number
+              <strong>Biometric Authentication:</strong> Secure login using fingerprint or face recognition
             </Text>
             <Text as="li" variant="small">
-              Complete biometric verification on your device
+              <strong>End-to-End Encryption:</strong> Your documents are encrypted and protected
             </Text>
             <Text as="li" variant="small">
-              Access your documents securely
+              <strong>Identity Verification:</strong> Multi-factor authentication for maximum security
+            </Text>
+            <Text as="li" variant="small">
+              <strong>Real-time Monitoring:</strong> Track and manage document access securely
             </Text>
           </Stack>
         </Stack>
