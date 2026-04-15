@@ -104,11 +104,13 @@ const DocumentList: React.FC<DocumentListProps> = ({
 
   if (isLoadingDocuments) {
     return (
-      <Stack tokens={{ padding: 16, childrenGap: 16 }}>
-        <Text variant="xLarge" styles={{ root: { fontWeight: 600 } }}>
-          Your Documents
-        </Text>
-        <SearchBox placeholder="Search documents..." disabled />
+      <Stack tokens={{ padding: 16, childrenGap: 16 }} styles={{ root: { backgroundColor: "#f5f5f5", minHeight: "100%" } }}>
+        <Stack horizontal horizontalAlign="space-between" verticalAlign="center" styles={{ root: { flexWrap: "wrap" } }}>
+          <Text variant="xLarge" styles={{ root: { fontWeight: 600, flexShrink: 0 } }}>
+            Your Documents
+          </Text>
+        </Stack>
+        <SearchBox placeholder="Search documents..." disabled styles={{ root: { width: "100%" } }} />
         <Stack tokens={{ childrenGap: 12 }}>
           {[1, 2, 3].map((index) => (
             <DocumentSkeleton key={index} />
@@ -123,8 +125,8 @@ const DocumentList: React.FC<DocumentListProps> = ({
       tokens={{ padding: 16, childrenGap: 16 }}
       styles={{ root: { backgroundColor: "#f5f5f5", minHeight: "100%" } }}
     >
-      <Stack horizontal horizontalAlign="space-between" verticalAlign="center">
-        <Text variant="xLarge" styles={{ root: { fontWeight: 600 } }}>
+      <Stack horizontal horizontalAlign="space-between" verticalAlign="center" styles={{ root: { flexWrap: "wrap" } }}>
+        <Text variant="xLarge" styles={{ root: { fontWeight: 600, flexShrink: 0 } }}>
           Your Documents
         </Text>
         {onReload && (
@@ -133,6 +135,7 @@ const DocumentList: React.FC<DocumentListProps> = ({
             onClick={handleReload}
             disabled={isReloading || isLoadingDocuments}
             onRenderIcon={() => <RefreshCw size={16} style={{ marginRight: 4 }} />}
+            styles={{ root: { minWidth: "auto", flexShrink: 0 } }}
           />
         )}
       </Stack>
@@ -142,6 +145,7 @@ const DocumentList: React.FC<DocumentListProps> = ({
         value={searchTerm}
         onChange={(_, value) => setSearchTerm(value || "")}
         onClear={() => setSearchTerm("")}
+        styles={{ root: { width: "100%" } }}
       />
 
       {isLoadingDocuments ? (
@@ -167,14 +171,23 @@ const DocumentList: React.FC<DocumentListProps> = ({
       ) : filteredDocuments.length === 0 ? (
         <Stack
           horizontalAlign="center"
-          tokens={{ padding: 40, childrenGap: 12 }}
-          styles={{ root: { backgroundColor: "white", border: "1px solid #edebe9" } }}
+          tokens={{ padding: 32, childrenGap: 12 }}
+          styles={{
+            root: {
+              backgroundColor: "white",
+              border: "1px solid #edebe9",
+              borderRadius: 4,
+              "@media (max-width: 480px)": {
+                padding: 24,
+              },
+            },
+          }}
         >
-          <FolderOpen size={48} color="#a19f9d" />
-          <Text variant="large" styles={{ root: { fontWeight: 600 } }}>
+          <FolderOpen size={40} color="#a19f9d" />
+          <Text variant="large" styles={{ root: { fontWeight: 600, textAlign: "center" } }}>
             {documents.length === 0 ? "No Documents Available" : "No Documents Found"}
           </Text>
-          <Text variant="medium" styles={{ root: { color: "#605e5c" } }}>
+          <Text variant="medium" styles={{ root: { color: "#605e5c", textAlign: "center" } }}>
             {documents.length === 0
               ? "You don't have any documents available at the moment."
               : "No documents match your search criteria."}
@@ -189,33 +202,46 @@ const DocumentList: React.FC<DocumentListProps> = ({
                 root: {
                   backgroundColor: "white",
                   border: "1px solid #edebe9",
-                  borderRadius: 0,
+                  borderRadius: 4,
                   boxShadow: "0 0 transparent",
                 },
               }}
             >
-              <Stack horizontal horizontalAlign="space-between" verticalAlign="center">
-                <Stack horizontal tokens={{ childrenGap: 16 }} verticalAlign="center">
+              <Stack
+                horizontal
+                horizontalAlign="space-between"
+                verticalAlign="center"
+                tokens={{ childrenGap: 12 }}
+                styles={{
+                  root: {
+                    flexWrap: "wrap",
+                    "@media (max-width: 480px)": {
+                      flexDirection: "column",
+                      alignItems: "flex-start",
+                    },
+                  },
+                }}
+              >
+                <Stack horizontal tokens={{ childrenGap: 12 }} verticalAlign="center" styles={{ root: { flex: 1, minWidth: 0, "@media (max-width: 480px)": { width: "100%" } } }}>
                   <div
                     style={{
-                      width: 48,
-                      height: 48,
+                      width: 40,
+                      height: 40,
                       backgroundColor: "#f5f5f5",
                       border: "1px solid #edebe9",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
+                      flexShrink: 0,
                     }}
                   >
                     {getFileIcon(document.type)}
                   </div>
-                  <Stack tokens={{ childrenGap: 4 }}>
-                    <Stack horizontal tokens={{ childrenGap: 8 }} verticalAlign="center">
-                      <Text variant="medium" styles={{ root: { fontWeight: 600 } }}>
-                        {document.title}
-                      </Text>
-                    </Stack>
-                    <Stack horizontal tokens={{ childrenGap: 8 }}>
+                  <Stack tokens={{ childrenGap: 4 }} styles={{ root: { minWidth: 0, flex: 1 } }}>
+                    <Text variant="medium" styles={{ root: { fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }}>
+                      {document.title}
+                    </Text>
+                    <Stack horizontal tokens={{ childrenGap: 6 }} styles={{ root: { flexWrap: "wrap" } }}>
                       <Text variant="small" styles={{ root: { color: "#605e5c" } }}>
                         {document.type.toUpperCase()}
                       </Text>
@@ -234,7 +260,7 @@ const DocumentList: React.FC<DocumentListProps> = ({
                     </Stack>
                   </Stack>
                 </Stack>
-                <Stack horizontal tokens={{ childrenGap: 8 }}>
+                <Stack horizontal tokens={{ childrenGap: 8 }} styles={{ root: { flexShrink: 0, "@media (max-width: 480px)": { width: "100%", marginTop: 8 } } }}>
                   <PrimaryButton
                     text={openingDocumentId === document.id ? "Opening..." : "Open"}
                     onClick={() => onDocumentOpen(document)}
@@ -243,6 +269,7 @@ const DocumentList: React.FC<DocumentListProps> = ({
                       openingDocumentId === document.id ||
                       closingDocumentId === document.id
                     }
+                    styles={{ root: { minWidth: 70, "@media (max-width: 480px)": { flex: 1 } } }}
                   />
                   <DefaultButton
                     text="Share"
@@ -255,6 +282,7 @@ const DocumentList: React.FC<DocumentListProps> = ({
                       openingDocumentId === document.id ||
                       closingDocumentId === document.id
                     }
+                    styles={{ root: { minWidth: 60, "@media (max-width: 480px)": { flex: 1 } } }}
                   />
                 </Stack>
               </Stack>
