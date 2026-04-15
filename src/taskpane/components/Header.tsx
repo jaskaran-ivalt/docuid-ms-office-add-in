@@ -8,7 +8,7 @@ import {
   DirectionalHint,
   Text,
 } from "@fluentui/react";
-import { User, Settings, LogOut, Bug } from "lucide-react";
+import { User, LogOut, Bug } from "lucide-react";
 import "./Header.css";
 
 interface HeaderProps {
@@ -243,34 +243,6 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile, on
                           <span>Profile</span>
                         </button>
                       )}
-                      <a
-                        href="https://www.docuid.net/account"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{
-                          width: "100%",
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "8px",
-                          padding: "8px 12px",
-                          border: "none",
-                          background: "transparent",
-                          cursor: "pointer",
-                          fontSize: "14px",
-                          color: "#323130",
-                          textAlign: "left",
-                          textDecoration: "none",
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = "#f3f2f1";
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = "transparent";
-                        }}
-                      >
-                        <Settings size={16} />
-                        <span>Account Settings</span>
-                      </a>
                       <button
                         onClick={onLogout}
                         style={{
