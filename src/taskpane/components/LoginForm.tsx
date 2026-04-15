@@ -44,7 +44,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
         }}
       >
         {/* Header Section */}
-        <Stack horizontalAlign="center" tokens={{ childrenGap: 8 }}>
+        <Stack horizontalAlign="center" tokens={{ childrenGap: 12 }}>
           <img
             src="assets/logo-transparent-bg.png"
             alt="iVALT Docuid"
@@ -52,6 +52,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
           />
           <Text variant="xLarge" styles={{ root: { fontWeight: 600 } }}>
             iVALT Docuid
+          </Text>
+          <Text variant="medium" styles={{ root: { fontWeight: 600, color: "#323130" } }}>
+            Security Platform
+          </Text>
+          <Text variant="medium" styles={{ root: { textAlign: "center", color: "#605e5c" } }}>
+            Secure your digital assets with our advanced file identity and verification system
+            powered by iVALT technology
           </Text>
         </Stack>
 
