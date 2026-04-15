@@ -160,7 +160,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  min-width: 90px;
+  min-width: 0px;
 }
 
 .PhoneInputInput {
@@ -223,6 +223,7 @@
   border-top: 5px solid #605e5c;
   margin-left: 6px;
   vertical-align: middle;
+  display: none !important;
 }
 
 /* Hide duplicate icons in country dropdown */
@@ -372,5 +373,12 @@ select.PhoneInputCountrySelect option::before {
 
   .account-links .ms-Text {
     font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .PhoneInputCountry {
+      min-width: 0px !important;
+      padding: 8px 10px;
   }
 }

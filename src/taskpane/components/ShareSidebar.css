@@ -300,7 +300,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  min-width: 100px;
+  /* min-width: 100px; */
   flex-shrink: 0;
 }
 
@@ -357,6 +357,7 @@
   border-top: 5px solid #605e5c;
   margin-left: 6px;
   vertical-align: middle;
+  display: none !important;
 }
 
 .action-buttons {
@@ -449,3 +450,10 @@
     transform: rotate(360deg);
   }
 } 
+
+@media (max-width: 480px) {
+  .PhoneInputCountry {
+      min-width: 0px !important;
+      padding: 8px 10px;
+  }
+}
