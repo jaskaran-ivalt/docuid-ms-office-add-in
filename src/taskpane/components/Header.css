@@ -323,4 +323,127 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 480px) {
+  .header {
+    padding: 12px 16px;
+  }
+
+  .header-brand {
+    gap: 8px;
+  }
+
+  .brand-logo {
+    padding: 4px;
+  }
+
+  .brand-logo img {
+    width: 24px;
+    height: 24px;
+  }
+
+  .brand-title {
+    font-size: 16px;
+  }
+
+  .brand-subtitle {
+    font-size: 10px;
+  }
+
+  .header-user-section {
+    gap: 8px;
+  }
+
+  .user-profile-trigger {
+    padding: 6px 8px;
+    min-width: auto;
+    gap: 8px;
+  }
+
+  .user-avatar {
+    width: 28px;
+    height: 28px;
+  }
+
+  .avatar-initials {
+    font-size: 12px;
+  }
+
+  .user-name {
+    font-size: 12px;
+  }
+
+  .user-email {
+    font-size: 10px;
+  }
+
+  .dropdown-menu {
+    min-width: 240px;
+    right: -8px;
+  }
+
+  .dropdown-user-info {
+    padding: 12px;
+  }
+
+  .dropdown-avatar {
+    width: 36px;
+    height: 36px;
+  }
+
+  .dropdown-user-name {
+    font-size: 13px;
+  }
+
+  .dropdown-user-email {
+    font-size: 11px;
+  }
+
+  .dropdown-menu-item {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 360px) {
+  .header {
+    padding: 10px 12px;
+  }
+
+  .brand-title {
+    font-size: 14px;
+  }
+
+  .brand-subtitle {
+    display: none;
+  }
+
+  .user-profile-trigger {
+    padding: 4px 6px;
+  }
+
+  .user-avatar {
+    width: 24px;
+    height: 24px;
+  }
+
+  .avatar-initials {
+    font-size: 11px;
+  }
+
+  .user-info {
+    display: none;
+  }
+
+  .dropdown-menu {
+    min-width: 200px;
+    right: -12px;
+  }
+
+  .dropdown-menu-item {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
 } 

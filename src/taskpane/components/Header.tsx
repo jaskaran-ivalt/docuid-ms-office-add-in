@@ -243,7 +243,10 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile, on
                           <span>Profile</span>
                         </button>
                       )}
-                      <button
+                      <a
+                        href="https://www.docuid.net/account"
+                        target="_blank"
+                        rel="noopener noreferrer"
                         style={{
                           width: "100%",
                           display: "flex",
@@ -256,6 +259,7 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile, on
                           fontSize: "14px",
                           color: "#323130",
                           textAlign: "left",
+                          textDecoration: "none",
                         }}
                         onMouseEnter={(e) => {
                           e.currentTarget.style.backgroundColor = "#f3f2f1";
@@ -265,8 +269,8 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile, on
                         }}
                       >
                         <Settings size={16} />
-                        <span>Settings</span>
-                      </button>
+                        <span>Account Settings</span>
+                      </a>
                       <button
                         onClick={onLogout}
                         style={{
@@ -290,7 +294,7 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile, on
                         }}
                       >
                         <LogOut size={16} />
-                        <span>Logout</span>
+                        <span>Sign Out</span>
                       </button>
                     </Stack>
                   </Stack>
