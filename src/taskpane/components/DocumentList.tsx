@@ -1,13 +1,12 @@
 import React, { useState } from "react";
 import {
-  SearchBox,
   Spinner,
   PrimaryButton,
   DefaultButton,
   Stack,
   Text,
 } from "@fluentui/react";
-import { FileText, FolderOpen, RefreshCw, Shield } from "lucide-react";
+import { FileText, FolderOpen, RefreshCw, Shield, Search, X } from "lucide-react";
 import { Card } from "./shared/Card";
 import ShareSidebar from "./ShareSidebar";
 import ShareSuccessModal from "./ShareSuccessModal";
@@ -110,7 +109,15 @@ const DocumentList: React.FC<DocumentListProps> = ({
             Your Documents
           </Text>
         </Stack>
-        <SearchBox placeholder="Search documents..." disabled styles={{ root: { width: "100%" } }} />
+        <div className="search-input-wrapper">
+          <Search className="search-icon" size={18} />
+          <input
+            type="text"
+            className="search-input"
+            placeholder="Search documents..."
+            disabled
+          />
+        </div>
         <Stack tokens={{ childrenGap: 12 }}>
           {[1, 2, 3].map((index) => (
             <DocumentSkeleton key={index} />
@@ -130,23 +137,37 @@ const DocumentList: React.FC<DocumentListProps> = ({
           Your Documents
         </Text>
         {onReload && (
-          <DefaultButton
-            text={isReloading ? "Reloading..." : "Reload"}
+          <button
+            className="reload-button"
             onClick={handleReload}
             disabled={isReloading || isLoadingDocuments}
-            onRenderIcon={() => <RefreshCw className={`reload-icon ${isReloading ? 'spinning' : ''}`} />}
-            className="reload-button"
-          />
+            aria-label={isReloading ? "Reloading" : "Reload"}
+          >
+            <RefreshCw className={`reload-icon ${isReloading ? 'spinning' : ''}`} />
+            <span className="reload-text">{isReloading ? "Reloading..." : "Reload"}</span>
+          </button>
         )}
       </Stack>
 
-      <SearchBox
-        placeholder="Search documents..."
-        value={searchTerm}
-        onChange={(_, value) => setSearchTerm(value || "")}
-        onClear={() => setSearchTerm("")}
-        styles={{ root: { width: "100%" } }}
-      />
+      <div className="search-input-wrapper">
+        <Search className="search-icon" size={18} />
+        <input
+          type="text"
+          className="search-input"
+          placeholder="Search documents..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        {searchTerm && (
+          <button
+            className="search-clear-btn"
+            onClick={() => setSearchTerm("")}
+            aria-label="Clear search"
+          >
+            <X size={16} />
+          </button>
+        )}
+      </div>
 
       {isLoadingDocuments ? (
         <Stack tokens={{ childrenGap: 12 }}>
