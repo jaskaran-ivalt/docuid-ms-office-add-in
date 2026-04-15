@@ -14,6 +14,263 @@
   border-color: #d0d0d0;
 }
 
+/* Modern Document Card Design */
+.document-card {
+  background: white;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.document-card:hover {
+  border-color: #0078d4;
+  box-shadow: 0 4px 12px rgba(0, 120, 212, 0.15);
+  transform: translateY(-2px);
+}
+
+.document-card-inner {
+  padding: 16px;
+  flex-wrap: wrap;
+}
+
+.document-card-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.document-icon-wrapper {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  border: 2px solid #e9ecef;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.document-card:hover .document-icon-wrapper {
+  border-color: #0078d4;
+  background: linear-gradient(135deg, #e8f4fd 0%, #ffffff 100%);
+}
+
+.doc-icon {
+  width: 28px;
+  height: 28px;
+  transition: all 0.3s ease;
+}
+
+.document-info {
+  min-width: 0;
+  flex: 1;
+}
+
+.document-title {
+  font-weight: 600;
+  color: #323130;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 15px;
+  transition: color 0.2s ease;
+}
+
+.document-card:hover .document-title {
+  color: #0078d4;
+}
+
+.document-meta {
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.document-type-badge {
+  background: linear-gradient(135deg, #e1f5fe 0%, #b3e5fc 100%);
+  color: #0277bd;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.3px;
+}
+
+.document-separator {
+  color: #d1d1d1;
+  font-weight: 600;
+}
+
+.document-meta-text {
+  color: #605e5c;
+  font-size: 12px;
+}
+
+.document-actions {
+  flex-shrink: 0;
+  gap: 8px;
+  margin-left: 0 !important;
+  margin-top: 10px !important; 
+}
+
+.document-open-button {
+  min-width: 80px !important;
+  height: 40px !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  padding: 0 16px !important;
+  background: linear-gradient(135deg, #0078d4 0%, #106ebe 100%) !important;
+  border: none !important;
+  box-shadow: 0 2px 8px rgba(0, 120, 212, 0.2) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.document-open-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #106ebe 0%, #005a9e 100%) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 16px rgba(0, 120, 212, 0.3) !important;
+}
+
+.document-open-button:active:not(:disabled) {
+  transform: translateY(0) !important;
+  box-shadow: 0 2px 4px rgba(0, 120, 212, 0.2) !important;
+}
+
+.document-share-button {
+  min-width: 70px !important;
+  height: 40px !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  padding: 0 16px !important;
+  border: 1.5px solid #d1d1d1 !important;
+  background: white !important;
+  color: #323130 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.document-share-button:hover:not(:disabled) {
+  background: #f8f9fa !important;
+  border-color: #0078d4 !important;
+  color: #0078d4 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
+}
+
+.document-share-button:active:not(:disabled) {
+  transform: translateY(0) !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Empty State */
+.empty-state {
+  background: white;
+  border: 2px dashed #e9ecef;
+  border-radius: 12px;
+  padding: 40px 32px;
+}
+
+.empty-state-icon {
+  width: 56px;
+  height: 56px;
+  color: #a19f9d;
+  opacity: 0.6;
+}
+
+/* Skeleton Loading */
+.document-card-skeleton {
+  background: white;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+}
+
+.skeleton-icon-wrapper {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  background: linear-gradient(90deg, #f3f2f1 25%, #edebe9 50%, #f3f2f1 75%);
+  background-size: 200% 100%;
+  border-radius: 10px;
+  animation: skeletonShimmer 1.5s ease-in-out infinite;
+}
+
+.skeleton-title-bar {
+  width: 60%;
+  height: 16px;
+  background: linear-gradient(90deg, #f3f2f1 25%, #edebe9 50%, #f3f2f1 75%);
+  background-size: 200% 100%;
+  border-radius: 4px;
+  animation: skeletonShimmer 1.5s ease-in-out infinite;
+}
+
+.skeleton-meta-bar {
+  width: 40%;
+  height: 12px;
+  background: linear-gradient(90deg, #f3f2f1 25%, #edebe9 50%, #f3f2f1 75%);
+  background-size: 200% 100%;
+  border-radius: 4px;
+  animation: skeletonShimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes skeletonShimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.document-loading-card {
+  background: white;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+}
+
+/* Reload Button */
+.reload-button {
+  min-width: auto !important;
+  height: 36px !important;
+  padding: 0 16px !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  border: 1.5px solid #d1d1d1 !important;
+  background: white !important;
+  color: #323130 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+  transition: all 0.3s ease !important;
+}
+
+.reload-button:hover:not(:disabled) {
+  background: #f8f9fa !important;
+  border-color: #0078d4 !important;
+  color: #0078d4 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+.reload-button:active:not(:disabled) {
+  transform: translateY(0) !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+}
+
+.reload-icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 6px;
+  transition: all 0.3s ease;
+}
+
+.reload-icon.spinning {
+  animation: spin 1s linear infinite;
+}
+
 .documents-header {
   padding: 28px 24px 20px;
   border-bottom: 1px solid #e1e1e1;
@@ -393,118 +650,96 @@
 
 /* Mobile Responsive Styles */
 @media (max-width: 480px) {
-  .documents-header {
-    padding: 20px 16px 16px;
+  .document-card-inner {
+    padding: 12px;
+    flex-direction: column;
+    align-items: flex-start;
   }
 
-  .documents-header h2 {
-    font-size: 18px;
-  }
-
-  .reload-button {
-    padding: 6px 12px;
-    font-size: 13px;
-  }
-
-  .skeleton-search {
+  .document-card-content {
     width: 100%;
+    margin-bottom: 12px;
   }
 
-  .document-skeleton {
-    padding: 12px 16px;
+  .document-icon-wrapper {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
   }
 
-  .skeleton-icon {
-    width: 28px;
-    height: 28px;
-    margin-right: 12px;
-  }
-
-  .no-documents {
-    padding: 24px 16px;
-  }
-
-  .no-documents h3 {
-    font-size: 16px;
-  }
-
-  .no-documents p {
-    font-size: 13px;
-  }
-
-  .document-item {
-    padding: 12px 16px;
-  }
-
-  .document-icon {
-    font-size: 20px;
-    margin-right: 12px;
-    width: 28px;
+  .doc-icon {
+    width: 24px;
+    height: 24px;
   }
 
   .document-title {
     font-size: 14px;
   }
 
-  .document-meta {
-    font-size: 11px;
-    flex-wrap: wrap;
+  .document-type-badge {
+    font-size: 10px;
+    padding: 1px 6px;
   }
 
-  .document-type {
-    padding: 1px 4px;
-    font-size: 10px;
+  .document-meta-text {
+    font-size: 11px;
   }
 
   .document-actions {
-    gap: 6px;
-  }
-
-  .document-open-btn {
-    padding: 6px 12px;
-    font-size: 13px;
-    min-width: 60px;
-  }
-
-  .document-share-btn {
-    padding: 6px 12px;
-    font-size: 13px;
-    min-width: 50px;
-  }
-
-  /* Fluent UI SearchBox responsive override */
-  .ms-SearchBox {
-    width: 100% !important;
-  }
-
-  /* Fluent UI Stack responsive fixes */
-  .ms-Stack {
     width: 100%;
+    gap: 6px;
+    margin-left: 0;
   }
 
-  /* Card responsive padding */
-  .ms-Card {
-    margin: 0;
+  .document-open-button,
+  .document-share-button {
+    flex: 1 !important;
+    min-width: auto !important;
+    height: 36px !important;
+    font-size: 13px !important;
+  }
+
+  .empty-state {
+    padding: 32px 24px;
+  }
+
+  .empty-state-icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .reload-button {
+    height: 32px !important;
+    padding: 0 12px !important;
+    font-size: 13px !important;
+  }
+
+  .reload-icon {
+    width: 14px;
+    height: 14px;
+  }
+
+  .skeleton-icon-wrapper {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
   }
 }
 
 @media (max-width: 360px) {
-  .documents-header {
-    padding: 16px 12px 12px;
+  .document-card-inner {
+    padding: 10px;
   }
 
-  .documents-header h2 {
-    font-size: 16px;
+  .document-icon-wrapper {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
   }
 
-  .document-item {
-    padding: 10px 12px;
-  }
-
-  .document-icon {
-    font-size: 18px;
-    margin-right: 10px;
-    width: 24px;
+  .doc-icon {
+    width: 20px;
+    height: 20px;
   }
 
   .document-title {
@@ -514,27 +749,71 @@
   .document-actions {
     flex-direction: column;
     gap: 4px;
+    margin-left: 0;
   }
 
-  .document-open-btn,
-  .document-share-btn {
+  .document-open-button,
+  .document-share-button {
     width: 100%;
-    min-width: auto;
+    height: 34px !important;
+    font-size: 12px !important;
   }
 
-  /* Fluent UI Button responsive fixes */
-  .ms-Button {
-    min-width: auto;
+  .empty-state-icon {
+    width: 40px;
+    height: 40px;
   }
 }
 
 /* Tablet responsive styles */
 @media (min-width: 481px) and (max-width: 768px) {
-  .documents-header {
-    padding: 24px 20px 18px;
+  .document-card-inner {
+    padding: 14px;
   }
 
-  .document-item {
-    padding: 14px 20px;
+  .document-icon-wrapper {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+  }
+
+  .doc-icon {
+    width: 26px;
+    height: 26px;
+  }
+
+  .document-open-button,
+  .document-share-button {
+    height: 38px !important;
+    font-size: 13px !important;
+  }
+}
+
+/* Large screen optimizations */
+@media (min-width: 1024px) {
+  .document-card-inner {
+    padding: 18px;
+  }
+
+  .document-icon-wrapper {
+    width: 52px;
+    height: 52px;
+    min-width: 52px;
+  }
+
+  .doc-icon {
+    width: 30px;
+    height: 30px;
+  }
+
+  .document-title {
+    font-size: 16px;
+  }
+
+  .document-open-button,
+  .document-share-button {
+    height: 42px !important;
+    font-size: 15px !important;
+    min-width: 90px !important;
   }
 } 
