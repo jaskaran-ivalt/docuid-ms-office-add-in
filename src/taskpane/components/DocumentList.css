@@ -471,6 +471,21 @@
     font-size: 13px;
     min-width: 50px;
   }
+
+  /* Fluent UI SearchBox responsive override */
+  .ms-SearchBox {
+    width: 100% !important;
+  }
+
+  /* Fluent UI Stack responsive fixes */
+  .ms-Stack {
+    width: 100%;
+  }
+
+  /* Card responsive padding */
+  .ms-Card {
+    margin: 0;
+  }
 }
 
 @media (max-width: 360px) {
@@ -505,5 +520,21 @@
   .document-share-btn {
     width: 100%;
     min-width: auto;
+  }
+
+  /* Fluent UI Button responsive fixes */
+  .ms-Button {
+    min-width: auto;
+  }
+}
+
+/* Tablet responsive styles */
+@media (min-width: 481px) and (max-width: 768px) {
+  .documents-header {
+    padding: 24px 20px 18px;
+  }
+
+  .document-item {
+    padding: 14px 20px;
   }
 } 
