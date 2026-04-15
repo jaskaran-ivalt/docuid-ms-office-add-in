@@ -54,7 +54,7 @@
                     <TaskpaneId>ButtonId1</TaskpaneId>
                     <SourceLocation resid="Taskpane.Url"/>
                     <TaskpaneSize>
-                      <Width>400</Width>
+                      <Width>450</Width>
                     </TaskpaneSize>
                   </Action>
                 </Control>
