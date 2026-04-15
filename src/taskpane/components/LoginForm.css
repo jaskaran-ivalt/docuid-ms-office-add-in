@@ -241,6 +241,16 @@ select.PhoneInputCountrySelect option::before {
   content: none;
 }
 
+/* Glowing animation for info icon */
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(0, 120, 212, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(0, 120, 212, 0.8), 0 0 10px rgba(0, 120, 212, 0.6);
+  }
+}
+
 /* Mobile Responsive Styles */
 @media (max-width: 480px) {
   .login-container {
