@@ -40,9 +40,6 @@ const AppDownloadButtons: React.FC = () => {
         </span>
       </a>
 
-      <Text variant="small" styles={{ root: { color: "#605e5c", textAlign: "center" } }}>
-        Register in the app, then login here
-      </Text>
     </Stack>
   );
 };
