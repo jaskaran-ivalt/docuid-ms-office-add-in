@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0" xmlns:ov="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="TaskPaneApp">
   <Id>c42a66ec-73b7-459d-af77-4324c5454a40</Id>
-  <Version>1.0.0.0</Version>
-  <ProviderName>DocuID</ProviderName>
+  <Version>1.0.1.0</Version>
+  <ProviderName>iVALT</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
-  <DisplayName DefaultValue="DocuID"/>
-  <Description DefaultValue="DocuID add-in for document management."/>
+  <DisplayName DefaultValue="Docuid"/>
+  <Description DefaultValue="Docuid add-in for document management."/>
   <IconUrl DefaultValue="https://addon.docuid.net/assets/icon-32.png"/>
   <HighResolutionIconUrl DefaultValue="https://addon.docuid.net/assets/icon-64.png"/>
   <SupportUrl DefaultValue="https://addon.docuid.net/support.html"/>
@@ -73,13 +73,13 @@
         <bt:Url id="Taskpane.Url" DefaultValue="https://addon.docuid.net/taskpane.html"/>
       </bt:Urls>
       <bt:ShortStrings>
-        <bt:String id="GetStarted.Title" DefaultValue="Get started with DocuID!"/>
-        <bt:String id="CommandsGroup.Label" DefaultValue="DocuID"/>
-        <bt:String id="TaskpaneButton.Label" DefaultValue="DocuID"/>
+        <bt:String id="GetStarted.Title" DefaultValue="Get started with Docuid!"/>
+        <bt:String id="CommandsGroup.Label" DefaultValue="Docuid"/>
+        <bt:String id="TaskpaneButton.Label" DefaultValue="Docuid"/>
       </bt:ShortStrings>
       <bt:LongStrings>
-        <bt:String id="GetStarted.Description" DefaultValue="DocuID add-in loaded successfully. Go to the HOME tab and click the 'DocuID' button to get started."/>
-        <bt:String id="TaskpaneButton.Tooltip" DefaultValue="Click to open DocuID"/>
+        <bt:String id="GetStarted.Description" DefaultValue="Docuid loaded successfully. Go to the HOME tab and click the 'Docuid' button to get started."/>
+        <bt:String id="TaskpaneButton.Tooltip" DefaultValue="Click to open Docuid"/>
       </bt:LongStrings>
     </Resources>
   </VersionOverrides>

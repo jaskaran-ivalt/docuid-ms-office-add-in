@@ -123,3 +123,10 @@ Desktop.ini
 *.OfficeAddin
 manifest*.xml.copybak
 .vercel
+
+# Windows junk file (reserved name; sometimes created by mistaken redirects)
+nul
+
+# Vendored CLI binaries and archives (large; download locally if needed)
+/tools/innoextract/
+/tools/*.zip

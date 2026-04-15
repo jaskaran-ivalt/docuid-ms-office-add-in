@@ -44,14 +44,14 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
         <Stack horizontalAlign="center" tokens={{ childrenGap: 12 }}>
           <img
             src="assets/logo-transparent-bg.png"
-            alt="DocuID Logo"
+            alt="iVALT Docuid"
             style={{ width: "140px", objectFit: "contain" }}
           />
-          <Text variant="xLarge" styles={{ root: { fontWeight: 600, position: "relative" } }}>
-            <span style={{ marginLeft: -5 }}>DocuID</span>
-            <span style={{ fontSize: 15, left: 60, top: 0, position: "absolute" }}>®</span>
-            {"   "}
-            <span style={{ marginLeft: 8 }}>Security Platform</span>
+          <Text variant="xLarge" styles={{ root: { fontWeight: 600 } }}>
+            iVALT Docuid
+          </Text>
+          <Text variant="medium" styles={{ root: { fontWeight: 600, color: "#323130" } }}>
+            Security Platform
           </Text>
           <Text variant="medium" styles={{ root: { textAlign: "center", color: "#605e5c" } }}>
             Secure your digital assets with our advanced file identity and verification system
