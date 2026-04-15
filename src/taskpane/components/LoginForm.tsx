@@ -41,57 +41,15 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
         }}
       >
         {/* Header Section */}
-        <Stack horizontalAlign="center" tokens={{ childrenGap: 12 }}>
+        <Stack horizontalAlign="center" tokens={{ childrenGap: 8 }}>
           <img
             src="assets/logo-transparent-bg.png"
             alt="iVALT Docuid"
-            style={{ width: "140px", objectFit: "contain" }}
+            style={{ width: "100px", objectFit: "contain" }}
           />
           <Text variant="xLarge" styles={{ root: { fontWeight: 600 } }}>
             iVALT Docuid
           </Text>
-          <Text variant="medium" styles={{ root: { fontWeight: 600, color: "#323130" } }}>
-            Security Platform
-          </Text>
-          <Text variant="medium" styles={{ root: { textAlign: "center", color: "#605e5c" } }}>
-            Secure your digital assets with our advanced file identity and verification system
-            powered by iVALT technology
-          </Text>
-        </Stack>
-
-        {/* Instructions Section */}
-        <Stack
-          tokens={{ childrenGap: 8 }}
-          styles={{
-            root: {
-              padding: 12,
-              backgroundColor: "#e8f4fd",
-              border: "1px solid #b3e5fc",
-              borderRadius: 6,
-            },
-          }}
-        >
-          <Text variant="small" styles={{ root: { fontWeight: 600, color: "#01579b" } }}>
-            How to get started:
-          </Text>
-          <Stack
-            as="ol"
-            tokens={{ childrenGap: 4 }}
-            styles={{ root: { paddingLeft: 20, margin: 0, color: "#0277bd" } }}
-          >
-            <Text as="li" variant="small">
-              Download the iVALT app from the links below
-            </Text>
-            <Text as="li" variant="small">
-              Register your mobile number in the app
-            </Text>
-            <Text as="li" variant="small">
-              Enter the same mobile number here to login
-            </Text>
-            <Text as="li" variant="small">
-              Complete biometric verification on your phone
-            </Text>
-          </Stack>
         </Stack>
 
         {/* Form Section */}
@@ -209,41 +167,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
           </a>
 
           <Text variant="small" styles={{ root: { color: "#605e5c", textAlign: "center" } }}>
-            Register in the app, then login here with the same mobile number
+            Register in the app, then login here
           </Text>
-        </Stack>
-
-        {/* Secure Process Section */}
-        <Stack
-          tokens={{ childrenGap: 8 }}
-          styles={{
-            root: { padding: 16, backgroundColor: "#faf9f8", border: "1px solid #edebe9" },
-          }}
-        >
-          <Stack horizontal tokens={{ childrenGap: 8 }} verticalAlign="center">
-            <Shield size={18} />
-            <Text variant="medium" styles={{ root: { fontWeight: 600 } }}>
-              Security Features:
-            </Text>
-          </Stack>
-          <Stack
-            as="ul"
-            tokens={{ childrenGap: 4 }}
-            styles={{ root: { paddingLeft: 20, margin: 0 } }}
-          >
-            <Text as="li" variant="small">
-              <strong>Biometric Authentication:</strong> Secure login using fingerprint or face recognition
-            </Text>
-            <Text as="li" variant="small">
-              <strong>End-to-End Encryption:</strong> Your documents are encrypted and protected
-            </Text>
-            <Text as="li" variant="small">
-              <strong>Identity Verification:</strong> Multi-factor authentication for maximum security
-            </Text>
-            <Text as="li" variant="small">
-              <strong>Real-time Monitoring:</strong> Track and manage document access securely
-            </Text>
-          </Stack>
         </Stack>
       </Stack>
     </Stack>
