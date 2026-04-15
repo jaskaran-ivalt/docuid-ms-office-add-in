@@ -240,3 +240,127 @@
 select.PhoneInputCountrySelect option::before {
   content: none;
 }
+
+/* Mobile Responsive Styles */
+@media (max-width: 480px) {
+  .login-container {
+    padding: 12px;
+    min-height: auto;
+  }
+
+  .login-card {
+    padding: 24px 20px;
+    max-width: 100%;
+    border-radius: 8px;
+  }
+
+  .login-header {
+    margin-bottom: 24px;
+  }
+
+  .login-title {
+    font-size: 18px;
+    margin-top: 12px;
+  }
+
+  .login-subtitle {
+    font-size: 11px;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-label {
+    font-size: 13px;
+  }
+
+  .login-button {
+    height: 44px;
+    font-size: 15px;
+  }
+
+  .secure-process {
+    padding: 16px;
+    margin-top: 20px;
+  }
+
+  .secure-process-title {
+    font-size: 14px;
+  }
+
+  .secure-process-steps {
+    font-size: 13px;
+    padding-left: 16px;
+  }
+
+  .PhoneInputCountry {
+    min-width: 75px;
+    padding: 8px 10px;
+  }
+
+  .PhoneInputInput {
+    padding: 8px 10px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 360px) {
+  .login-card {
+    padding: 20px 16px;
+  }
+
+  .login-title {
+    font-size: 16px;
+  }
+
+  .login-button {
+    height: 40px;
+    font-size: 14px;
+  }
+
+  .secure-process {
+    padding: 12px;
+  }
+
+  .PhoneInputCountry {
+    min-width: 65px;
+    padding: 6px 8px;
+  }
+
+  .PhoneInputInput {
+    padding: 6px 8px;
+    font-size: 13px;
+  }
+}
+
+/* App Store Buttons Responsive Styles */
+@media (max-width: 480px) {
+  .account-links a {
+    padding: 10px 12px;
+  }
+
+  .account-links svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .account-links .ms-Text {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 360px) {
+  .account-links a {
+    padding: 8px 10px;
+  }
+
+  .account-links svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .account-links .ms-Text {
+    font-size: 11px;
+  }
+}
