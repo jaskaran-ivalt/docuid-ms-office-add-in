@@ -28,7 +28,6 @@ const tryOfficeReady = () => {
   if (typeof window.Office !== "undefined" && typeof window.Office.onReady === "function") {
     // Set a timeout to fallback if Office.onReady doesn't fire
     const timeout = setTimeout(() => {
-      console.log("Office.onReady timeout - rendering in browser mode");
       renderApp();
     }, 1000);
 
@@ -38,7 +37,6 @@ const tryOfficeReady = () => {
         renderApp();
       } else {
         // Office context but not Word - still render
-        console.log("Office context detected but not Word host");
         renderApp();
       }
     });

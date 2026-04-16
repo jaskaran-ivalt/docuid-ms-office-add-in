@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { PrimaryButton, Spinner, Stack, TextField, Text } from "@fluentui/react";
-import { Shield } from "lucide-react";
+import { PrimaryButton, Spinner, Stack, TextField, Text, IconButton, Callout, DirectionalHint } from "@fluentui/react";
+import { Info } from "lucide-react";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import "./LoginForm.css";
+import AppDownloadButtons from "./AppDownloadButtons";
 
 interface LoginFormProps {
   onLogin: (phoneNumber: string) => Promise<void>;
@@ -12,6 +13,8 @@ interface LoginFormProps {
 
 const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
   const [phoneNumber, setPhoneNumber] = useState<string>("");
+  const [isInfoPopupOpen, setIsInfoPopupOpen] = useState(false);
+  const infoButtonRef = React.useRef<HTMLDivElement>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,11 +48,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
           <img
             src="assets/logo-transparent-bg.png"
             alt="iVALT Docuid"
-            style={{ width: "140px", objectFit: "contain" }}
+            style={{ width: "100px", objectFit: "contain" }}
           />
-          <Text variant="xLarge" styles={{ root: { fontWeight: 600 } }}>
-            iVALT Docuid
-          </Text>
           <Text variant="medium" styles={{ root: { fontWeight: 600, color: "#323130" } }}>
             Security Platform
           </Text>
@@ -63,9 +63,78 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
         <form onSubmit={handleSubmit}>
           <Stack tokens={{ childrenGap: 16 }}>
             <Stack.Item>
-              <Text variant="medium" styles={{ root: { fontWeight: 600, marginBottom: 8 } }}>
-                Mobile Number
-              </Text>
+              <Stack horizontal horizontalAlign="space-between" verticalAlign="center">
+                <Text variant="medium" styles={{ root: { fontWeight: 600, marginBottom: 8 } }}>
+                  Mobile Number
+                </Text>
+                <div ref={infoButtonRef}>
+                  <IconButton
+                    onClick={() => setIsInfoPopupOpen(!isInfoPopupOpen)}
+                    styles={{
+                      root: {
+                        width: 24,
+                        height: 24,
+                        marginBottom: 8,
+                        borderRadius: "50%",
+                        backgroundColor: "#e8f4fd",
+                        color: "#0078d4",
+                        border: "1px solid #b3e5fc",
+                      },
+                      rootHovered: {
+                        backgroundColor: "#b3e5fc",
+                      },
+                    }}
+                  >
+                    <Info size={14} />
+                  </IconButton>
+                </div>
+              </Stack>
+              {isInfoPopupOpen && (
+                <Callout
+                  target={infoButtonRef.current}
+                  onDismiss={() => setIsInfoPopupOpen(false)}
+                  directionalHint={DirectionalHint.bottomLeftEdge}
+                  styles={{
+                    root: {
+                      maxWidth: 320,
+                    },
+                  }}
+                >
+                  <Stack
+                    tokens={{ padding: 16, childrenGap: 8 }}
+                    styles={{
+                      root: {
+                        backgroundColor: "white",
+                        border: "1px solid #edebe9",
+                        borderRadius: 4,
+                        boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                      },
+                    }}
+                  >
+                    <Text variant="medium" styles={{ root: { fontWeight: 600, color: "#323130" } }}>
+                      How to get started:
+                    </Text>
+                    <Stack
+                      as="ol"
+                      tokens={{ childrenGap: 4 }}
+                      styles={{ root: { paddingLeft: 20, margin: 0, color: "#605e5c" } }}
+                    >
+                      <Text as="li" variant="small">
+                        Download the iVALT app from the links below
+                      </Text>
+                      <Text as="li" variant="small">
+                        Register your mobile number in the app
+                      </Text>
+                      <Text as="li" variant="small">
+                        Enter the same mobile number here to login
+                      </Text>
+                      <Text as="li" variant="small">
+                        Complete biometric verification on your phone
+                      </Text>
+                    </Stack>
+                  </Stack>
+                </Callout>
+              )}
               <PhoneInput
                 id="phone"
                 international
@@ -94,35 +163,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
           </Stack>
         </form>
 
-        {/* Secure Process Section */}
-        <Stack
-          tokens={{ childrenGap: 8 }}
-          styles={{
-            root: { padding: 16, backgroundColor: "#faf9f8", border: "1px solid #edebe9" },
-          }}
-        >
-          <Stack horizontal tokens={{ childrenGap: 8 }} verticalAlign="center">
-            <Shield size={18} />
-            <Text variant="medium" styles={{ root: { fontWeight: 600 } }}>
-              Secure Process:
-            </Text>
-          </Stack>
-          <Stack
-            as="ol"
-            tokens={{ childrenGap: 4 }}
-            styles={{ root: { paddingLeft: 20, margin: 0 } }}
-          >
-            <Text as="li" variant="small">
-              Enter your iVALT registered mobile number
-            </Text>
-            <Text as="li" variant="small">
-              Complete biometric verification on your device
-            </Text>
-            <Text as="li" variant="small">
-              Access your documents securely
-            </Text>
-          </Stack>
-        </Stack>
+        {/* Account Links Section */}
+        <AppDownloadButtons />
       </Stack>
     </Stack>
   );

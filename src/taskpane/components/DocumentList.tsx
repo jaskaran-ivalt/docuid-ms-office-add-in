@@ -1,13 +1,12 @@
 import React, { useState } from "react";
 import {
-  SearchBox,
   Spinner,
   PrimaryButton,
   DefaultButton,
   Stack,
   Text,
 } from "@fluentui/react";
-import { FileText, FolderOpen, RefreshCw, Shield } from "lucide-react";
+import { FileText, FolderOpen, RefreshCw, Shield, Search, X } from "lucide-react";
 import { Card } from "./shared/Card";
 import ShareSidebar from "./ShareSidebar";
 import ShareSuccessModal from "./ShareSuccessModal";
@@ -60,7 +59,7 @@ const DocumentList: React.FC<DocumentListProps> = ({
     try {
       await onReload();
     } catch (error) {
-      console.error("Failed to reload documents:", error);
+      // Error handled silently for production
     } finally {
       setIsReloading(false);
     }
@@ -74,29 +73,29 @@ const DocumentList: React.FC<DocumentListProps> = ({
   const getFileIcon = (type: string) => {
     switch (type.toLowerCase()) {
       case "pdf":
-        return <FileText size={32} color="#dc3545" />;
+        return <FileText className="doc-icon" style={{ color: "#dc3545" }} />;
       case "docx":
       case "doc":
-        return <FileText size={32} color="#0d6efd" />;
+        return <FileText className="doc-icon" style={{ color: "#0d6efd" }} />;
       case "xlsx":
       case "xls":
-        return <FileText size={32} color="#198754" />;
+        return <FileText className="doc-icon" style={{ color: "#198754" }} />;
       case "pptx":
       case "ppt":
-        return <FileText size={32} color="#fd7e14" />;
+        return <FileText className="doc-icon" style={{ color: "#fd7e14" }} />;
       default:
-        return <FileText size={32} color="#6c757d" />;
+        return <FileText className="doc-icon" style={{ color: "#6c757d" }} />;
     }
   };
 
   // Skeleton loading component
   const DocumentSkeleton = () => (
-    <Card elevation={1}>
+    <Card elevation={1} className="document-card-skeleton">
       <Stack horizontal tokens={{ childrenGap: 12 }} verticalAlign="center">
-        <div style={{ width: 40, height: 40, backgroundColor: "#f3f2f1", borderRadius: 4 }} />
+        <div className="skeleton-icon-wrapper" />
         <Stack tokens={{ childrenGap: 4 }} styles={{ root: { flex: 1 } }}>
-          <div style={{ width: "60%", height: 16, backgroundColor: "#f3f2f1", borderRadius: 2 }} />
-          <div style={{ width: "40%", height: 12, backgroundColor: "#f3f2f1", borderRadius: 2 }} />
+          <div className="skeleton-title-bar" />
+          <div className="skeleton-meta-bar" />
         </Stack>
       </Stack>
     </Card>
@@ -104,11 +103,21 @@ const DocumentList: React.FC<DocumentListProps> = ({
 
   if (isLoadingDocuments) {
     return (
-      <Stack tokens={{ padding: 16, childrenGap: 16 }}>
-        <Text variant="xLarge" styles={{ root: { fontWeight: 600 } }}>
-          Your Documents
-        </Text>
-        <SearchBox placeholder="Search documents..." disabled />
+      <Stack tokens={{ padding: 16, childrenGap: 16 }} styles={{ root: { backgroundColor: "#f5f5f5", minHeight: "100%" } }}>
+        <Stack horizontal horizontalAlign="space-between" verticalAlign="center" styles={{ root: { flexWrap: "wrap" } }}>
+          <Text variant="xLarge" styles={{ root: { fontWeight: 600, flexShrink: 0 } }}>
+            Your Documents
+          </Text>
+        </Stack>
+        <div className="search-input-wrapper">
+          <Search className="search-icon" size={18} />
+          <input
+            type="text"
+            className="search-input"
+            placeholder="Search documents..."
+            disabled
+          />
+        </div>
         <Stack tokens={{ childrenGap: 12 }}>
           {[1, 2, 3].map((index) => (
             <DocumentSkeleton key={index} />
@@ -123,39 +132,49 @@ const DocumentList: React.FC<DocumentListProps> = ({
       tokens={{ padding: 16, childrenGap: 16 }}
       styles={{ root: { backgroundColor: "#f5f5f5", minHeight: "100%" } }}
     >
-      <Stack horizontal horizontalAlign="space-between" verticalAlign="center">
-        <Text variant="xLarge" styles={{ root: { fontWeight: 600 } }}>
+      <Stack horizontal horizontalAlign="space-between" verticalAlign="center" styles={{ root: { flexWrap: "wrap" } }}>
+        <Text variant="xLarge" styles={{ root: { fontWeight: 600, flexShrink: 0 } }}>
           Your Documents
         </Text>
         {onReload && (
-          <DefaultButton
-            text={isReloading ? "Reloading..." : "Reload"}
+          <button
+            className="reload-button"
             onClick={handleReload}
             disabled={isReloading || isLoadingDocuments}
-            onRenderIcon={() => <RefreshCw size={16} style={{ marginRight: 4 }} />}
-          />
+            aria-label={isReloading ? "Reloading" : "Reload"}
+          >
+            <RefreshCw className={`reload-icon ${isReloading ? 'spinning' : ''}`} />
+            <span className="reload-text">{isReloading ? "Reloading..." : "Reload"}</span>
+          </button>
         )}
       </Stack>
 
-      <SearchBox
-        placeholder="Search documents..."
-        value={searchTerm}
-        onChange={(_, value) => setSearchTerm(value || "")}
-        onClear={() => setSearchTerm("")}
-      />
+      <div className="search-input-wrapper">
+        <Search className="search-icon" size={18} />
+        <input
+          type="text"
+          className="search-input"
+          placeholder="Search documents..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        {searchTerm && (
+          <button
+            className="search-clear-btn"
+            onClick={() => setSearchTerm("")}
+            aria-label="Clear search"
+          >
+            <X size={16} />
+          </button>
+        )}
+      </div>
 
       {isLoadingDocuments ? (
         <Stack tokens={{ childrenGap: 12 }}>
           {[1, 2, 3].map((i) => (
             <Card
               key={i}
-              styles={{
-                root: {
-                  backgroundColor: "white",
-                  border: "1px solid #edebe9",
-                  boxShadow: "0 0 transparent",
-                },
-              }}
+              className="document-loading-card"
             >
               <Stack horizontal tokens={{ childrenGap: 12 }}>
                 <Spinner />
@@ -167,74 +186,61 @@ const DocumentList: React.FC<DocumentListProps> = ({
       ) : filteredDocuments.length === 0 ? (
         <Stack
           horizontalAlign="center"
-          tokens={{ padding: 40, childrenGap: 12 }}
-          styles={{ root: { backgroundColor: "white", border: "1px solid #edebe9" } }}
+          tokens={{ padding: 32, childrenGap: 12 }}
+          className="empty-state"
         >
-          <FolderOpen size={48} color="#a19f9d" />
-          <Text variant="large" styles={{ root: { fontWeight: 600 } }}>
+          <FolderOpen className="empty-state-icon" />
+          <Text variant="large" styles={{ root: { fontWeight: 600, textAlign: "center" } }}>
             {documents.length === 0 ? "No Documents Available" : "No Documents Found"}
           </Text>
-          <Text variant="medium" styles={{ root: { color: "#605e5c" } }}>
+          <Text variant="medium" styles={{ root: { color: "#605e5c", textAlign: "center" } }}>
             {documents.length === 0
               ? "You don't have any documents available at the moment."
               : "No documents match your search criteria."}
           </Text>
         </Stack>
       ) : (
-        <Stack tokens={{ childrenGap: 12 }}>
+        <Stack tokens={{ childrenGap: 12 }} className="documents-list">
           {filteredDocuments.map((document) => (
             <Card
               key={document.id}
-              styles={{
-                root: {
-                  backgroundColor: "white",
-                  border: "1px solid #edebe9",
-                  borderRadius: 0,
-                  boxShadow: "0 0 transparent",
-                },
-              }}
+              className="document-card"
             >
-              <Stack horizontal horizontalAlign="space-between" verticalAlign="center">
-                <Stack horizontal tokens={{ childrenGap: 16 }} verticalAlign="center">
-                  <div
-                    style={{
-                      width: 48,
-                      height: 48,
-                      backgroundColor: "#f5f5f5",
-                      border: "1px solid #edebe9",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
+              <Stack
+                horizontal
+                horizontalAlign="space-between"
+                verticalAlign="center"
+                tokens={{ childrenGap: 12 }}
+                className="document-card-inner"
+              >
+                <Stack horizontal tokens={{ childrenGap: 12 }} verticalAlign="center" className="document-card-content">
+                  <div className="document-icon-wrapper">
                     {getFileIcon(document.type)}
                   </div>
-                  <Stack tokens={{ childrenGap: 4 }}>
-                    <Stack horizontal tokens={{ childrenGap: 8 }} verticalAlign="center">
-                      <Text variant="medium" styles={{ root: { fontWeight: 600 } }}>
-                        {document.title}
-                      </Text>
-                    </Stack>
-                    <Stack horizontal tokens={{ childrenGap: 8 }}>
-                      <Text variant="small" styles={{ root: { color: "#605e5c" } }}>
+                  <Stack tokens={{ childrenGap: 4 }} className="document-info">
+                    <Text variant="medium" className="document-title">
+                      {document.title}
+                    </Text>
+                    <Stack horizontal tokens={{ childrenGap: 6 }} className="document-meta">
+                      <Text variant="small" className="document-type-badge">
                         {document.type.toUpperCase()}
                       </Text>
-                      <Text variant="small" styles={{ root: { color: "#a19f9d" } }}>
+                      <Text variant="small" className="document-separator">
                         •
                       </Text>
-                      <Text variant="small" styles={{ root: { color: "#605e5c" } }}>
+                      <Text variant="small" className="document-meta-text">
                         {document.size}
                       </Text>
-                      <Text variant="small" styles={{ root: { color: "#a19f9d" } }}>
+                      <Text variant="small" className="document-separator">
                         •
                       </Text>
-                      <Text variant="small" styles={{ root: { color: "#605e5c" } }}>
+                      <Text variant="small" className="document-meta-text">
                         {document.dateModified}
                       </Text>
                     </Stack>
                   </Stack>
                 </Stack>
-                <Stack horizontal tokens={{ childrenGap: 8 }}>
+                <Stack horizontal tokens={{ childrenGap: 8 }} className="document-actions">
                   <PrimaryButton
                     text={openingDocumentId === document.id ? "Opening..." : "Open"}
                     onClick={() => onDocumentOpen(document)}
@@ -243,6 +249,7 @@ const DocumentList: React.FC<DocumentListProps> = ({
                       openingDocumentId === document.id ||
                       closingDocumentId === document.id
                     }
+                    className="document-open-button"
                   />
                   <DefaultButton
                     text="Share"
@@ -255,6 +262,7 @@ const DocumentList: React.FC<DocumentListProps> = ({
                       openingDocumentId === document.id ||
                       closingDocumentId === document.id
                     }
+                    className="document-share-button"
                   />
                 </Stack>
               </Stack>
