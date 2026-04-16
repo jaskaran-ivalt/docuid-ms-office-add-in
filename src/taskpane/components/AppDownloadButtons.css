@@ -12,6 +12,15 @@
   color: white;
   text-decoration: none;
   transition: background-color 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Constrain button width on larger screens */
+@media (min-width: 481px) {
+  .app-download-button {
+    max-width: 300px;
+  }
 }
 
 .app-download-button.android {
@@ -28,6 +37,13 @@
 
 .app-download-button.ios:hover {
   background-color: #374151;
+}
+
+@media (max-width: 480px) {
+  .app-download-button.ios {
+    background-color: #1f2937;
+    margin-left: 0px;
+  }
 }
 
 .app-icon {
@@ -51,4 +67,18 @@
   font-size: 11px;
   font-weight: 300;
   margin: 0;
+}
+
+/* Stack buttons vertically on small screens */
+@media (max-width: 480px) {
+  .app-download-button {
+    width: 100%;
+    max-width: none;
+    flex: 0 0 auto;
+  }
+
+  /* Override horizontal layout on small screens */
+  .app-download-buttons-inner {
+    flex-direction: column !important;
+  }
 }
