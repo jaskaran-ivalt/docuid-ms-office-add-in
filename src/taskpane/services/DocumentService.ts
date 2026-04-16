@@ -113,8 +113,13 @@ export class DocumentService {
         // Check if this is demo content (plain text) or a real file
         if (documentContent.contentType === "text/plain" || textContent.includes("demo document generated")) {
           // Use insertParagraph for demo text content
-          officeLogger.debug("Inserting demo text content as paragraph");
-          context.document.body.insertParagraph(textContent, Word.InsertLocation.start);
+          officeLogger.debug("Inserting demo text content as paragraphs");
+          // Split text by newlines and insert each line as a separate paragraph
+          const lines = textContent.split("\n");
+          lines.forEach((line, index) => {
+            const insertLocation = index === 0 ? Word.InsertLocation.start : Word.InsertLocation.end;
+            context.document.body.insertParagraph(line, insertLocation);
+          });
         } else {
           // Use insertFileFromBase64 for real Office files
           const base64String = arrayBufferToBase64(arrayBuffer);
