@@ -1,0 +1,54 @@
+.app-download-button {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 20px;
+  border: none;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: white;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.app-download-button.android {
+  background-color: #16a34a;
+}
+
+.app-download-button.android:hover {
+  background-color: #15803d;
+}
+
+.app-download-button.ios {
+  background-color: #1f2937;
+}
+
+.app-download-button.ios:hover {
+  background-color: #374151;
+}
+
+.app-icon {
+  height: 28px;
+  width: 28px;
+}
+
+.app-button-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.app-button-title {
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.app-button-subtitle {
+  font-size: 11px;
+  font-weight: 300;
+  margin: 0;
+}

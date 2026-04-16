@@ -217,7 +217,8 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({
     <Panel
       isOpen={isOpen}
       onDismiss={handleDismiss}
-      type={PanelType.medium}
+      type={PanelType.custom}
+      customWidth="85%"
       headerText="Share Document"
       closeButtonAriaLabel="Close"
       onRenderHeader={() => (
@@ -251,16 +252,6 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({
                 </span>
               </div>
             </div>
-            {/* {onCloseDocument && (
-               <button 
-                 className="close-document-btn"
-                 onClick={handleCloseDocument}
-                 title="Close this document"
-               >
-                 <X size={16} />
-                 <span>Close</span>
-               </button>
-             )} */}
           </div>
 
           {/* Share Form */}
@@ -278,32 +269,22 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({
                   disabled={isLoading}
                   styles={{
                     field: {
-                      paddingLeft: "40px",
+                      paddingLeft: "44px",
                       fontSize: "14px",
-                      border: "1px solid #d1d1d1",
-                      borderRadius: "6px",
                       height: "40px",
                       transition: "all 0.2s ease",
                     },
                     fieldGroup: {
-                      border: "none",
+                      border: "1px solid #d1d1d1",
+                      borderRadius: "6px",
                       transition: "all 0.2s ease",
-                      ":focus-within": {
-                        border: "1px solid #0078d4",
-                        boxShadow: "0 0 0 2px rgba(0, 120, 212, 0.1)",
-                      },
-                      ":after": {
-                        border: "none !important",
-                        outline: "none !important",
-                      },
-                    },
-                    root: {
-                      ":focus-within": {
-                        selectors: {
-                          "::after": {
-                            border: "none !important",
-                            outline: "none !important",
-                          },
+                      selectors: {
+                        ":focus-within": {
+                          border: "2px solid #0078d4",
+                          boxShadow: "0 0 0 3px rgba(0, 120, 212, 0.1)",
+                        },
+                        "::after": {
+                          display: "none",
                         },
                       },
                     },
@@ -347,24 +328,16 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({
                     transition: "all 0.2s ease",
                   },
                   fieldGroup: {
-                    border: "none",
+                    border: "1px solid #d1d1d1",
+                    borderRadius: "6px",
                     transition: "all 0.2s ease",
-                    ":focus-within": {
-                      border: "1px solid #0078d4",
-                      boxShadow: "0 0 0 2px rgba(0, 120, 212, 0.1)",
-                    },
-                    ":after": {
-                      border: "none !important",
-                      outline: "none !important",
-                    },
-                  },
-                  root: {
-                    ":focus-within": {
-                      selectors: {
-                        "::after": {
-                          border: "none !important",
-                          outline: "none !important",
-                        },
+                    selectors: {
+                      ":focus-within": {
+                        border: "2px solid #0078d4",
+                        boxShadow: "0 0 0 3px rgba(0, 120, 212, 0.1)",
+                      },
+                      "::after": {
+                        display: "none",
                       },
                     },
                   },
@@ -414,7 +387,7 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({
                   height: "44px",
                   fontSize: "14px",
                   fontWeight: "600",
-                  borderRadius: "6px",
+                  borderRadius: "8px",
                   border: "none",
                   background:
                     (!email && !mobile) || isLoading
@@ -428,18 +401,21 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({
                   alignItems: "center",
                   justifyContent: "center",
                   gap: "8px",
+                  minWidth: "120px",
+                  boxShadow: (!email && !mobile) || isLoading ? "none" : "0 2px 8px rgba(0, 120, 212, 0.2)",
                 },
                 rootHovered: {
                   background:
                     (!email && !mobile) || isLoading
                       ? "#f3f2f1"
                       : "linear-gradient(135deg, #106ebe 0%, #005a9e 100%)",
-                  transform: (!email && !mobile) || isLoading ? "none" : "translateY(-1px)",
+                  transform: (!email && !mobile) || isLoading ? "none" : "translateY(-2px)",
                   boxShadow:
-                    (!email && !mobile) || isLoading ? "none" : "0 4px 12px rgba(0, 120, 212, 0.3)",
+                    (!email && !mobile) || isLoading ? "none" : "0 6px 16px rgba(0, 120, 212, 0.3)",
                 },
                 rootPressed: {
                   transform: "translateY(0)",
+                  boxShadow: (!email && !mobile) || isLoading ? "none" : "0 2px 4px rgba(0, 120, 212, 0.2)",
                 },
               }}
             >
@@ -461,22 +437,24 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({
                   height: "44px",
                   fontSize: "14px",
                   fontWeight: "500",
-                  borderRadius: "6px",
+                  borderRadius: "8px",
                   border: "1px solid #d1d1d1",
                   background: "white",
                   color: "#323130",
                   transition: "all 0.2s ease",
                   minWidth: "80px",
+                  boxShadow: "0 1px 3px rgba(0, 0, 0, 0.08)",
                 },
                 rootHovered: {
                   background: "#f8f9fa",
                   borderColor: "#0078d4",
                   color: "#0078d4",
-                  transform: "translateY(-1px)",
-                  boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+                  transform: "translateY(-2px)",
+                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.12)",
                 },
                 rootPressed: {
                   transform: "translateY(0)",
+                  boxShadow: "0 1px 2px rgba(0, 0, 0, 0.08)",
                 },
               }}
             />

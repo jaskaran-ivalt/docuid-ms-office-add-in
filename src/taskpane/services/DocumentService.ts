@@ -105,17 +105,27 @@ export class DocumentService {
         context.document.body.clear();
         await context.sync();
 
-        // Convert blob to base64
+        // Convert blob to text for demo mode, or base64 for real files
         const arrayBuffer = await documentContent.binaryContent.arrayBuffer();
-        const base64String = arrayBufferToBase64(arrayBuffer);
+        const textDecoder = new TextDecoder();
+        const textContent = textDecoder.decode(arrayBuffer);
 
-        officeLogger.debug("Inserting file into Word");
-        context.document.body.insertFileFromBase64(base64String, Word.InsertLocation.start);
+        // Check if this is demo content (plain text) or a real file
+        if (documentContent.contentType === "text/plain" || textContent.includes("demo document generated")) {
+          // Use insertParagraph for demo text content
+          officeLogger.debug("Inserting demo text content as paragraph");
+          context.document.body.insertParagraph(textContent, Word.InsertLocation.start);
+        } else {
+          // Use insertFileFromBase64 for real Office files
+          const base64String = arrayBufferToBase64(arrayBuffer);
+          officeLogger.debug("Inserting file into Word");
+          context.document.body.insertFileFromBase64(base64String, Word.InsertLocation.start);
+        }
 
         await context.sync();
-        officeLogger.logOfficeOperation("Binary document insertion", true);
+        officeLogger.logOfficeOperation("Document insertion", true);
       } catch (error) {
-        officeLogger.logOfficeOperation("Binary document insertion", false, error);
+        officeLogger.logOfficeOperation("Document insertion", false, error);
         throw error;
       }
     });

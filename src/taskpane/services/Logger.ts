@@ -22,7 +22,7 @@ export interface LogEntry {
 export class Logger {
   private static instance: Logger;
   private logLevel: LogLevel = LogLevel.INFO;
-  private enableConsoleOutput: boolean = true;
+  private enableConsoleOutput: boolean = process.env.NODE_ENV === "development";
   private logHistory: LogEntry[] = [];
   private maxHistorySize: number = 1000;
 
@@ -62,7 +62,7 @@ export class Logger {
         this.logLevel = LogLevel.DEBUG;
       }
     } catch (error) {
-      console.warn("Failed to load logging settings:", error);
+      // Silently ignore storage errors in production
     }
   }
 
@@ -199,7 +199,6 @@ export class Logger {
    */
   public logApiRequest(context: string, method: string, url: string, data?: any): void {
     this.debug(context, `API Request: ${method} ${url}`, data);
-    console.log("🚀 API Request: ", method, url, data);
   }
 
   /**

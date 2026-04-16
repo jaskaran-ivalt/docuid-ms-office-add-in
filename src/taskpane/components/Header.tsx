@@ -8,7 +8,7 @@ import {
   DirectionalHint,
   Text,
 } from "@fluentui/react";
-import { User, Settings, LogOut, Bug } from "lucide-react";
+import { User, LogOut, Bug } from "lucide-react";
 import "./Header.css";
 
 interface HeaderProps {
@@ -244,30 +244,6 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile, on
                         </button>
                       )}
                       <button
-                        style={{
-                          width: "100%",
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "8px",
-                          padding: "8px 12px",
-                          border: "none",
-                          background: "transparent",
-                          cursor: "pointer",
-                          fontSize: "14px",
-                          color: "#323130",
-                          textAlign: "left",
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = "#f3f2f1";
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = "transparent";
-                        }}
-                      >
-                        <Settings size={16} />
-                        <span>Settings</span>
-                      </button>
-                      <button
                         onClick={onLogout}
                         style={{
                           width: "100%",
@@ -290,7 +266,7 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile, on
                         }}
                       >
                         <LogOut size={16} />
-                        <span>Logout</span>
+                        <span>Sign Out</span>
                       </button>
                     </Stack>
                   </Stack>

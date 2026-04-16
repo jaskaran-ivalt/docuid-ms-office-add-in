@@ -149,14 +149,14 @@ const App: React.FC = () => {
           onToggleDebug={() => setDebugPanelOpen(!debugPanelOpen)}
         />
 
-        <main className="app-main">
-          {error && (
-            <div className="error-banner">
-              <span>{error}</span>
-              <button onClick={() => setError("")} className="error-close">×</button>
-            </div>
-          )}
+        {error && (
+          <div className="error-banner">
+            <span>{error}</span>
+            <button onClick={() => setError("")} className="error-close">×</button>
+          </div>
+        )}
 
+        <main className="app-main">
           {!isAuthenticated ? (
             <LoginForm onLogin={handleLogin} isLoading={isLoadingLogin} />
           ) : currentPage === "profile" ? (
