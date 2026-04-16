@@ -1,5 +1,14 @@
 import React, { useState } from "react";
-import { PrimaryButton, Spinner, Stack, TextField, Text, IconButton, Callout, DirectionalHint } from "@fluentui/react";
+import {
+  PrimaryButton,
+  Spinner,
+  Stack,
+  TextField,
+  Text,
+  IconButton,
+  Callout,
+  DirectionalHint,
+} from "@fluentui/react";
 import { Info } from "lucide-react";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
@@ -38,7 +47,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
             margin: "0 auto",
             width: "100%",
             backgroundColor: "white",
-            padding: "32px",
+            padding: "30px 15px",
             border: "1px solid #edebe9",
           },
         }}
