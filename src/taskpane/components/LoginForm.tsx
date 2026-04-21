@@ -13,7 +13,7 @@ import { Info } from "lucide-react";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import "./LoginForm.css";
-import AppDownloadButtons from "./AppDownloadButtons";
+import DownloadSheet from "./DownloadSheet";
 
 interface LoginFormProps {
   onLogin: (phoneNumber: string) => Promise<void>;
@@ -23,6 +23,7 @@ interface LoginFormProps {
 const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [isInfoPopupOpen, setIsInfoPopupOpen] = useState(false);
+  const [isDownloadSheetOpen, setIsDownloadSheetOpen] = useState(false);
   const infoButtonRef = React.useRef<HTMLDivElement>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -186,8 +187,33 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
           </Stack>
         </form>
 
-        {/* Account Links Section */}
-        <AppDownloadButtons />
+        <Stack horizontalAlign="center" tokens={{ childrenGap: 8 }}>
+          <Text variant="small" styles={{ root: { color: "#605e5c", textAlign: "center" } }}>
+            Need the iVALT app to authenticate?{" "}
+            <button
+              onClick={() => setIsDownloadSheetOpen(true)}
+              style={{
+                background: "none",
+                border: "none",
+                padding: 0,
+                color: "#0078d4",
+                fontWeight: 600,
+                cursor: "pointer",
+                textDecoration: "none",
+                fontSize: "inherit",
+                fontFamily: "inherit",
+              }}
+              type="button"
+            >
+              Download here
+            </button>
+          </Text>
+        </Stack>
+
+        <DownloadSheet
+          isOpen={isDownloadSheetOpen}
+          onClose={() => setIsDownloadSheetOpen(false)}
+        />
       </Stack>
     </Stack>
   );
