@@ -169,6 +169,20 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
             >
               {isLoading && <Spinner size={1} />}
             </PrimaryButton>
+
+            <Stack horizontalAlign="center">
+              <Text variant="small" styles={{ root: { color: "#605e5c" } }}>
+                New to DocuID?{" "}
+                <a
+                  href="https://www.docuid.net"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: "#0078d4", textDecoration: "none", fontWeight: 600 }}
+                >
+                  Create an account
+                </a>
+              </Text>
+            </Stack>
           </Stack>
         </form>
 
