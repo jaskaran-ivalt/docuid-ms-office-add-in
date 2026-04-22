@@ -303,31 +303,39 @@
   box-shadow: 0 0 0 1px var(--accent) !important;
 }
 
-.share-submit-btn {
+.share-submit-btn,
+.share-cancel-btn {
   height: 40px !important;
+  width: 100% !important;
   border-radius: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 16px !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.share-submit-btn {
   font-weight: 600 !important;
   background-color: var(--accent) !important;
-  border-color: var(--accent) !important;
+  border: none !important;
   color: white !important;
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
 }
 
 .share-submit-btn:hover:not(:disabled) {
   background-color: var(--accent-dark) !important;
-  border-color: var(--accent-dark) !important;
 }
 
 .share-cancel-btn {
-  height: 40px !important;
-  border-radius: 0 !important;
   border: 1px solid #e1dfdd !important;
   background-color: white !important;
   color: #323130 !important;
+}
+
+.share-cancel-btn:hover:not(:disabled) {
+  background-color: #f3f2f1 !important;
+  border-color: #d1d1d1 !important;
 }
 
 .document-info-card {
@@ -346,8 +354,10 @@
 
 .action-buttons {
   display: flex;
+  flex-direction: column;
   gap: 8px;
-  margin-top: 16px;
+  margin-top: 20px;
+  width: 100%;
 }
 
 .spinning {
