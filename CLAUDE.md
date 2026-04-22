@@ -23,7 +23,20 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - `bun run signin` - Sign in to M365 account for testing
 - `bun run signout` - Sign out of M365 account
-- `bun run stop` - Stop sideloaded add-in
+
+#### Per-host start/stop/validate
+
+| Command                       | Target application |
+|-------------------------------|--------------------|
+| `bun run start` / `start:word`      | Microsoft Word     |
+| `bun run start:excel`               | Microsoft Excel    |
+| `bun run start:powerpoint`          | Microsoft PowerPoint |
+| `bun run stop:word`                 | Stop Word sideload |
+| `bun run stop:excel`                | Stop Excel sideload |
+| `bun run stop:powerpoint`           | Stop PowerPoint sideload |
+| `bun run validate:word`             | Validate Word manifest |
+| `bun run validate:excel`            | Validate Excel manifest |
+| `bun run validate:powerpoint`       | Validate PowerPoint manifest |
 
 ### Testing Commands
 
