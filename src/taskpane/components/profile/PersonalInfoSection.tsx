@@ -4,6 +4,8 @@ import { User as UserIcon } from "lucide-react";
 import { User as UserProfile } from "../../common/types";
 import { formatLocation } from "../../common/utils";
 
+import { Card } from "../shared/Card";
+
 interface PersonalInfoSectionProps {
   formData: UserProfile;
   isEditing: boolean;
@@ -16,7 +18,7 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({
   onInputChange 
 }) => {
   return (
-    <div className="profile-section">
+    <Card className="profile-section">
       <h3 className="section-title">
         <UserIcon size={18} />
         Personal Information
@@ -102,7 +104,7 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({
           />
         </div>
       </div>
-    </div>
+    </Card>
   );
 };
 

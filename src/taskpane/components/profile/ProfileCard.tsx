@@ -2,6 +2,8 @@ import React from "react";
 import { User as UserProfile } from "../../common/types";
 import { formatPhoneNumber } from "../../common/utils";
 
+import { Card } from "../shared/Card";
+
 interface ProfileCardProps {
   profile: UserProfile;
 }
@@ -16,7 +18,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile }) => {
   };
 
   return (
-    <div className="profile-card">
+    <Card className="profile-card">
       <div className="profile-avatar-section">
         <div className="profile-avatar">
           <div className="avatar-placeholder">{getInitials(profile.name)}</div>
@@ -27,7 +29,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile }) => {
           <p className="profile-company">{formatPhoneNumber(profile.country_code, profile.mobile)}</p>
         </div>
       </div>
-    </div>
+    </Card>
   );
 };
 
