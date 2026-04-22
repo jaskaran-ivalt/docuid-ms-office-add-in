@@ -161,37 +161,24 @@ const ShareSuccessModal: React.FC<ShareSuccessModalProps> = ({
         {shareDetails?.shareLink && (
           <div className="share-link-section">
             <Text className="share-link-label">Share Link</Text>
-            <div className="share-link-container">
-              <Text className="share-link-text" title={shareDetails.shareLink}>
+            <div className="share-link-display">
+              <Text className="share-link-text">
                 {shareDetails.shareLink}
               </Text>
-              <Stack horizontal tokens={{ childrenGap: 8 }}>
-                <button className="share-link-button" onClick={handleCopyLink}>
-                  <Copy size={14} />
-                  <span>Copy</span>
-                </button>
-                <button className="share-link-button" onClick={handleOpenLink}>
-                  <ExternalLink size={14} />
-                  <span>Open</span>
-                </button>
-              </Stack>
             </div>
+            <Stack horizontal horizontalAlign="center" tokens={{ childrenGap: 8 }} className="share-link-actions">
+              <button className="share-link-button" onClick={handleCopyLink}>
+                <Copy size={14} />
+                <span>Copy Link</span>
+              </button>
+              <button className="share-link-button secondary" onClick={handleOpenLink}>
+                <ExternalLink size={14} />
+                <span>Open Link</span>
+              </button>
+            </Stack>
           </div>
         )}
 
-        {/* Action Button */}
-        <Stack horizontal horizontalAlign="center" style={{ marginTop: 16, paddingBottom: 8 }}>
-          <PrimaryButton
-            text="Done"
-            onClick={onDismiss}
-            styles={{
-              root: {
-                minWidth: "100px",
-                height: "36px",
-              },
-            }}
-          />
-        </Stack>
       </div>
     </Dialog>
   );
