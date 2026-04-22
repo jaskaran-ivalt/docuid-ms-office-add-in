@@ -105,7 +105,7 @@ const DocumentList: React.FC<DocumentListProps> = ({
 
   if (isLoadingDocuments) {
     return (
-      <Stack tokens={{ padding: 16, childrenGap: 16 }} styles={{ root: { backgroundColor: "#f5f5f5", minHeight: "100%" } }}>
+      <Stack tokens={{ padding: 8, childrenGap: 8 }} styles={{ root: { backgroundColor: "#f5f5f5", minHeight: "100%" } }}>
         <Stack horizontal horizontalAlign="space-between" verticalAlign="center" styles={{ root: { flexWrap: "wrap" } }}>
           <Text variant="xLarge" styles={{ root: { fontWeight: 600, flexShrink: 0 } }}>
             Your Documents
@@ -131,7 +131,7 @@ const DocumentList: React.FC<DocumentListProps> = ({
 
   return (
     <Stack
-      tokens={{ padding: 16, childrenGap: 16 }}
+      tokens={{ padding: 8, childrenGap: 8 }}
       styles={{ root: { backgroundColor: "#f5f5f5", minHeight: "100%" } }}
     >
       <Stack horizontal horizontalAlign="space-between" verticalAlign="center" styles={{ root: { flexWrap: "wrap" } }}>
@@ -172,7 +172,7 @@ const DocumentList: React.FC<DocumentListProps> = ({
       </div>
 
       {isLoadingDocuments ? (
-        <Stack tokens={{ childrenGap: 12 }}>
+        <Stack tokens={{ childrenGap: 8 }}>
           {[1, 2, 3].map((i) => (
             <Card
               key={i}
@@ -202,7 +202,7 @@ const DocumentList: React.FC<DocumentListProps> = ({
           </Text>
         </Stack>
       ) : (
-        <Stack tokens={{ childrenGap: 12 }} className="documents-list">
+        <Stack tokens={{ childrenGap: 8 }} className="documents-list">
           {filteredDocuments.map((document) => (
             <Card
               key={document.id}
