@@ -56,13 +56,7 @@ const ShareSuccessModal: React.FC<ShareSuccessModalProps> = ({
       onDismiss={onDismiss}
       dialogContentProps={{
         type: DialogType.normal,
-        title: "",
         showCloseButton: true,
-        styles: {
-          title: {
-            display: "none",
-          },
-        },
       }}
       modalProps={{
         isBlocking: false,
