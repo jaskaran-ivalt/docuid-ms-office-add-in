@@ -19,6 +19,33 @@ interface AppProps {
 }
 
 const App: React.FC<AppProps> = ({ officeHost = "Unknown" }) => {
+
+  // CSS custom properties injected on the root container so every
+  // descendant can reference var(--accent), var(--accent-dark), var(--accent-dim)
+  // without knowing which Office host is active.
+  const getHostVars = (): React.CSSProperties => {
+    switch (officeHost) {
+      case "Excel":
+        return {
+          "--accent": "#217346",
+          "--accent-dark": "#1a5c39",
+          "--accent-dim": "rgba(33,115,70,0.12)",
+        } as React.CSSProperties;
+      case "PowerPoint":
+        return {
+          "--accent": "#c7421f",
+          "--accent-dark": "#b33519",
+          "--accent-dim": "rgba(199,66,31,0.12)",
+        } as React.CSSProperties;
+      case "Word":
+      default:
+        return {
+          "--accent": "#0067c0",
+          "--accent-dark": "#005fb8",
+          "--accent-dim": "rgba(0,103,192,0.12)",
+        } as React.CSSProperties;
+    }
+  };
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoadingDocuments, setIsLoadingDocuments] = useState(false);
   const [isLoadingLogin, setIsLoadingLogin] = useState(false);
@@ -146,7 +173,7 @@ const App: React.FC<AppProps> = ({ officeHost = "Unknown" }) => {
 
   return (
     <ThemeProvider theme={docuIdTheme}>
-      <div className="app-container">
+      <div className="app-container" style={getHostVars()}>
         <Header
           user={user}
           onLogout={handleLogout}

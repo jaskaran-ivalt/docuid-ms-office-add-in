@@ -26,20 +26,21 @@ body {
 
 /* Fluent UI Button Overrides - Windows 11 Design System */
 .ms-Button--primary {
-  background-color: #005fb8 !important;
-  border-color: #005fb8 !important;
+  background-color: var(--accent) !important;
+  border-color: var(--accent) !important;
   color: white !important;
   border-radius: 4px !important;
 }
 
 .ms-Button--primary:hover {
-  background-color: #0067c0 !important;
-  border-color: #0067c0 !important;
+  background-color: var(--accent-dark) !important;
+  border-color: var(--accent-dark) !important;
 }
 
 .ms-Button--primary:active {
-  background-color: #004c8c !important;
-  border-color: #004c8c !important;
+  background-color: var(--accent-dark) !important;
+  border-color: var(--accent-dark) !important;
+  filter: brightness(0.9);
 }
 
 .ms-Button--primary:disabled,
@@ -222,7 +223,7 @@ input, textarea, [contenteditable="true"] {
   width: 32px;
   height: 32px;
   border: 3px solid #e1e1e1;
-  border-top: 3px solid #0078d4;
+  border-top: 3px solid var(--accent);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }

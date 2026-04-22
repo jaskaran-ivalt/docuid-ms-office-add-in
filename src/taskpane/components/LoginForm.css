@@ -81,7 +81,7 @@
 
 .login-button:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(0, 120, 212, 0.25);
+  box-shadow: 0 6px 16px var(--accent-dim);
 }
 
 .login-button:disabled {
@@ -107,7 +107,7 @@
 }
 
 .shield-icon {
-  color: #0078d4;
+  color: var(--accent);
   flex-shrink: 0;
 }
 
@@ -146,7 +146,7 @@
 }
 
 .PhoneInput:focus-within {
-  border-color: #005fb8;
+  border-color: var(--accent);
   border-width: 1.5px !important;
   outline: none;
 }
@@ -245,10 +245,10 @@ select.PhoneInputCountrySelect option::before {
 /* Glowing animation for info icon */
 @keyframes glow {
   0%, 100% {
-    box-shadow: 0 0 5px rgba(0, 120, 212, 0.5);
+    box-shadow: 0 0 5px var(--accent-dim);
   }
   50% {
-    box-shadow: 0 0 20px rgba(0, 120, 212, 0.8), 0 0 10px rgba(0, 120, 212, 0.6);
+    box-shadow: 0 0 20px var(--accent-dim), 0 0 10px var(--accent-dim);
   }
 }
 
