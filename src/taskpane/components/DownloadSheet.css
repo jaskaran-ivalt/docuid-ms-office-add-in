@@ -22,11 +22,11 @@
   right: 0;
   bottom: 0;
   background: #fff;
-  border-radius: 16px 16px 0 0;
+  border-radius: 12px 12px 0 0;
   z-index: 1001;
   transform: translateY(100%);
   transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
-  max-height: 85vh;
+  max-height: 80vh;
   display: flex;
   flex-direction: column;
 }
@@ -39,20 +39,20 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 20px 8px;
+  padding: 10px 16px;
   border-bottom: 1px solid #f0f0f0;
 }
 
 .download-sheet-title {
-  font-size: 1.1rem;
-  font-weight: 600;
+  font-size: 0.95rem;
+  font-weight: 700;
   color: #323130;
   margin: 0;
 }
 
 .download-sheet-close {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   border: none;
   background: #f3f2f1;
   border-radius: 50%;
@@ -61,7 +61,7 @@
   align-items: center;
   justify-content: center;
   color: #605e5c;
-  font-size: 18px;
+  font-size: 16px;
   line-height: 1;
   padding: 0;
   transition: background 0.2s;
@@ -73,31 +73,31 @@
 
 .download-sheet-tabs {
   display: flex;
-  gap: 8px;
-  padding: 12px 20px 0;
+  gap: 6px;
+  padding: 8px 16px 0;
 }
 
 .download-sheet-tab {
   flex: 1;
-  padding: 10px 12px;
+  padding: 6px 8px;
   border: 1px solid #e1dfdd;
   background: #fff;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  font-size: 0.9rem;
-  font-weight: 500;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
   color: #605e5c;
   transition: all 0.2s;
 }
 
 .download-sheet-tab.active {
-  border-color: #0078d4;
-  background: #f0f6ff;
-  color: #0078d4;
+  border-color: var(--accent);
+  background: var(--accent-dim);
+  color: var(--accent);
 }
 
 .download-sheet-tab:hover:not(.active) {
@@ -107,46 +107,46 @@
 .download-sheet-body {
   flex: 1;
   overflow-y: auto;
-  padding: 24px 20px 32px;
+  padding: 12px 16px 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
+  gap: 12px;
 }
 
 .qr-container {
   background: #fff;
   border: 1px solid #e1dfdd;
-  border-radius: 12px;
-  padding: 20px;
+  border-radius: 8px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: 10px;
   width: 100%;
-  max-width: 280px;
+  max-width: 240px;
 }
 
 .qr-code {
-  width: 180px;
-  height: 180px;
+  width: 140px;
+  height: 140px;
 }
 
 .qr-label {
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   color: #605e5c;
   text-align: center;
-  line-height: 1.4;
+  line-height: 1.3;
 }
 
 .qr-store-link {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  color: #0078d4;
+  gap: 4px;
+  color: var(--accent);
   text-decoration: none;
-  font-weight: 500;
-  font-size: 0.9rem;
+  font-weight: 600;
+  font-size: 0.85rem;
 }
 
 .qr-store-link:hover {
@@ -154,7 +154,7 @@
 }
 
 .download-sheet-footer {
-  padding: 12px 20px 20px;
+  padding: 8px 16px 12px;
   text-align: center;
   border-top: 1px solid #f0f0f0;
 }
