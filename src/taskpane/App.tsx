@@ -67,6 +67,14 @@ const App: React.FC<AppProps> = ({ officeHost = "Unknown" }) => {
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
 
   useEffect(() => {
+    // Inject host variables into body for global availability (portals/dialogs)
+    const vars = getHostVars() as any;
+    Object.keys(vars).forEach(key => {
+      document.body.style.setProperty(key, vars[key]);
+    });
+  }, [officeHost]);
+
+  useEffect(() => {
     // Session management via custom events from DocuIdApiService
     const handleUnauthorized = () => {
       handleLogout();
@@ -189,8 +197,8 @@ const App: React.FC<AppProps> = ({ officeHost = "Unknown" }) => {
   };
 
   return (
-    <ThemeProvider theme={docuIdTheme}>
-      <div className="app-container" style={getHostVars()}>
+    <ThemeProvider theme={docuIdTheme} style={getHostVars() as any}>
+      <div className="app-container">
         <Header
           user={user}
           onLogout={() => setIsLogoutDialogOpen(true)}
