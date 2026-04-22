@@ -40,6 +40,8 @@ export const BIOMETRIC_ROUTES = {
 export const DOCUMENT_ROUTES = {
   // List and metadata endpoints (backend: /api/dashboard/documents/)
   WORD_FILES: getApiUrl("/dashboard/documents/word-files"),
+  EXCEL_FILES: getApiUrl("/dashboard/documents/excel-files"),
+  POWERPOINT_FILES: getApiUrl("/dashboard/documents/powerpoint-files"),
   GET_DOCUMENT: (id: number) => getApiUrl(`/dashboard/documents/${id}`),
   DOCUMENT_ACCESS: (id: number) => getApiUrl(`/dashboard/documents/${id}/access`),
 

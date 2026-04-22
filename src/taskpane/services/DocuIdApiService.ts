@@ -3,6 +3,7 @@ import { AuthService } from "./AuthService";
 import { logger } from "./Logger";
 import { DOCUMENT_ROUTES, SHARE_ROUTES, API_CONFIG } from "../../config/apiRoutes";
 import { DocuIdDocument, DocumentAccess, ApiResponse, ShareApiResponse } from "../common/types";
+import { OfficeHostService } from "./OfficeHostService";
 
 /**
  * Service for communicating with DocuID dashboard APIs
@@ -51,42 +52,20 @@ export class DocuIdApiService {
   }
 
   /**
-   * Get list of Word documents
+   * Get list of documents for the current Office host (Word, Excel, or PowerPoint).
+   * The API endpoint is chosen based on OfficeHostService.getDocumentRouteKey().
    */
-  static async getWordDocuments(): Promise<DocuIdDocument[]> {
-    const url = DOCUMENT_ROUTES.WORD_FILES;
+  static async getDocuments(): Promise<DocuIdDocument[]> {
+    const routeKey = OfficeHostService.getDocumentRouteKey();
+    const url = DOCUMENT_ROUTES[routeKey];
+    const host = OfficeHostService.getHost();
     try {
       this.apiLogger.logApiRequest("GET", url);
 
       // --- DEMO MODE CHECK ---
       if (AuthService.getSessionToken() === "demo-session-token") {
-        this.apiLogger.info("Returning demo documents");
-        return [
-          {
-            documentId: 1001,
-            fileName: "Demo Proposal.docx",
-            filePath: "/demo/Demo Proposal.docx",
-            fileType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            fileSize: 1024500,
-            description: "A sample proposal document for demonstration.",
-            folderId: null,
-            isPasswordProtected: false,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-          },
-          {
-            documentId: 1002,
-            fileName: "Confidential Report.docx",
-            filePath: "/demo/Confidential Report.docx",
-            fileType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            fileSize: 2048000,
-            description: "Highly confidential Q4 report.",
-            folderId: null,
-            isPasswordProtected: true,
-            createdAt: new Date(Date.now() - 86400000).toISOString(),
-            updatedAt: new Date(Date.now() - 86400000).toISOString(),
-          }
-        ];
+        this.apiLogger.info(`Returning demo documents for host: ${host}`);
+        return this.getDemoDocuments(host);
       }
       // -----------------------
 
@@ -98,9 +77,108 @@ export class DocuIdApiService {
       }
       throw new Error(response.data.message || "Failed to fetch documents");
     } catch (error) {
-      this.apiLogger.error("Error fetching Word documents", error as Error);
+      this.apiLogger.error(`Error fetching ${host} documents`, error as Error);
       throw error;
     }
+  }
+
+  /**
+   * Backward-compatible alias kept for any callers that still use getWordDocuments.
+   * @deprecated Use getDocuments() instead.
+   */
+  static async getWordDocuments(): Promise<DocuIdDocument[]> {
+    return this.getDocuments();
+  }
+
+  /**
+   * Returns host-appropriate demo documents.
+   */
+  private static getDemoDocuments(host: string): DocuIdDocument[] {
+    if (host === "Excel") {
+      return [
+        {
+          documentId: 2001,
+          fileName: "Demo Budget.xlsx",
+          filePath: "/demo/Demo Budget.xlsx",
+          fileType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          fileSize: 512000,
+          description: "A sample budget spreadsheet for demonstration.",
+          folderId: null,
+          isPasswordProtected: false,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+        {
+          documentId: 2002,
+          fileName: "Quarterly Data.xlsx",
+          filePath: "/demo/Quarterly Data.xlsx",
+          fileType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          fileSize: 1536000,
+          description: "Highly confidential Q4 data.",
+          folderId: null,
+          isPasswordProtected: true,
+          createdAt: new Date(Date.now() - 86400000).toISOString(),
+          updatedAt: new Date(Date.now() - 86400000).toISOString(),
+        },
+      ];
+    }
+
+    if (host === "PowerPoint") {
+      return [
+        {
+          documentId: 3001,
+          fileName: "Demo Presentation.pptx",
+          filePath: "/demo/Demo Presentation.pptx",
+          fileType: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+          fileSize: 2048000,
+          description: "A sample presentation for demonstration.",
+          folderId: null,
+          isPasswordProtected: false,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+        {
+          documentId: 3002,
+          fileName: "Investor Deck.pptx",
+          filePath: "/demo/Investor Deck.pptx",
+          fileType: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+          fileSize: 4096000,
+          description: "Confidential investor presentation.",
+          folderId: null,
+          isPasswordProtected: true,
+          createdAt: new Date(Date.now() - 86400000).toISOString(),
+          updatedAt: new Date(Date.now() - 86400000).toISOString(),
+        },
+      ];
+    }
+
+    // Default: Word documents
+    return [
+      {
+        documentId: 1001,
+        fileName: "Demo Proposal.docx",
+        filePath: "/demo/Demo Proposal.docx",
+        fileType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        fileSize: 1024500,
+        description: "A sample proposal document for demonstration.",
+        folderId: null,
+        isPasswordProtected: false,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+      {
+        documentId: 1002,
+        fileName: "Confidential Report.docx",
+        filePath: "/demo/Confidential Report.docx",
+        fileType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        fileSize: 2048000,
+        description: "Highly confidential Q4 report.",
+        folderId: null,
+        isPasswordProtected: true,
+        createdAt: new Date(Date.now() - 86400000).toISOString(),
+        updatedAt: new Date(Date.now() - 86400000).toISOString(),
+      },
+    ];
   }
 
   /**
