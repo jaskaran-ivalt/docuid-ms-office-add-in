@@ -66,9 +66,9 @@
 
 .document-info-card {
   background: white;
-  border-radius: 8px;
+  border-radius: 0;
   padding: 16px;
-  border: 2px solid #e9ecef;
+  border: 1px solid #e9ecef;
   display: flex;
   align-items: flex-start;
   gap: 12px;
@@ -87,7 +87,7 @@
   padding: 6px 12px;
   border: 1px solid #e9ecef;
   background: #f8f9fa;
-  border-radius: 4px;
+  border-radius: 0;
   font-size: 12px;
   font-weight: 500;
   color: #605e5c;
@@ -114,7 +114,7 @@
   align-items: center;
   justify-content: center;
   background: #f8f9fa;
-  border-radius: 6px;
+  border-radius: 0;
   border: 1px solid #e9ecef;
 }
 
@@ -142,10 +142,10 @@
 }
 
 .document-type-badge {
-  background: #e1f5fe;
-  color: #0277bd;
+  background: var(--accent-dim);
+  color: var(--accent);
   padding: 2px 6px;
-  border-radius: 4px;
+  border-radius: 0;
   font-weight: 500;
   font-size: 11px;
 }
@@ -171,9 +171,9 @@
 
 .share-form {
   background: white;
-  border-radius: 8px;
+  border-radius: 0;
   padding: 18px;
-  border: 2px solid #e9ecef;
+  border: 1px solid #e9ecef;
   /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06); */
 }
 
@@ -277,8 +277,8 @@
 .phone-input-field .PhoneInput {
   width: 100%;
   display: flex;
-  border: 1px solid rgba(0, 0, 0, 0.0578);
-  border-radius: 6px;
+  border: 1px solid #e9ecef;
+  border-radius: 0;
   overflow: hidden;
   transition: border-color 0.08s ease;
   background: white;
@@ -369,22 +369,22 @@
 
 .action-buttons .ms-Button {
   flex: 1;
-  height: 44px;
-  border-radius: 8px;
+  height: 40px;
+  border-radius: 0;
   font-weight: 600;
   transition: all 0.2s ease;
 }
 
 .action-buttons .ms-Button--primary {
-  background: linear-gradient(135deg, #0078d4 0%, #106ebe 100%) !important;
+  background: var(--accent) !important;
   border: none !important;
-  box-shadow: 0 2px 8px rgba(0, 120, 212, 0.2) !important;
+  box-shadow: none !important;
 }
 
 .action-buttons .ms-Button--primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, #106ebe 0%, #005a9e 100%) !important;
-  transform: translateY(-2px) !important;
-  box-shadow: 0 6px 16px rgba(0, 120, 212, 0.3) !important;
+  background: var(--accent-dark) !important;
+  transform: none !important;
+  box-shadow: none !important;
 }
 
 .action-buttons .ms-Button--primary:active {
