@@ -25,13 +25,12 @@ export const Card: React.FC<CardProps> = ({
       styles={{
         root: {
           backgroundColor: "#ffffff",
-          borderRadius: "6px",
+          borderRadius: "0",
           padding: "10px 12px",
           boxShadow: shadowMap[elevation],
-          transition: hoverable ? "box-shadow 0.2s ease, transform 0.1s ease" : undefined,
+          transition: hoverable ? "box-shadow 0.2s ease" : undefined,
           ":hover": hoverable ? {
             boxShadow: shadowMap[elevation === 3 ? 3 : (elevation + 1) as 2 | 3],
-            transform: "translateY(-1px)",
           } : undefined,
           ...styles?.root,
         },

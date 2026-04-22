@@ -18,7 +18,7 @@
 .document-card {
   background: white;
   border: 1px solid #e9ecef;
-  border-radius: 8px;
+  border-radius: 0;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
@@ -120,14 +120,14 @@
 .document-open-button {
   min-width: 60px !important;
   height: 30px !important;
-  border-radius: 4px !important;
+  border-radius: 0 !important;
   font-weight: 600 !important;
   font-size: 12px !important;
   padding: 0 12px !important;
-  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%) !important;
+  background: var(--accent) !important;
   border: none !important;
-  box-shadow: 0 1px 4px var(--accent-dim) !important;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: none !important;
+  transition: all 0.2s ease !important;
 }
 
 .document-open-button:hover:not(:disabled) {
@@ -145,15 +145,15 @@
 .document-close-button {
   min-width: 60px !important;
   height: 30px !important;
-  border-radius: 4px !important;
+  border-radius: 0 !important;
   font-weight: 600 !important;
   font-size: 12px !important;
   padding: 0 12px !important;
-  border: 1.5px solid #d13438 !important;
+  border: 1px solid #d13438 !important;
   background: white !important;
   color: #d13438 !important;
-  box-shadow: 0 1px 3px rgba(209, 52, 56, 0.08) !important;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: none !important;
+  transition: all 0.2s ease !important;
 }
 
 .document-close-button:hover:not(:disabled) {
@@ -172,15 +172,15 @@
 .document-share-button {
   min-width: 50px !important;
   height: 30px !important;
-  border-radius: 4px !important;
+  border-radius: 0 !important;
   font-weight: 600 !important;
   font-size: 12px !important;
   padding: 0 12px !important;
   border: 1px solid #d1d1d1 !important;
   background: white !important;
   color: #323130 !important;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: none !important;
+  transition: all 0.2s ease !important;
 }
 
 .document-share-button:hover:not(:disabled) {

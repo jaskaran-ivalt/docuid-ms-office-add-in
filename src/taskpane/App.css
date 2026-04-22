@@ -33,7 +33,7 @@ body {
   background-color: var(--accent) !important;
   border-color: var(--accent) !important;
   color: white !important;
-  border-radius: 4px !important;
+  border-radius: 0 !important;
 }
 
 .ms-Button--primary:hover {
