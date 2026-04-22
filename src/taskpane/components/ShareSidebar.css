@@ -277,165 +277,77 @@
 .phone-input-field .PhoneInput {
   width: 100%;
   display: flex;
-  border: 1px solid #e9ecef;
-  border-radius: 0;
+  border: 1px solid #e1dfdd;
+  border-radius: 0 !important;
   overflow: hidden;
-  transition: border-color 0.08s ease;
+  transition: all 0.2s ease;
   background: white;
   min-height: 40px;
 }
 
 .phone-input-field .PhoneInput:focus-within {
-  border-color: #0078d4;
-  border-width: 2px;
-  box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.1);
-  transition: all 0.2s ease;
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 1px var(--accent) !important;
 }
 
-.phone-input-field .PhoneInputCountry {
-  border: none;
-  border-right: 1px solid #edebe9;
-  background: #faf9f8;
-  padding: 10px 12px;
+.share-textfield .ms-TextField-fieldGroup,
+.share-textfield-multiline .ms-TextField-fieldGroup {
+  border: 1px solid #e1dfdd !important;
+  border-radius: 0 !important;
+  transition: all 0.2s ease !important;
+}
+
+.share-textfield .ms-TextField-fieldGroup:focus-within,
+.share-textfield-multiline .ms-TextField-fieldGroup:focus-within {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 1px var(--accent) !important;
+}
+
+.share-submit-btn {
+  height: 40px !important;
+  border-radius: 0 !important;
+  font-weight: 600 !important;
+  background-color: var(--accent) !important;
+  border-color: var(--accent) !important;
+  color: white !important;
+  flex: 1;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  /* min-width: 100px; */
-  flex-shrink: 0;
 }
 
-.phone-input-field .PhoneInputInput {
-  width: 100%;
-  padding: 10px 12px;
-  border: none;
-  font-size: 14px;
-  outline: none;
+.share-submit-btn:hover:not(:disabled) {
+  background-color: var(--accent-dark) !important;
+  border-color: var(--accent-dark) !important;
+}
+
+.share-cancel-btn {
+  height: 40px !important;
+  border-radius: 0 !important;
+  border: 1px solid #e1dfdd !important;
+  background-color: white !important;
+  color: #323130 !important;
+}
+
+.document-info-card {
+  background: #f8f9fa;
+  border: 1px solid #e1dfdd;
+  border-radius: 0;
+  padding: 12px;
+}
+
+.share-form {
+  border: 1px solid #e1dfdd;
+  border-radius: 0;
   background: white;
-  color: #323130;
-  min-width: 0;
-}
-
-.phone-input-field .PhoneInputInput::placeholder {
-  color: #a19f9d;
-}
-
-.phone-input-field .PhoneInputInput:disabled {
-  background-color: #f3f2f1;
-  cursor: not-allowed;
-  opacity: 0.6;
-  color: #a19f9d;
-}
-
-.phone-input-field .PhoneInputCountryIcon {
-  width: 24px;
-  height: 18px;
-  border-radius: 2px;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
-}
-
-/* Hide duplicate icons in country dropdown */
-.phone-input-field .PhoneInputCountrySelect option {
-  background-repeat: no-repeat;
-  background-position: left center;
-  padding-left: 0;
-}
-
-.phone-input-field .PhoneInputCountryIconImg {
-  display: inline-block;
-}
-
-.phone-input-field select.PhoneInputCountrySelect option::before {
-  content: none;
-}
-
-.phone-input-field .PhoneInputCountrySelectArrow {
-  display: inline-block;
-  width: 0;
-  height: 0;
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-top: 5px solid #605e5c;
-  margin-left: 6px;
-  vertical-align: middle;
-  display: none !important;
+  padding: 16px;
 }
 
 .action-buttons {
   display: flex;
-  gap: 10px;
-  margin-top: 4px;
-  padding-top: 8px;
-}
-
-.action-buttons .ms-Button {
-  flex: 1;
-  height: 40px;
-  border-radius: 0 !important;
-  font-weight: 600;
-  transition: all 0.2s ease;
-}
-
-.action-buttons .ms-Button--primary {
-  background: var(--accent) !important;
-  border: none !important;
-  box-shadow: none !important;
-}
-
-.action-buttons .ms-Button--primary:hover:not(:disabled) {
-  background: var(--accent-dark) !important;
-  transform: none !important;
-  box-shadow: none !important;
-}
-
-.action-buttons .ms-Button--primary:active {
-  transform: translateY(0) !important;
-  box-shadow: 0 2px 4px rgba(0, 120, 212, 0.2) !important;
-}
-
-.action-buttons .ms-Button--primary:disabled {
-  background: #f3f2f1 !important;
-  color: #605e5c !important;
-  cursor: not-allowed;
-  box-shadow: none !important;
-}
-
-.action-buttons .ms-Button--default {
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
-}
-
-.action-buttons .ms-Button--default:hover:not(:disabled) {
-  transform: translateY(-2px) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
-}
-
-.action-buttons .ms-Button--default:active {
-  transform: translateY(0) !important;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08) !important;
-}
-
-/* Responsive styles for action buttons */
-@media (max-width: 480px) {
-  .action-buttons {
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .action-buttons .ms-Button {
-    width: 100%;
-    height: 48px;
-    font-size: 15px;
-  }
-}
-
-@media (max-width: 360px) {
-  .action-buttons {
-    gap: 6px;
-  }
-
-  .action-buttons .ms-Button {
-    height: 44px;
-    font-size: 14px;
-  }
+  gap: 8px;
+  margin-top: 16px;
 }
 
 .spinning {
@@ -443,17 +355,15 @@
 }
 
 @keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-} 
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 
 @media (max-width: 480px) {
-  .PhoneInputCountry {
-      min-width: 0px !important;
-      padding: 8px 10px;
+  .action-buttons {
+    flex-direction: column;
+  }
+  .share-submit-btn, .share-cancel-btn {
+    width: 100% !important;
   }
 }

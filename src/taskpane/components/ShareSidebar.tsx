@@ -268,27 +268,10 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({
                   onChange={(_, value) => setEmail(value || "")}
                   disabled={isLoading}
                   styles={{
-                    field: {
-                      paddingLeft: "44px",
-                      fontSize: "14px",
-                      height: "40px",
-                      transition: "all 0.2s ease",
-                    },
-                    fieldGroup: {
-                      border: "1px solid #d1d1d1",
-                      borderRadius: "6px",
-                      transition: "all 0.2s ease",
-                      selectors: {
-                        ":focus-within": {
-                          border: "2px solid #0078d4",
-                          boxShadow: "0 0 0 3px rgba(0, 120, 212, 0.1)",
-                        },
-                        "::after": {
-                          display: "none",
-                        },
-                      },
-                    },
+                    field: { paddingLeft: "44px" },
+                    fieldGroup: { border: "none" }
                   }}
+                  className="share-textfield"
                 />
               </div>
             </div>
@@ -319,29 +302,10 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({
                 rows={3}
                 disabled={isLoading}
                 styles={{
-                  field: {
-                    fontSize: "14px",
-                    border: "1px solid #d1d1d1",
-                    borderRadius: "6px",
-                    padding: "12px",
-                    resize: "none",
-                    transition: "all 0.2s ease",
-                  },
-                  fieldGroup: {
-                    border: "1px solid #d1d1d1",
-                    borderRadius: "6px",
-                    transition: "all 0.2s ease",
-                    selectors: {
-                      ":focus-within": {
-                        border: "2px solid #0078d4",
-                        boxShadow: "0 0 0 3px rgba(0, 120, 212, 0.1)",
-                      },
-                      "::after": {
-                        display: "none",
-                      },
-                    },
-                  },
+                  field: { padding: "10px" },
+                  fieldGroup: { border: "none" }
                 }}
+                className="share-textfield-multiline"
               />
             </div>
           </div>
@@ -382,42 +346,7 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({
             <PrimaryButton
               onClick={handleShare}
               disabled={isLoading || (!email && !mobile)}
-              styles={{
-                root: {
-                  height: "44px",
-                  fontSize: "14px",
-                  fontWeight: "600",
-                  borderRadius: "8px",
-                  border: "none",
-                  background:
-                    (!email && !mobile) || isLoading
-                      ? "#f3f2f1"
-                      : "linear-gradient(135deg, #0078d4 0%, #106ebe 100%)",
-                  color: (!email && !mobile) || isLoading ? "#605e5c" : "white",
-                  cursor: (!email && !mobile) || isLoading ? "not-allowed" : "pointer",
-                  transition: "all 0.2s ease",
-                  flex: 1,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "8px",
-                  minWidth: "120px",
-                  boxShadow: (!email && !mobile) || isLoading ? "none" : "0 2px 8px rgba(0, 120, 212, 0.2)",
-                },
-                rootHovered: {
-                  background:
-                    (!email && !mobile) || isLoading
-                      ? "#f3f2f1"
-                      : "linear-gradient(135deg, #106ebe 0%, #005a9e 100%)",
-                  transform: (!email && !mobile) || isLoading ? "none" : "translateY(-2px)",
-                  boxShadow:
-                    (!email && !mobile) || isLoading ? "none" : "0 6px 16px rgba(0, 120, 212, 0.3)",
-                },
-                rootPressed: {
-                  transform: "translateY(0)",
-                  boxShadow: (!email && !mobile) || isLoading ? "none" : "0 2px 4px rgba(0, 120, 212, 0.2)",
-                },
-              }}
+              className="share-submit-btn"
             >
               {isLoading ? (
                 <>
@@ -425,38 +354,17 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({
                   <span>Sharing...</span>
                 </>
               ) : (
-                <span>Share Document</span>
+                <>
+                  <Share size={16} />
+                  <span>Share Document</span>
+                </>
               )}
             </PrimaryButton>
             <DefaultButton
               text="Cancel"
               onClick={handleDismiss}
               disabled={isLoading}
-              styles={{
-                root: {
-                  height: "44px",
-                  fontSize: "14px",
-                  fontWeight: "500",
-                  borderRadius: "8px",
-                  border: "1px solid #d1d1d1",
-                  background: "white",
-                  color: "#323130",
-                  transition: "all 0.2s ease",
-                  minWidth: "80px",
-                  boxShadow: "0 1px 3px rgba(0, 0, 0, 0.08)",
-                },
-                rootHovered: {
-                  background: "#f8f9fa",
-                  borderColor: "#0078d4",
-                  color: "#0078d4",
-                  transform: "translateY(-2px)",
-                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.12)",
-                },
-                rootPressed: {
-                  transform: "translateY(0)",
-                  boxShadow: "0 1px 2px rgba(0, 0, 0, 0.08)",
-                },
-              }}
+              className="share-cancel-btn"
             />
           </div>
         </div>
