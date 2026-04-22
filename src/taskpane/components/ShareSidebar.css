@@ -306,14 +306,33 @@
 .share-submit-btn,
 .share-cancel-btn {
   height: 40px !important;
+  min-height: 40px !important;
+  max-height: 40px !important;
   width: 100% !important;
   border-radius: 0 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
   padding: 0 16px !important;
   margin: 0 !important;
   box-sizing: border-box !important;
+  overflow: hidden !important;
+  line-height: 40px !important;
+}
+
+/* Force the internal Fluent UI container to center properly */
+.share-submit-btn .ms-Button-flexContainer,
+.share-cancel-btn .ms-Button-flexContainer {
+  height: 40px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+}
+
+/* Icon alignment fix */
+.share-submit-btn svg {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-top: -1px; /* Optical adjustment */
 }
 
 .share-submit-btn {
