@@ -72,8 +72,24 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile, on
   const displayName = user?.name ? user?.name : "User";
   const displayEmail = user?.email || "";
 
+  // Returns the gradient that matches each Office host's brand colour.
+  // Word  : current blue  (#005fb8 → #0067c0)
+  // Excel : Microsoft green  (#1a5c39 → #217346)
+  // PowerPoint : Microsoft orange-red  (#b33519 → #c7421f)
+  const getHostBackground = (): string => {
+    switch (officeHost) {
+      case "Excel":
+        return "linear-gradient(135deg, #1a5c39 0%, #217346 100%)";
+      case "PowerPoint":
+        return "linear-gradient(135deg, #b33519 0%, #c7421f 100%)";
+      case "Word":
+      default:
+        return "linear-gradient(135deg, #005fb8 0%, #0067c0 100%)";
+    }
+  };
+
   return (
-    <div className="header">
+    <div className="header" style={{ background: getHostBackground() }}>
       <div className="header-content">
         <div className="header-brand">
           <div className="brand-logo">
