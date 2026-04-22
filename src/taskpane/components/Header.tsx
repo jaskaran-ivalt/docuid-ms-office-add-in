@@ -9,6 +9,7 @@ import {
   Text,
 } from "@fluentui/react";
 import { User, LogOut, Bug } from "lucide-react";
+import { OfficeHost } from "@/taskpane/services/OfficeHostService";
 import "./Header.css";
 
 interface HeaderProps {
@@ -16,9 +17,10 @@ interface HeaderProps {
   onLogout: () => void;
   onNavigateToProfile?: () => void;
   onToggleDebug?: () => void;
+  officeHost?: OfficeHost;
 }
 
-const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile, onToggleDebug }) => {
+const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile, onToggleDebug, officeHost }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -79,8 +81,17 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile, on
           </div>
           <div className="brand-text">
             <h1 className="brand-title">iVALT Docuid</h1>
-            <span className="brand-subtitle">Document management</span>
-            {/* <span className="brand-subtitle">Secure Document Access</span> */}
+            <span className="brand-subtitle">
+              Document management
+              {officeHost && officeHost !== "Unknown" && (
+                <span
+                  className="host-badge"
+                  title={`Running in Microsoft ${officeHost}`}
+                >
+                  {officeHost}
+                </span>
+              )}
+            </span>
           </div>
         </div>
 

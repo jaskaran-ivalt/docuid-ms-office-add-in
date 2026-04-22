@@ -8,12 +8,17 @@ import DebugPanel from "@/taskpane/components/DebugPanel";
 import { AuthService } from "@/taskpane/services/AuthService";
 import { DocuIdApiService } from "@/taskpane/services/DocuIdApiService";
 import { DocumentService } from "@/taskpane/services/DocumentService";
+import { OfficeHost } from "@/taskpane/services/OfficeHostService";
 import { docuIdTheme } from "./theme/fluentTheme";
 import { logger } from "@/taskpane/services/Logger";
 import { Document } from "./common/types";
 import "./App.css";
 
-const App: React.FC = () => {
+interface AppProps {
+  officeHost?: OfficeHost;
+}
+
+const App: React.FC<AppProps> = ({ officeHost = "Unknown" }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoadingDocuments, setIsLoadingDocuments] = useState(false);
   const [isLoadingLogin, setIsLoadingLogin] = useState(false);
@@ -147,6 +152,7 @@ const App: React.FC = () => {
           onLogout={handleLogout}
           onNavigateToProfile={() => setCurrentPage("profile")}
           onToggleDebug={() => setDebugPanelOpen(!debugPanelOpen)}
+          officeHost={officeHost}
         />
 
         {error && (
