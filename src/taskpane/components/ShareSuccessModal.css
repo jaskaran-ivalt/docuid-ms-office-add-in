@@ -1,65 +1,59 @@
 .share-success-modal {
-  padding: 40px 20px 8px 20px;
+  padding: 16px 12px 4px 12px;
 }
 
 .success-icon-wrapper {
   display: flex;
   justify-content: center;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
 }
 
 .success-icon {
   color: #107c10;
+  width: 32px;
+  height: 32px;
   animation: scaleIn 0.3s ease-out;
 }
 
 @keyframes scaleIn {
-  0% {
-    transform: scale(0);
-    opacity: 0;
-  }
-  50% {
-    transform: scale(1.1);
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
+  0% { transform: scale(0); opacity: 0; }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); opacity: 1; }
 }
 
 .success-title {
   display: block;
   text-align: center;
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 600;
   color: #323130;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 .success-subtitle {
   display: block;
   text-align: center;
-  font-size: 14px;
+  font-size: 12px;
   color: #605e5c;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
 .document-details-section,
 .share-details-section {
   background: #f8f9fa;
   border-radius: 0;
-  padding: 16px;
-  margin-bottom: 16px;
-  border: 1px solid #e9ecef;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #e1dfdd;
 }
 
 .section-header {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #e9ecef;
+  gap: 6px;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #edebe9;
 }
 
 .section-header svg {
@@ -67,21 +61,23 @@
 }
 
 .section-title {
-  font-size: 16px;
+  font-size: 13px;
   font-weight: 600;
   color: #323130;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .details-grid {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
 .detail-item {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
+  gap: 8px;
 }
 
 .detail-item.full-width {
@@ -142,11 +138,11 @@
 .share-link-container {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   background: white;
-  border: 1px solid #e9ecef;
+  border: 1px solid #e1dfdd;
   border-radius: 0;
-  padding: 12px;
+  padding: 8px;
 }
 
 .share-link-text {

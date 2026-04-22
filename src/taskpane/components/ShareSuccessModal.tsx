@@ -68,7 +68,8 @@ const ShareSuccessModal: React.FC<ShareSuccessModalProps> = ({
         isBlocking: false,
         styles: {
           main: {
-            maxWidth: "520px",
+            maxWidth: "400px",
+            minHeight: "auto",
           },
         },
       }}
@@ -179,14 +180,14 @@ const ShareSuccessModal: React.FC<ShareSuccessModalProps> = ({
         )}
 
         {/* Action Button */}
-        <Stack horizontal horizontalAlign="center" style={{ marginTop: 24 }}>
+        <Stack horizontal horizontalAlign="center" style={{ marginTop: 16, paddingBottom: 8 }}>
           <PrimaryButton
             text="Done"
             onClick={onDismiss}
             styles={{
               root: {
-                minWidth: "120px",
-                height: "40px",
+                minWidth: "100px",
+                height: "36px",
               },
             }}
           />
