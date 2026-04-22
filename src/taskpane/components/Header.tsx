@@ -242,28 +242,10 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile, on
                     <Stack tokens={{ childrenGap: 4 }}>
                       {onNavigateToProfile && (
                         <button
+                          className="dropdown-menu-item"
                           onClick={() => {
                             onNavigateToProfile();
                             setIsDropdownOpen(false);
-                          }}
-                          style={{
-                            width: "100%",
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "8px",
-                            padding: "8px 12px",
-                            border: "none",
-                            background: "transparent",
-                            cursor: "pointer",
-                            fontSize: "14px",
-                            color: "#323130",
-                            textAlign: "left",
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = "#f3f2f1";
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor = "transparent";
                           }}
                         >
                           <User size={16} />
@@ -271,26 +253,8 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile, on
                         </button>
                       )}
                       <button
+                        className="dropdown-menu-item logout-item"
                         onClick={onLogout}
-                        style={{
-                          width: "100%",
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "8px",
-                          padding: "8px 12px",
-                          border: "none",
-                          background: "transparent",
-                          cursor: "pointer",
-                          fontSize: "14px",
-                          color: "#323130",
-                          textAlign: "left",
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = "#f3f2f1";
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = "transparent";
-                        }}
                       >
                         <LogOut size={16} />
                         <span>Sign Out</span>
