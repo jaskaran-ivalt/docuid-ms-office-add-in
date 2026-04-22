@@ -113,8 +113,13 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
   return (
     <div className="profile-page">
       <div className="profile-header">
-        <button className="back-button" onClick={onBack}><X size={20} /></button>
-        <h1 className="profile-title">Profile Settings</h1>
+        <button className="back-button" onClick={onBack} title="Back to documents"><X size={18} /></button>
+        <h1 className="profile-title">Profile</h1>
+        {!isEditing && (
+          <button className="edit-button" onClick={() => setIsEditing(true)}>
+            Edit
+          </button>
+        )}
       </div>
 
       {error && <MessageBar messageBarType={MessageBarType.error} onDismiss={() => setError("")}>{error}</MessageBar>}

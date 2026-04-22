@@ -30,7 +30,7 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({
             onChange={(_, value) => onInputChange("name", value)}
             disabled={!isEditing}
             styles={{
-              field: { fontSize: "14px", border: "1px solid #d1d1d1", borderRadius: "6px", height: "40px" },
+              field: { fontSize: "13px", border: "1px solid #d1d1d1", borderRadius: "4px", height: "32px" },
               fieldGroup: { border: "none" },
             }}
           />
@@ -43,7 +43,7 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({
             onChange={(_, value) => onInputChange("email", value)}
             disabled={!isEditing}
             styles={{
-              field: { fontSize: "14px", border: "1px solid #d1d1d1", borderRadius: "6px", height: "40px" },
+              field: { fontSize: "13px", border: "1px solid #d1d1d1", borderRadius: "4px", height: "32px" },
               fieldGroup: { border: "none" },
             }}
           />
@@ -56,7 +56,7 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({
             onChange={(_, value) => onInputChange("mobile", value)}
             disabled={!isEditing}
             styles={{
-              field: { fontSize: "14px", border: "1px solid #d1d1d1", borderRadius: "6px", height: "40px" },
+              field: { fontSize: "13px", border: "1px solid #d1d1d1", borderRadius: "4px", height: "32px" },
               fieldGroup: { border: "none" },
             }}
           />
@@ -69,7 +69,7 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({
             onChange={(_, value) => onInputChange("country_code", value)}
             disabled={!isEditing}
             styles={{
-              field: { fontSize: "14px", border: "1px solid #d1d1d1", borderRadius: "6px", height: "40px" },
+              field: { fontSize: "13px", border: "1px solid #d1d1d1", borderRadius: "4px", height: "32px" },
               fieldGroup: { border: "none" },
             }}
           />
@@ -84,7 +84,7 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({
             multiline
             rows={2}
             styles={{
-              field: { fontSize: "14px", border: "1px solid #d1d1d1", borderRadius: "6px", minHeight: "60px" },
+              field: { fontSize: "13px", border: "1px solid #d1d1d1", borderRadius: "4px", minHeight: "50px" },
               fieldGroup: { border: "none", background: "white" },
             }}
           />
@@ -93,10 +93,10 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({
         <div className="form-group">
           <Label className="form-label">Location</Label>
           <TextField
-            value={formatLocation(formData.latitude, formData.longitude)}
+            value={formData.latitude && formData.longitude ? `${formData.latitude}, ${formData.longitude}` : "N/A"}
             disabled={true}
             styles={{
-              field: { fontSize: "14px", border: "1px solid #d1d1d1", borderRadius: "6px", height: "40px", backgroundColor: "#f8f9fa" },
+              field: { fontSize: "13px", border: "1px solid #d1d1d1", borderRadius: "4px", height: "32px", backgroundColor: "#f8f9fa" },
               fieldGroup: { border: "none" },
             }}
           />
