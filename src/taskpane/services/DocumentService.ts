@@ -146,8 +146,7 @@ export class DocumentService {
 
   /**
    * Insert document content into Excel.
-   * For xlsx files the content is inserted into the active sheet starting at A1.
-   * For plain-text / csv content each row is split on commas and written cell by cell.
+   * CSV / plain-text content is parsed and written cell-by-cell starting at A1.
    */
   private static async insertIntoExcel(documentContent: DocumentContent): Promise<void> {
     const officeLogger = logger.createContextLogger("DocumentService.Excel");
@@ -164,13 +163,13 @@ export class DocumentService {
 
         const sheet = context.workbook.worksheets.getActiveWorksheet();
 
-        // Clear existing used range
-        const usedRange = sheet.getUsedRangeOrNullObject();
-        usedRange.load("isNullObject");
-        await context.sync();
-        if (!usedRange.isNullObject) {
-          usedRange.clear();
+        // Clear existing content - getUsedRange() throws on an empty sheet,
+        // so wrap in try/catch and continue regardless.
+        try {
+          sheet.getUsedRange().clear();
           await context.sync();
+        } catch {
+          // Sheet is empty - nothing to clear
         }
 
         if (
@@ -178,24 +177,37 @@ export class DocumentService {
           documentContent.contentType === "text/csv" ||
           textContent.includes("demo document generated")
         ) {
-          // Parse CSV/plain text into a 2-D array
           officeLogger.debug("Inserting plain text / CSV content into Excel");
-          const rows = textContent
+
+          // Parse every non-empty line into cells by splitting on comma.
+          const rawRows = textContent
             .split("\n")
             .filter((line) => line.trim().length > 0)
             .map((line) => line.split(",").map((cell) => cell.trim()));
 
-          if (rows.length > 0) {
-            const range = sheet.getRangeByIndexes(0, 0, rows.length, rows[0].length);
-            range.values = rows;
+          if (rawRows.length > 0) {
+            // All rows must have the same column count for range.values to work.
+            // Pad shorter rows with empty strings so they match the widest row.
+            const maxCols = Math.max(...rawRows.map((r) => r.length));
+            const rows: string[][] = rawRows.map((r) => {
+              const padded = [...r];
+              while (padded.length < maxCols) {
+                padded.push("");
+              }
+              return padded;
+            });
+
+            const range = sheet.getRangeByIndexes(0, 0, rows.length, maxCols);
+            // Excel API expects (string | number | boolean)[][] but string[][] is compatible
+            range.values = rows as unknown as (string | number | boolean)[][];
             await context.sync();
           }
         } else {
-          // For real xlsx files, insert a note since Excel.run does not support
-          // insertFileFromBase64 in the same way Word does.
-          officeLogger.debug("Non-text content detected; writing placeholder for real XLSX file");
+          // Real xlsx binary - write a placeholder note since Excel.run cannot
+          // insert a binary workbook the same way Word can insertFileFromBase64.
+          officeLogger.debug("Non-text content: writing placeholder for real XLSX");
           sheet.getRange("A1").values = [
-            [`File: ${documentContent.fileName} loaded. Open directly for full fidelity.`],
+            [`File: ${documentContent.fileName} - open directly for full fidelity.`],
           ];
           await context.sync();
         }
