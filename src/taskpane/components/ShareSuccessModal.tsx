@@ -56,6 +56,7 @@ const ShareSuccessModal: React.FC<ShareSuccessModalProps> = ({
       onDismiss={onDismiss}
       dialogContentProps={{
         type: DialogType.normal,
+        title: " ",
         showCloseButton: true,
       }}
       modalProps={{
@@ -109,10 +110,12 @@ const ShareSuccessModal: React.FC<ShareSuccessModalProps> = ({
         {/* Share Details */}
         {shareDetails && (
           <div className="share-details-section">
-            <div className="section-header">
-              <CheckCircle size={18} />
-              <Text className="section-title">Share Information</Text>
-            </div>
+            {/* <div className="section-header">
+              <div>
+                <CheckCircle size={18} />
+              </div>
+              <Text className="section-title share-information-label">Share Information</Text>
+            </div> */}
             <div className="details-grid">
               {shareDetails.recipientEmail && (
                 <div className="detail-item">
