@@ -18,14 +18,14 @@ export class AuthService {
       });
 
       // --- DUMMY CREDENTIALS FOR DEMO ---
-      if (phoneNumber === "+919999999999" || phoneNumber === "9999999999") {
+      if (phoneNumber === "+919876543210" || phoneNumber === "9876543210") {
         this.authLogger.info("Using dummy credentials for demo mode");
         
         const dummyUser: User = {
           id: 999999,
           name: "Demo User",
           email: "demo@docuid.net",
-          mobile: "9999999999",
+          mobile: "9876543210",
           country_code: "91",
           address: "Demo Location",
           latitude: 0,

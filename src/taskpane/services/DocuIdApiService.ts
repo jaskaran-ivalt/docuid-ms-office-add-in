@@ -192,28 +192,78 @@ export class DocuIdApiService {
       // --- DEMO MODE CHECK ---
       if (AuthService.getSessionToken() === "demo-session-token") {
         this.apiLogger.info(`Returning demo document access for doc: ${documentId}`);
-        const fileName = documentId === 1001 ? "Demo Proposal.docx" : "Confidential Report.docx";
-        const isProtected = documentId === 1002;
-        return {
-          documentId: documentId,
-          fileName: fileName,
-          fileType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-          fileSize: 1024500,
-          description: "Demo document access",
-          folderId: null,
-          isPasswordProtected: isProtected,
-          isEncrypted: false,
-          status: "active",
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          access: {
-            url: "demo-document-content-url",
-            previewUrl: "demo-document-content-url",
-            expiresIn: 3600,
-            method: "GET",
-            headers: {}
-          }
-        };
+
+        // Word demo docs
+        if (documentId === 1001 || documentId === 1002) {
+          return {
+            documentId,
+            fileName: documentId === 1001 ? "Demo Proposal.docx" : "Confidential Report.docx",
+            fileType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            fileSize: documentId === 1001 ? 1024500 : 2048000,
+            description: "Demo Word document",
+            folderId: null,
+            isPasswordProtected: documentId === 1002,
+            isEncrypted: false,
+            status: "active",
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            access: {
+              url: "demo-word-content-url",
+              previewUrl: "demo-word-content-url",
+              expiresIn: 3600,
+              method: "GET",
+              headers: {},
+            },
+          };
+        }
+
+        // Excel demo docs
+        if (documentId === 2001 || documentId === 2002) {
+          return {
+            documentId,
+            fileName: documentId === 2001 ? "Demo Budget.xlsx" : "Quarterly Data.xlsx",
+            fileType: "text/csv",
+            fileSize: documentId === 2001 ? 512000 : 1536000,
+            description: "Demo Excel document",
+            folderId: null,
+            isPasswordProtected: documentId === 2002,
+            isEncrypted: false,
+            status: "active",
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            access: {
+              url: "demo-excel-content-url",
+              previewUrl: "demo-excel-content-url",
+              expiresIn: 3600,
+              method: "GET",
+              headers: {},
+            },
+          };
+        }
+
+        // PowerPoint demo docs
+        if (documentId === 3001 || documentId === 3002) {
+          return {
+            documentId,
+            fileName: documentId === 3001 ? "Demo Presentation.pptx" : "Investor Deck.pptx",
+            fileType: "text/plain",
+            fileSize: documentId === 3001 ? 2048000 : 4096000,
+            description: "Demo PowerPoint document",
+            folderId: null,
+            isPasswordProtected: documentId === 3002,
+            isEncrypted: false,
+            status: "active",
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            access: {
+              url: "demo-powerpoint-content-url",
+              previewUrl: "demo-powerpoint-content-url",
+              expiresIn: 3600,
+              method: "GET",
+              headers: {},
+            },
+          };
+        }
       }
       // -----------------------
 
@@ -236,17 +286,21 @@ export class DocuIdApiService {
   static async downloadDocumentContent(accessUrl: string): Promise<Blob> {
     try {
       // --- DEMO MODE CHECK ---
-      if (AuthService.getSessionToken() === "demo-session-token" || accessUrl === "demo-document-content-url") {
-        this.apiLogger.info("Returning demo document blob content");
-        // Create a minimal valid DOCX structure for demo
-        const docxContent = this.createDemoDocxContent();
-        return new Blob([docxContent], { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
+      if (
+        AuthService.getSessionToken() === "demo-session-token" ||
+        accessUrl === "demo-word-content-url" ||
+        accessUrl === "demo-excel-content-url" ||
+        accessUrl === "demo-powerpoint-content-url" ||
+        accessUrl === "demo-document-content-url" // legacy fallback
+      ) {
+        this.apiLogger.info(`Returning demo content for URL: ${accessUrl}`);
+        return this.createDemoContent(accessUrl);
       }
       // -----------------------
 
       let finalUrl = accessUrl;
 
-      // Fix backend returning absolute URLs (like localhost or docuid.net) 
+      // Fix backend returning absolute URLs (like localhost or docuid.net)
       // which causes CORS or incorrect routing. Rewrite to proxied paths.
       if (finalUrl.includes("localhost:") || /^https?:\/\/(dev\.|www\.)?docuid\.net/i.test(finalUrl)) {
         try {
@@ -286,17 +340,64 @@ export class DocuIdApiService {
   }
 
   /**
-   * Create a minimal valid DOCX content for demo mode
+   * Create demo content blob appropriate for the given demo URL.
+   *
+   * demo-word-content-url      -> plain text (inserted as paragraphs in Word)
+   * demo-excel-content-url     -> CSV rows  (parsed into cells in Excel)
+   * demo-powerpoint-content-url -> plain text (inserted as slide text in PowerPoint)
    */
-  private static createDemoDocxContent(): ArrayBuffer {
-    // This is a minimal valid DOCX structure
-    // In production, this would be replaced with actual document content
-    const demoText = "This is a demo document generated for the iVALT Docuid Office Add-in preview.\n\nAll features are unlocked in demo mode. Document generated on: " + new Date().toLocaleString();
-    
-    // For now, return the text as-is. The Office.js insertFileFromBase64 can handle plain text
-    // but we need to ensure it's properly encoded
+  private static createDemoContent(accessUrl: string): Blob {
+    let text: string;
+    let mimeType: string;
+
+    if (accessUrl === "demo-excel-content-url") {
+      text =
+        "Category,Q1,Q2,Q3,Q4,Total\n" +
+        "Revenue,120000,135000,148000,162000,565000\n" +
+        "Cost of Goods,72000,81000,88800,97200,339000\n" +
+        "Gross Profit,48000,54000,59200,64800,226000\n" +
+        "Operating Expenses,30000,32000,34000,36000,132000\n" +
+        "Net Income,18000,22000,25200,28800,94000\n" +
+        "\nGenerated by iVALT Docuid demo mode on " +
+        new Date().toLocaleString();
+      mimeType = "text/csv";
+    } else if (accessUrl === "demo-powerpoint-content-url") {
+      text =
+        "iVALT Docuid - Demo Presentation\n\n" +
+        "Slide 1: Introduction\n" +
+        "Welcome to the iVALT Docuid Office Add-in demo.\n\n" +
+        "Slide 2: Key Features\n" +
+        "- Biometric document access\n" +
+        "- Secure sharing with audit trail\n" +
+        "- Works across Word, Excel, and PowerPoint\n\n" +
+        "Slide 3: How It Works\n" +
+        "1. Login with your registered mobile number\n" +
+        "2. Approve the biometric request on the iVALT app\n" +
+        "3. Access and share documents securely\n\n" +
+        "Generated by iVALT Docuid demo mode on " +
+        new Date().toLocaleString();
+      mimeType = "text/plain";
+    } else {
+      // Word (demo-word-content-url or legacy demo-document-content-url)
+      text =
+        "iVALT Docuid - Demo Document\n\n" +
+        "This is a demo document generated for the iVALT Docuid Office Add-in preview.\n\n" +
+        "Section 1: Overview\n" +
+        "iVALT Docuid provides biometric-secured document management directly inside " +
+        "Microsoft Office applications.\n\n" +
+        "Section 2: Features\n" +
+        "- One-tap biometric login via the iVALT mobile app\n" +
+        "- Access Word, Excel, and PowerPoint files stored in DocuID\n" +
+        "- Share documents with granular permission controls\n" +
+        "- Full audit trail for every document access\n\n" +
+        "All features are unlocked in demo mode.\n" +
+        "Document generated on: " +
+        new Date().toLocaleString();
+      mimeType = "text/plain";
+    }
+
     const encoder = new TextEncoder();
-    return encoder.encode(demoText).buffer;
+    return new Blob([encoder.encode(text)], { type: mimeType });
   }
 
   /**
