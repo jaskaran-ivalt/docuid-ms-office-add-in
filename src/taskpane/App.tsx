@@ -56,6 +56,7 @@ const App: React.FC<AppProps> = ({ officeHost = "Unknown" }) => {
   const [error, setError] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<"documents" | "profile">("documents");
   const [debugPanelOpen, setDebugPanelOpen] = useState(false);
+  const [openDocumentId, setOpenDocumentId] = useState<string | null>(null);
 
   useEffect(() => {
     // Session management via custom events from DocuIdApiService
@@ -120,18 +121,23 @@ const App: React.FC<AppProps> = ({ officeHost = "Unknown" }) => {
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    // Clear document content on logout as requested
+    await DocumentService.clearDocument();
+    
     AuthService.logout();
     setIsAuthenticated(false);
     setUser(null);
     setDocuments([]);
     setError("");
+    setOpenDocumentId(null);
   };
 
   const handleDocumentOpen = async (document: Document) => {
     try {
       setIsOpeningDocument(document.id);
       await DocumentService.openDocument(document.id);
+      setOpenDocumentId(document.id);
     } catch (err) {
       setError("Failed to open document");
     } finally {
@@ -143,7 +149,9 @@ const App: React.FC<AppProps> = ({ officeHost = "Unknown" }) => {
     try {
       setIsClosingDocument(documentId);
       await DocumentService.closeDocument(documentId);
-      setDocuments((prev) => prev.filter((doc) => doc.id !== documentId));
+      if (openDocumentId === documentId) {
+        setOpenDocumentId(null);
+      }
     } catch (err) {
       setError("Failed to close document");
     } finally {
@@ -203,6 +211,7 @@ const App: React.FC<AppProps> = ({ officeHost = "Unknown" }) => {
               isLoadingDocuments={isLoadingDocuments}
               openingDocumentId={isOpeningDocument}
               closingDocumentId={isClosingDocument}
+              openDocumentId={openDocumentId}
               onReload={loadDocuments}
             />
           )}

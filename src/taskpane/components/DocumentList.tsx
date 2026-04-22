@@ -29,6 +29,7 @@ interface DocumentListProps {
   isLoadingDocuments: boolean;
   openingDocumentId: string | null;
   closingDocumentId: string | null;
+  openDocumentId?: string | null;
   onReload?: () => Promise<void>;
 }
 
@@ -40,6 +41,7 @@ const DocumentList: React.FC<DocumentListProps> = ({
   isLoadingDocuments,
   openingDocumentId,
   closingDocumentId,
+  openDocumentId,
   onReload,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -241,16 +243,29 @@ const DocumentList: React.FC<DocumentListProps> = ({
                   </Stack>
                 </Stack>
                 <Stack horizontal tokens={{ childrenGap: 8 }} className="document-actions">
-                  <PrimaryButton
-                    text={openingDocumentId === document.id ? "Opening..." : "Open"}
-                    onClick={() => onDocumentOpen(document)}
-                    disabled={
-                      isLoadingDocuments ||
-                      openingDocumentId === document.id ||
-                      closingDocumentId === document.id
-                    }
-                    className="document-open-button"
-                  />
+                  {openDocumentId === document.id ? (
+                    <DefaultButton
+                      text={closingDocumentId === document.id ? "Closing..." : "Close"}
+                      onClick={() => onCloseDocument && onCloseDocument(document.id)}
+                      disabled={
+                        isLoadingDocuments ||
+                        openingDocumentId === document.id ||
+                        closingDocumentId === document.id
+                      }
+                      className="document-close-button"
+                    />
+                  ) : (
+                    <PrimaryButton
+                      text={openingDocumentId === document.id ? "Opening..." : "Open"}
+                      onClick={() => onDocumentOpen(document)}
+                      disabled={
+                        isLoadingDocuments ||
+                        openingDocumentId === document.id ||
+                        closingDocumentId === document.id
+                      }
+                      className="document-open-button"
+                    />
+                  )}
                   <DefaultButton
                     text="Share"
                     onClick={() => {

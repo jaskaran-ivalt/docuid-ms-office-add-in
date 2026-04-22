@@ -272,10 +272,44 @@ export class DocumentService {
   }
 
   /**
-   * Close a document (placeholder for future implementation).
+   * Clear the active document's content.
+   */
+  static async clearDocument(): Promise<void> {
+    const host = OfficeHostService.getHost();
+    this.docLogger.info(`Clearing ${host} document content`);
+
+    try {
+      if (host === "Word") {
+        return Word.run(async (context) => {
+          context.document.body.clear();
+          await context.sync();
+        });
+      } else if (host === "Excel") {
+        return Excel.run(async (context) => {
+          try {
+            const sheet = context.workbook.worksheets.getActiveWorksheet();
+            const usedRange = sheet.getUsedRange();
+            usedRange.clear();
+            await context.sync();
+          } catch (e) {
+            // Sheet is likely empty
+          }
+        });
+      } else if (host === "PowerPoint") {
+        // PowerPoint clearing is destructive (deleting slides), so we log it
+        // and optionally could clear selection if needed.
+        this.docLogger.info("Clear document content not fully supported for PowerPoint slides");
+      }
+    } catch (error) {
+      this.docLogger.error(`Failed to clear ${host} document`, error as Error);
+    }
+  }
+
+  /**
+   * Close a document and clear its content.
    */
   static async closeDocument(documentId: string): Promise<void> {
-    this.docLogger.info(`Closing document: ${documentId} (mock)`);
-    // Future: implement session closing on backend if needed
+    this.docLogger.info(`Closing document: ${documentId}`);
+    await this.clearDocument();
   }
 }
