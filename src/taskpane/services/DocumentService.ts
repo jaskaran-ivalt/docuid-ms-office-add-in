@@ -77,6 +77,9 @@ export class DocumentService {
         binaryContent: blobContent,
       };
 
+      // Clear document content before opening a new one to prevent appending
+      await this.clearDocument();
+
       // Dispatch to host-specific insertion logic
       const host = OfficeHostService.getHost();
       if (host === "Excel") {
@@ -112,6 +115,14 @@ export class DocumentService {
 
         officeLogger.debug("Clearing existing document content");
         context.document.body.clear();
+        // Also clear headers/footers to be thorough
+        context.document.sections.load("items");
+        await context.sync();
+        
+        context.document.sections.items.forEach((section) => {
+          section.getHeader(Word.HeaderFooterType.primary).clear();
+          section.getFooter(Word.HeaderFooterType.primary).clear();
+        });
         await context.sync();
 
         const arrayBuffer = await documentContent.binaryContent.arrayBuffer();
@@ -163,10 +174,10 @@ export class DocumentService {
 
         const sheet = context.workbook.worksheets.getActiveWorksheet();
 
-        // Clear existing content - getUsedRange() throws on an empty sheet,
-        // so wrap in try/catch and continue regardless.
+        // Clear existing content in the active sheet
         try {
-          sheet.getUsedRange().clear();
+          const usedRange = sheet.getUsedRange();
+          usedRange.clear();
           await context.sync();
         } catch {
           // Sheet is empty - nothing to clear
@@ -296,9 +307,30 @@ export class DocumentService {
           }
         });
       } else if (host === "PowerPoint") {
-        // PowerPoint clearing is destructive (deleting slides), so we log it
-        // and optionally could clear selection if needed.
-        this.docLogger.info("Clear document content not fully supported for PowerPoint slides");
+        // Use modern PowerPoint API to delete all slides
+        if (typeof PowerPoint !== "undefined" && PowerPoint.run) {
+          return PowerPoint.run(async (context) => {
+            const slides = context.presentation.slides;
+            slides.load("items");
+            await context.sync();
+            
+            // We need at least one slide to exist in a presentation,
+            // so we add a new blank slide before deleting others,
+            // or just delete all but one and clear that one.
+            if (slides.items.length > 0) {
+              // Delete all slides from last to first to avoid index shifting issues
+              // or just call delete() on each.
+              for (let i = slides.items.length - 1; i >= 0; i--) {
+                slides.items[i].delete();
+              }
+              // Add a fresh slide
+              context.presentation.slides.add();
+            }
+            await context.sync();
+          });
+        } else {
+          this.docLogger.info("PowerPoint.run not available for clearing slides");
+        }
       }
     } catch (error) {
       this.docLogger.error(`Failed to clear ${host} document`, error as Error);
