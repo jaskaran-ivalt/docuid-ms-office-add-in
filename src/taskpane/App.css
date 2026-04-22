@@ -59,7 +59,7 @@ body {
   background-color: rgba(0, 0, 0, 0.0373) !important;
   border: 1px solid rgba(0, 0, 0, 0.0578) !important;
   color: rgba(0, 0, 0, 0.8956) !important;
-  border-radius: 4px !important;
+  border-radius: 0 !important;
 }
 
 .ms-Button--default:hover {

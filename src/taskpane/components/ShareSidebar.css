@@ -370,7 +370,7 @@
 .action-buttons .ms-Button {
   flex: 1;
   height: 40px;
-  border-radius: 0;
+  border-radius: 0 !important;
   font-weight: 600;
   transition: all 0.2s ease;
 }
