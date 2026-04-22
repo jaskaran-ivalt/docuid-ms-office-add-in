@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { ThemeProvider } from "@fluentui/react";
+import { 
+  ThemeProvider, 
+  Dialog, 
+  DialogType, 
+  DialogFooter, 
+  PrimaryButton, 
+  DefaultButton 
+} from "@fluentui/react";
 import LoginForm from "@/taskpane/components/LoginForm";
 import DocumentList from "@/taskpane/components/DocumentList";
 import Header from "@/taskpane/components/Header";
@@ -57,6 +64,7 @@ const App: React.FC<AppProps> = ({ officeHost = "Unknown" }) => {
   const [currentPage, setCurrentPage] = useState<"documents" | "profile">("documents");
   const [debugPanelOpen, setDebugPanelOpen] = useState(false);
   const [openDocumentId, setOpenDocumentId] = useState<string | null>(null);
+  const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
 
   useEffect(() => {
     // Session management via custom events from DocuIdApiService
@@ -122,6 +130,7 @@ const App: React.FC<AppProps> = ({ officeHost = "Unknown" }) => {
   };
 
   const handleLogout = async () => {
+    setIsLogoutDialogOpen(false);
     // Clear document content on logout as requested
     await DocumentService.clearDocument();
     
@@ -184,7 +193,7 @@ const App: React.FC<AppProps> = ({ officeHost = "Unknown" }) => {
       <div className="app-container" style={getHostVars()}>
         <Header
           user={user}
-          onLogout={handleLogout}
+          onLogout={() => setIsLogoutDialogOpen(true)}
           onNavigateToProfile={() => setCurrentPage("profile")}
           onToggleDebug={() => setDebugPanelOpen(!debugPanelOpen)}
           officeHost={officeHost}
@@ -200,20 +209,43 @@ const App: React.FC<AppProps> = ({ officeHost = "Unknown" }) => {
         <main className="app-main">
           {!isAuthenticated ? (
             <LoginForm onLogin={handleLogin} isLoading={isLoadingLogin} />
-          ) : currentPage === "profile" ? (
-            <ProfilePage onBack={() => setCurrentPage("documents")} />
           ) : (
-            <DocumentList
-              documents={documents}
-              onDocumentOpen={handleDocumentOpen}
-              onDocumentShare={handleDocumentShare}
-              onCloseDocument={handleDocumentClose}
-              isLoadingDocuments={isLoadingDocuments}
-              openingDocumentId={isOpeningDocument}
-              closingDocumentId={isClosingDocument}
-              openDocumentId={openDocumentId}
-              onReload={loadDocuments}
-            />
+            <>
+              {currentPage === "profile" ? (
+                <ProfilePage onBack={() => setCurrentPage("documents")} />
+              ) : (
+                <DocumentList
+                  documents={documents}
+                  onDocumentOpen={handleDocumentOpen}
+                  onDocumentShare={handleDocumentShare}
+                  onCloseDocument={handleDocumentClose}
+                  isLoadingDocuments={isLoadingDocuments}
+                  openingDocumentId={isOpeningDocument}
+                  closingDocumentId={isClosingDocument}
+                  openDocumentId={openDocumentId}
+                  onReload={loadDocuments}
+                />
+              )}
+              <Dialog
+                hidden={!isLogoutDialogOpen}
+                onDismiss={() => setIsLogoutDialogOpen(false)}
+                dialogContentProps={{
+                  type: DialogType.normal,
+                  title: "Sign Out",
+                  closeButtonAriaLabel: "Close",
+                  subText: "Are you sure you want to sign out? This will also clear the current document content for security.",
+                }}
+                modalProps={{
+                  isBlocking: false,
+                  styles: { main: { maxWidth: 450 } },
+                }}
+              >
+                <DialogFooter>
+                  <PrimaryButton onClick={handleLogout} text="Sign Out" />
+                  <DefaultButton onClick={() => setIsLogoutDialogOpen(false)} text="Cancel" />
+                </DialogFooter>
+              </Dialog>
+            </>
           )}
         </main>
 
