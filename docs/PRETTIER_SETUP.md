@@ -2,7 +2,7 @@
 
 ## ✅ Setup Complete
 
-Prettier has been successfully configured for the DocuID add-in for MS Office project.
+Prettier has been successfully configured for the DocuID add-in for Microsoft Office  project.
 
 ## 📁 Configuration Files Created
 
