@@ -27,42 +27,386 @@
     --plan-bg: #F3F4F6;
     --plan-text: #6B7280;
     --plan-border: #E5E7EB;
+    --blue: #3B82F6;
   }
 
   html.dark {
-    --teal: #2DD4BF;
-    --teal-light: #134E4A;
-    --teal-mid: #0F766E;
-    --navy: #F1F5F9;
-    --text: #E2E8F0;
-    --text-2: #94A3B8;
-    --text-3: #64748B;
-    --border: #334155;
-    --bg: #0F172A;
-    --white: #1E293B;
-    --done-bg: #064E3B;
-    --done-text: #6EE7B7;
-    --done-border: #065F46;
-    --active-bg: #1E3A5F;
-    --active-text: #93C5FD;
-    --active-border: #1D4ED8;
-    --plan-bg: #1E293B;
-    --plan-text: #94A3B8;
-    --plan-border: #334155;
+    --teal: #14B8A6;
+    --teal-light: #0C3D37;
+    --teal-mid: #115E59;
+    --navy: #E8E8E8;
+    --text: #D4D4D4;
+    --text-2: #A3A3A3;
+    --text-3: #737373;
+    --border: #2A2A2A;
+    --bg: #111111;
+    --white: #1C1C1C;
+    --done-bg: rgba(16, 185, 129, 0.10);
+    --done-text: #34D399;
+    --done-border: rgba(16, 185, 129, 0.20);
+    --active-bg: rgba(59, 130, 246, 0.10);
+    --active-text: #60A5FA;
+    --active-border: rgba(59, 130, 246, 0.20);
+    --plan-bg: rgba(107, 114, 128, 0.06);
+    --plan-text: #9CA3AF;
+    --plan-border: rgba(107, 114, 128, 0.12);
+    --blue: #60A5FA;
   }
 
   html.dark .badge-new {
-    background: #422006;
+    background: rgba(245, 158, 11, 0.10);
     color: #FBBF24;
-    border-color: #78350F;
+    border-color: rgba(245, 158, 11, 0.25);
   }
 
   html.dark .nav-btn {
-    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    box-shadow: 0 1px 6px rgba(0,0,0,0.4);
+    background: #1C1C1C;
+    border-color: #2A2A2A;
+  }
+
+  html.dark .nav-btn:hover {
+    border-color: var(--teal);
+    color: var(--teal);
   }
 
   html.dark .card:hover {
-    box-shadow: 0 2px 12px rgba(45,212,191,0.12);
+    box-shadow: 0 4px 20px rgba(20, 184, 166, 0.08);
+    border-color: var(--teal-mid);
+  }
+
+  html.dark .cover-blob::before,
+  html.dark .cover-blob::after {
+    background: var(--teal-light);
+    opacity: 0.35;
+  }
+
+  html.dark .tl-track {
+    background: linear-gradient(to bottom, var(--teal) 0%, var(--teal) 40%, var(--border) 100%);
+  }
+
+  html.dark .tl-done {
+    background: var(--teal);
+    box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.15);
+  }
+
+  html.dark .tl-active {
+    background: var(--blue);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+  }
+
+  html.dark .tl-plan {
+    background: var(--text-3);
+    border: 2px solid var(--text-3);
+    box-shadow: 0 0 0 3px rgba(107, 114, 128, 0.08);
+  }
+
+  html.dark .accent-line {
+    background: var(--teal);
+  }
+
+  html.dark .eyebrow {
+    background: var(--teal-light);
+    border-color: var(--teal-mid);
+    color: var(--teal);
+  }
+
+  html.dark .eyebrow[style*="color:var(--blue)"] {
+    color: var(--blue);
+    background: var(--active-bg);
+    border-color: var(--active-border);
+  }
+
+  html.dark .dot {
+    background: var(--border);
+    border-color: var(--border);
+  }
+
+  html.dark .dot.active {
+    background: var(--teal);
+    border-color: var(--teal);
+  }
+
+  html.dark #theme-toggle {
+    background: #1C1C1C;
+    border-color: #2A2A2A;
+    color: var(--text-2);
+  }
+
+  html.dark #theme-toggle:hover {
+    border-color: var(--teal);
+    color: var(--teal);
+  }
+
+  html.dark .badge-active {
+    background: var(--active-bg);
+    color: var(--active-text);
+    border-color: var(--active-border);
+  }
+
+  html.dark .badge-planned {
+    background: var(--plan-bg);
+    color: var(--plan-text);
+    border-color: var(--plan-border);
+  }
+
+  html.dark .badge-done {
+    background: var(--done-bg);
+    color: var(--done-text);
+    border-color: var(--done-border);
+  }
+
+  html.dark #slide-0 {
+    background: #1C1C1C;
+  }
+
+  html.dark #logo {
+    color: var(--navy);
+  }
+
+  html.dark #counter {
+    color: var(--text-3);
+  }
+
+  html.dark #hint {
+    color: var(--text-3);
+  }
+
+  html.dark .display {
+    color: var(--navy);
+  }
+
+  html.dark .display em {
+    color: var(--teal);
+  }
+
+  html.dark .card .label {
+    color: var(--text-2);
+  }
+
+  html.dark .card[style*="border-left: 2px solid var(--teal)"] {
+    border-left-color: var(--teal);
+  }
+
+  html.dark .card[style*="border-top: 2px solid var(--teal)"] {
+    border-top-color: var(--teal);
+  }
+
+  html.dark .card[style*="border-color: var(--active-border)"] {
+    border-color: var(--active-border);
+  }
+
+  /* Brutalist Microsoft Button */
+  .brutalist-button {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    background-color: var(--navy);
+    color: var(--bg);
+    text-decoration: none;
+    font-family: 'Instrument Sans', sans-serif;
+    font-weight: 600;
+    border: 2px solid var(--navy);
+    outline: 2px solid var(--bg);
+    box-shadow: 4px 4px 0 var(--teal);
+    transition: all 0.1s ease-out;
+    padding: 0 14px;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+    border-radius: 0;
+  }
+
+  .brutalist-button::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+    z-index: 1;
+    opacity: 0;
+  }
+
+  @keyframes brutalist-slide {
+    0% { left: -100%; }
+    100% { left: 100%; }
+  }
+
+  .brutalist-button:hover::before {
+    opacity: 1;
+    animation: brutalist-slide 2s infinite;
+  }
+
+  .brutalist-button:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 7px 7px 0 var(--teal);
+  }
+
+  .brutalist-button:active {
+    transform: translate(3px, 3px);
+    box-shadow: 0px 0px 0 var(--teal);
+  }
+
+  .brutalist-button .ms-logo {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    width: 22px;
+    height: 22px;
+    margin-right: 8px;
+    flex-shrink: 0;
+    transition: transform 0.2s ease-out;
+    position: relative;
+    z-index: 1;
+  }
+
+  .brutalist-button:hover .ms-logo {
+    transform: rotate(-10deg) scale(1.1);
+  }
+
+  .brutalist-button:active .ms-logo {
+    transform: rotate(10deg) scale(0.9);
+  }
+
+  .brutalist-button .ms-logo-square {
+    width: 100%;
+    height: 100%;
+  }
+
+  .brutalist-button .ms-logo-square:nth-child(1) { background-color: #f25022; }
+  .brutalist-button .ms-logo-square:nth-child(2) { background-color: #7fba00; }
+  .brutalist-button .ms-logo-square:nth-child(3) { background-color: #00a4ef; }
+  .brutalist-button .ms-logo-square:nth-child(4) { background-color: #ffb900; }
+
+  .brutalist-button .button-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+    transition: transform 0.2s ease-out;
+    position: relative;
+    z-index: 1;
+  }
+
+  .brutalist-button:hover .button-text {
+    transform: skew(-5deg);
+  }
+
+  .brutalist-button:active .button-text {
+    transform: skew(5deg);
+  }
+
+  .brutalist-button .button-text span:first-child {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .brutalist-button .button-text span:last-child {
+    font-size: 14px;
+  }
+
+  html.dark .brutalist-button {
+    background-color: #1C1C1C;
+    color: #E8E8E8;
+    border-color: #2A2A2A;
+    outline-color: #111111;
+    box-shadow: 4px 4px 0 var(--teal);
+  }
+
+  html.dark .brutalist-button:hover {
+    box-shadow: 7px 7px 0 var(--teal);
+  }
+
+  html.dark .brutalist-button:active {
+    box-shadow: 0px 0px 0 var(--teal);
+  }
+
+  html.dark .brutalist-button::before {
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+  }
+
+  /* DocuID Documents Button */
+  .Documents-btn {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: fit-content;
+    height: 45px;
+    border: none;
+    padding: 0px 15px;
+    border-radius: 5px;
+    background-color: var(--navy);
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+  }
+
+  .Documents-btn .folderContainer {
+    width: 40px;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    position: relative;
+  }
+
+  .Documents-btn .fileBack {
+    z-index: 1;
+    width: 80%;
+    height: auto;
+  }
+
+  .Documents-btn .filePage {
+    width: 50%;
+    height: auto;
+    position: absolute;
+    z-index: 2;
+    transition: all 0.3s ease-out;
+  }
+
+  .Documents-btn .fileFront {
+    width: 85%;
+    height: auto;
+    position: absolute;
+    z-index: 3;
+    opacity: 0.95;
+    transform-origin: bottom;
+    transition: all 0.3s ease-out;
+  }
+
+  .Documents-btn .text {
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  .Documents-btn:hover .filePage {
+    transform: translateY(-5px);
+  }
+
+  .Documents-btn:hover {
+    background-color: color-mix(in srgb, var(--navy) 80%, var(--teal));
+  }
+
+  .Documents-btn:active {
+    transform: scale(0.95);
+  }
+
+  .Documents-btn:hover .fileFront {
+    transform: rotateX(30deg);
+  }
+
+  html.dark .Documents-btn {
+    background-color: #1C1C1C;
+  }
+
+  html.dark .Documents-btn:hover {
+    background-color: #2A2A2A;
   }
 
   * { margin:0; padding:0; box-sizing:border-box; }
@@ -141,7 +485,7 @@
   /* Timeline nodes */
   .tl-track { position:absolute; left:12px; top:4px; bottom:0; width:1px; background:linear-gradient(to bottom, var(--teal) 0%, var(--teal) 40%, var(--border) 100%); }
   .tl-done   { background:var(--teal); box-shadow:0 0 0 4px var(--teal-light); }
-  .tl-active { background:#3B82F6; box-shadow:0 0 0 4px var(--active-bg); }
+  .tl-active { background:var(--blue); box-shadow:0 0 0 4px var(--active-bg); }
   .tl-plan   { background:var(--text-3); border:2px solid var(--text-3); box-shadow:0 0 0 3px var(--plan-bg); }
 
   .accent-line { width:28px; height:2px; background:var(--teal); border-radius:2px; }
@@ -180,8 +524,50 @@
         A secure, identity-verified document platform — giving organisations full control over who accesses their files, with every interaction tied to a verified identity.
       </p>
       <div style="display:flex;gap:10px;flex-wrap:wrap;">
-        <a href="https://docuid.net" target="_blank" style="padding:10px 22px;background:var(--teal);border-radius:8px;font-size:13px;font-weight:500;color:#fff;text-decoration:none;">docuid.net</a>
-        <a href="https://marketplace.microsoft.com/en-us/product/WA200010668?tab=Overview" target="_blank" style="padding:10px 22px;border:1px solid var(--border);border-radius:8px;font-size:13px;color:var(--text-3);background:var(--white);text-decoration:none;">Microsoft AppSource</a>
+        <a href="https://docuid.net" target="_blank" class="Documents-btn">
+          <span class="folderContainer">
+            <svg class="fileBack" width="146" height="113" viewBox="0 0 146 113" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M0 4C0 1.79086 1.79086 0 4 0H50.3802C51.8285 0 53.2056 0.627965 54.1553 1.72142L64.3303 13.4371C65.2799 14.5306 66.657 15.1585 68.1053 15.1585H141.509C143.718 15.1585 145.509 16.9494 145.509 19.1585V109C145.509 111.209 143.718 113 141.509 113H3.99999C1.79085 113 0 111.209 0 109V4Z" fill="url(#docuid-fileBack)"></path>
+              <defs>
+                <linearGradient id="docuid-fileBack" x1="0" y1="0" x2="72.93" y2="95.4804" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#2DD4BF"></stop>
+                  <stop offset="1" stop-color="#0F766E"></stop>
+                </linearGradient>
+              </defs>
+            </svg>
+            <svg class="filePage" width="88" height="99" viewBox="0 0 88 99" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="88" height="99" fill="url(#docuid-filePage)"></rect>
+              <defs>
+                <linearGradient id="docuid-filePage" x1="0" y1="0" x2="81" y2="160.5" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="white"></stop>
+                  <stop offset="1" stop-color="#E6F4F1"></stop>
+                </linearGradient>
+              </defs>
+            </svg>
+            <svg class="fileFront" width="160" height="79" viewBox="0 0 160 79" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M0.29306 12.2478C0.133905 9.38186 2.41499 6.97059 5.28537 6.97059H30.419H58.1902C59.5751 6.97059 60.9288 6.55982 62.0802 5.79025L68.977 1.18034C70.1283 0.410771 71.482 0 72.8669 0H77H155.462C157.87 0 159.733 2.1129 159.43 4.50232L150.443 75.5023C150.19 77.5013 148.489 79 146.474 79H7.78403C5.66106 79 3.9079 77.3415 3.79019 75.2218L0.29306 12.2478Z" fill="url(#docuid-fileFront)"></path>
+              <defs>
+                <linearGradient id="docuid-fileFront" x1="38.7619" y1="8.71323" x2="66.9106" y2="82.8317" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#CCFBF1"></stop>
+                  <stop offset="1" stop-color="#14B8A6"></stop>
+                </linearGradient>
+              </defs>
+            </svg>
+          </span>
+          <p class="text">docuid.net</p>
+        </a>
+        <a href="https://marketplace.microsoft.com/en-us/product/WA200010668?tab=Overview" target="_blank" class="brutalist-button">
+          <div class="ms-logo">
+            <div class="ms-logo-square"></div>
+            <div class="ms-logo-square"></div>
+            <div class="ms-logo-square"></div>
+            <div class="ms-logo-square"></div>
+          </div>
+          <div class="button-text">
+            <span>Get it from</span>
+            <span>Microsoft Word</span>
+          </div>
+        </a>
       </div>
     </div>
   </section>
@@ -207,7 +593,7 @@
         </div>
         <div class="card" style="padding:2rem;">
           <div style="width:38px;height:38px;border-radius:10px;background:var(--active-bg);display:flex;align-items:center;justify-content:center;margin-bottom:1.2rem;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
           </div>
           <div style="font-family:'Fraunces',serif;font-size:17px;font-weight:400;margin-bottom:0.5rem;color:var(--navy);">Microsoft Office Add-in</div>
           <div style="font-size:13px;color:var(--text-2);line-height:1.65;">Access your DocuID documents from inside Microsoft Word, Excel, and PowerPoint — verified by biometrics at every step.</div>
@@ -263,7 +649,7 @@
   <section class="slide" id="slide-3">
     <div class="stagger" style="max-width:860px;width:100%;">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:1.6rem;">
-        <div class="eyebrow" style="color:#1D4ED8;background:var(--active-bg);border-color:var(--active-border);">Phase 2</div>
+        <div class="eyebrow" style="color:var(--blue);background:var(--active-bg);border-color:var(--active-border);">Phase 2</div>
         <span class="badge badge-active">In Progress</span>
       </div>
       <h2 class="display" style="font-size:clamp(26px,4vw,48px);margin-bottom:0.8rem;">
@@ -556,11 +942,7 @@
   }
 
   const saved = localStorage.getItem('theme');
-  if (saved) {
-    setTheme(saved === 'dark');
-  } else {
-    setTheme(window.matchMedia('(prefers-color-scheme: dark)').matches);
-  }
+  setTheme(saved === 'dark');
 
   themeToggle.addEventListener('click', () => {
     setTheme(!document.documentElement.classList.contains('dark'));
