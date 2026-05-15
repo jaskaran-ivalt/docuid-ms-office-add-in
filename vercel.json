@@ -9,6 +9,10 @@
       "destination": "/taskpane.html"
     },
     {
+      "source": "/progress",
+      "destination": "/progress/index.html"
+    },
+    {
       "source": "/index.html",
       "destination": "/taskpane.html"
     },

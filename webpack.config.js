@@ -117,8 +117,8 @@ module.exports = async (env, options) => {
             },
           },
           {
-            from: "progress/",
-            to: "progress/",
+            from: "progress/**",
+            to: "progress/[name][ext][query]",
           },
           // Copy production manifest in production builds
           ...(dev ? [] : [{
