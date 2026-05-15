@@ -92,7 +92,7 @@ Build a Microsoft Office Add-in named DocuID that allows users to securely authe
   - [ ] Handle form submission and loading states
   - [ ] Implement error message display
 
-- [ ] **2.2.2** Docuid.net API integration
+- [ ] **2.2.2** DocuID.net API integration
   - [ ] Implement POST /api/auth/login endpoint call
   - [ ] Handle authentication responses
   - [ ] Implement biometric verification waiting state
@@ -189,7 +189,7 @@ Build a Microsoft Office Add-in named DocuID that allows users to securely authe
 
 - [ ] **4.2.2** Integration testing
   - [ ] Test Office.js integration
-  - [ ] Test API integration with Docuid.net
+  - [ ] Test API integration with DocuID.net
   - [ ] Test cross-platform compatibility (Windows/macOS)
   - [ ] Test different Office versions
 
@@ -258,7 +258,7 @@ Build a Microsoft Office Add-in named DocuID that allows users to securely authe
 - **Office Integration:** Office.js API
 
 ### Backend Dependencies
-- **Authentication API:** Docuid.net
+- **Authentication API:** DocuID.net
 - **Biometric Service:** iVALT
 - **Document Storage:** AWS S3 or similar cloud storage
 - **Communication:** REST APIs over HTTPS

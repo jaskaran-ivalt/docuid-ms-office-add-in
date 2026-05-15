@@ -15,7 +15,7 @@
 | Phase | Status | Progress | Start Date | End Date | Notes |
 |-------|--------|----------|------------|----------|-------|
 | Phase 1: Setup & Foundation | ✅ Complete | 100% | 2025-06-28 | 2025-06-29 | Project scaffolding and UI design - COMPLETED |
-| Phase 2: Authentication | Ready to Start | 0% | TBD | TBD | Docuid.net integration |
+| Phase 2: Authentication | Ready to Start | 0% | TBD | TBD | DocuID.net integration |
 | Phase 3: Document Management | Pending | 0% | TBD | TBD | Document listing and viewing |
 | Phase 4: Integration & Testing | Pending | 0% | TBD | TBD | Office.js integration and QA |
 | Phase 5: Deployment | Pending | 0% | TBD | TBD | Production deployment and final testing |
