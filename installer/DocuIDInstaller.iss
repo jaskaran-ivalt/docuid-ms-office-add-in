@@ -1,7 +1,7 @@
-#define MyAppName "iVALT Docuid Word Add-in"
+#define MyAppName "iVALT DocuID Word Add-in"
 #define MyAppVersion "1.0.2"
 #define MyAppPublisher "iVALT"
-#define MyAppExeName "iVALTDocuidInstaller.exe"
+#define MyAppExeName "iVALTDocuIDInstaller.exe"
 
 [Setup]
 AppId={{C42A66EC-73B7-459D-AF77-4324C5454A40}
@@ -12,7 +12,7 @@ DefaultDirName={commonappdata}\DocuID\OfficeAddin
 DisableDirPage=yes
 DisableProgramGroupPage=yes
 OutputDir=..\dist\installer
-OutputBaseFilename=iVALT-Docuid-WordAddin-Installer-{#MyAppVersion}
+OutputBaseFilename=iVALT-DocuID-WordAddin-Installer-{#MyAppVersion}
 Compression=lzma
 SolidCompression=yes
 ArchitecturesInstallIn64BitMode=x64compatible

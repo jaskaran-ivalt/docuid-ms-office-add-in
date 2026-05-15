@@ -45,4 +45,4 @@ foreach ($officeVersion in @("15.0", "16.0")) {
 
 Remove-PathIfExists -PathToRemove $SharedInstallRoot
 
-Write-Output "iVALT Docuid add-in uninstall cleanup completed."
+Write-Output "iVALT DocuID add-in uninstall cleanup completed."

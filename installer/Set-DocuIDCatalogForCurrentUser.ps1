@@ -28,4 +28,4 @@ foreach ($officeVersion in $officeVersions) {
   New-ItemProperty -Path $developerRegPath -Name $AddinId -Value $targetManifestPath -PropertyType String -Force | Out-Null
 }
 
-Write-Output "iVALT Docuid add-in registered for current user (manifest + WEF Developer registry)."
+Write-Output "iVALT DocuID add-in registered for current user (manifest + WEF Developer registry)."
