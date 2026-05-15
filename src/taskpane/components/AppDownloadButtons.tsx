@@ -11,7 +11,7 @@ const AppDownloadButtons: React.FC = () => {
       styles={{ root: { padding: "16px 0" } }}
     >
       <Text variant="small" styles={{ root: { color: "#605e5c", textAlign: "center" } }}>
-        Download the iVALT app, then register or log in to access Docuid ID and use this add-in
+        Download the iVALT app, then register or log in to access DocuID ID and use this add-in
       </Text>
       <Stack
         horizontal

@@ -57,7 +57,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
         <Stack horizontalAlign="center" tokens={{ childrenGap: 12 }}>
           <img
             src="assets/logo-transparent-bg.png"
-            alt="iVALT Docuid"
+            alt="iVALT DocuID"
             style={{ width: "100px", objectFit: "contain" }}
           />
           <Text variant="medium" styles={{ root: { fontWeight: 600, color: "#323130" } }}>

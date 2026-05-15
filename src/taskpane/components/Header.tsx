@@ -93,10 +93,10 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile, on
       <div className="header-content">
         <div className="header-brand">
           <div className="brand-logo">
-            <img src="assets/logo-transparent.png" alt="iVALT Docuid" />
+            <img src="assets/logo-transparent.png" alt="iVALT DocuID" />
           </div>
           <div className="brand-text">
-            <h1 className="brand-title">iVALT Docuid</h1>
+            <h1 className="brand-title">iVALT DocuID</h1>
             <span className="brand-subtitle">
               Document management
               {officeHost && officeHost !== "Unknown" && (
