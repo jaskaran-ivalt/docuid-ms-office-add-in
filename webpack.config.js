@@ -116,6 +116,10 @@ module.exports = async (env, options) => {
               }
             },
           },
+          {
+            from: "progress/",
+            to: "progress/",
+          },
           // Copy production manifest in production builds
           ...(dev ? [] : [{
             from: "manifest-production.xml",
