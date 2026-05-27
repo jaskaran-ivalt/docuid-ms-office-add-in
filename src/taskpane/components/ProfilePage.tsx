@@ -9,10 +9,9 @@ import {
   TextField,
 } from '@fluentui/react';
 import { Calendar, User as UserIcon, X } from 'lucide-react';
-import type React from 'react';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import type { User as UserProfile } from '../../common/types';
 import { AuthService } from '../services/AuthService';
-import type { User as UserProfile } from '../types';
 import './ProfilePage.css';
 
 interface ProfilePageProps {
@@ -59,7 +58,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
     { key: 'friends', text: 'Friends Only' },
   ];
 
-  const handleInputChange = (field: keyof UserProfile, value: any) => {
+  const handleInputChange = (field: keyof UserProfile, value: string | undefined) => {
     if (!formData) return;
 
     // Sanitize input
@@ -104,7 +103,10 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
     return { isValid: errors.length === 0, errors };
   };
 
-  const _handlePreferenceChange = (field: keyof UserProfile['preferences'], value: any) => {
+  const _handlePreferenceChange = (
+    field: keyof UserProfile['preferences'],
+    value: string | number | boolean
+  ) => {
     if (!formData) return;
     setFormData((prev) => ({
       ...prev!,

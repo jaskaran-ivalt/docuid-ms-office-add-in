@@ -17,7 +17,7 @@ const Header: React.FC<HeaderProps> = ({
   user,
   onLogout,
   onNavigateToProfile,
-  onToggleDebug,
+  onToggleDebug: _onToggleDebug,
   officeHost,
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);

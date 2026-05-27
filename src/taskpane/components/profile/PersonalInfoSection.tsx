@@ -1,6 +1,6 @@
 import { Label, TextField } from '@fluentui/react';
 import { User as UserIcon } from 'lucide-react';
-import type React from 'react';
+import React from 'react';
 import type { User as UserProfile } from '../../common/types';
 
 import { Card } from '../shared/Card';
@@ -8,7 +8,7 @@ import { Card } from '../shared/Card';
 interface PersonalInfoSectionProps {
   formData: UserProfile;
   isEditing: boolean;
-  onInputChange: (field: keyof UserProfile, value: any) => void;
+  onInputChange: (field: keyof UserProfile, value: string | number | boolean) => void;
 }
 
 const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({

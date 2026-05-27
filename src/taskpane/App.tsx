@@ -67,7 +67,7 @@ const App: React.FC<AppProps> = ({ officeHost = 'Unknown' }) => {
 
   useEffect(() => {
     // Inject host variables into body for global availability (portals/dialogs)
-    const vars = getHostVars() as any;
+    const vars = getHostVars();
     Object.keys(vars).forEach((key) => {
       document.body.style.setProperty(key, vars[key]);
     });
@@ -175,7 +175,13 @@ const App: React.FC<AppProps> = ({ officeHost = 'Unknown' }) => {
     }
   };
 
-  const handleDocumentShare = async (shareData: any) => {
+  const handleDocumentShare = async (shareData: {
+    documentId: string;
+    email?: string;
+    countryCode?: string;
+    mobile?: string;
+    message?: string;
+  }) => {
     const response = await DocuIdApiService.shareDocument({
       documentId: Number(shareData.documentId),
       email: shareData.email,
@@ -196,7 +202,7 @@ const App: React.FC<AppProps> = ({ officeHost = 'Unknown' }) => {
   };
 
   return (
-    <ThemeProvider theme={docuIdTheme} style={getHostVars() as any}>
+    <ThemeProvider theme={docuIdTheme} style={getHostVars()}>
       <div className="app-container">
         <Header
           user={user}

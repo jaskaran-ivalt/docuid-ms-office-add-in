@@ -1,7 +1,6 @@
 import { DefaultButton, MessageBar, MessageBarType, PrimaryButton, Spinner } from '@fluentui/react';
 import { X } from 'lucide-react';
-import type React from 'react';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { User as UserProfile } from '../../common/types';
 import { sanitizeInput, validateEmail, validateIMEI, validatePhone } from '../../common/utils';
 import { AuthService } from '../../services/AuthService';
@@ -33,7 +32,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
     loadUserData();
   }, []);
 
-  const handleInputChange = (field: keyof UserProfile, value: any) => {
+  const handleInputChange = (field: keyof UserProfile, value: string | number | boolean) => {
     if (!formData) return;
     const sanitizedValue = typeof value === 'string' ? sanitizeInput(value) : value;
     setFormData((prev) => ({ ...prev!, [field]: sanitizedValue }));

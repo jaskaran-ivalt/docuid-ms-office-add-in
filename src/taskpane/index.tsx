@@ -19,7 +19,7 @@ const renderApp = (host: OfficeHost) => {
 // Office.js sets window.Office when loaded
 declare global {
   interface Window {
-    Office?: any;
+    Office?: unknown;
   }
 }
 
