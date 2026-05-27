@@ -18,33 +18,14 @@ A Microsoft Office Add-in that enables secure biometric authentication and docum
 - Office Add-ins development certificates
 - DocuID API key (contact iVALT for access)
 
-## 🛠️ Quick Start
+## Quick Start
 
-1. **Clone the repository**
-
-   ```bash
-   git clone <repository-url>
-   cd DocuID
-   ```
-
-2. **Install dependencies**
-
-   ```bash
-   bun install
-   # or npm install
-   ```
-
-3. **Start development**
-   ```bash
-   bun start
-   # This will build, start HTTPS server, and sideload in Word
-   ```
-
-This will automatically:
-
-- Start the HTTPS development server on port 3000
-- Launch Microsoft Word
-- Sideload the add-in for testing
+```bash
+git clone <repository-url>
+cd DocuID
+bun install
+bun run debug:word     # launches Word with live-reload dev server
+```
 
 ## ⚙️ Configuration
 
@@ -60,13 +41,14 @@ REACT_APP_DOCUID_API_KEY=your_api_key_here
 
 ### Development Proxy Setup
 
-The application uses webpack proxy to bypass CORS restrictions during development:
+The dev server proxies API calls to `https://www.docuid.net` with path rewriting:
 
-- **Proxy Path**: `/api/docuid/*` → `https://dev.docuid.net/api/*`
-- **Purpose**: Allows API calls from `localhost:3000` to work with the production API
-- **Automatic**: No additional configuration needed - works out of the box
+- `/api/docuid/biometric/*` → `/api/biometric/*`
+- `/api/docuid/documents/<id>/download` → `/api/documents/<id>/download`
+- `/api/docuid/documents/*` → `/api/dashboard/documents/*`
+- `/api/docuid/shares/*` → `/api/dashboard/shares/*`
 
-The proxy automatically forwards all API requests in development, eliminating CORS issues while maintaining the same API interface.
+No additional configuration needed — works out of the box.
 
 ## 🐛 Debugging & Logging
 
@@ -181,14 +163,28 @@ DocuID/
 
 ### Available Scripts
 
-- `bun start` - Start development server and sideload add-in
-- `bun run build` - Build for production
-- `bun run build:dev` - Build for development
-- `bun run dev-server` - Start development server only
-- `bun run lint` - Run Biome linter
-- `bun run lint:fix` - Run Biome linter with auto-fix
-- `bun run format` - Format code with Biome
-- `bun run format:check` - Check code formatting with Biome
+**Build (tsup ~2-4s)**
+- `bun run build` — Production build
+- `bun run build:dev` — Dev build (sourcemaps)
+
+**Start (dev server + live reload)**
+- `bun run start` — Dev server + watch + auto-reload on save
+- `bun run stop` — Stop all
+
+**Debug (launch in Office app)**
+- `bun run debug:word` — Debug in Word
+- `bun run debug:excel` — Debug in Excel
+- `bun run debug:ppt` — Debug in PowerPoint
+- `bun run debug:all` — Debug all 3 at once
+- `bun run stop:word` — Stop Word
+- `bun run stop:excel` — Stop Excel
+- `bun run stop:ppt` — Stop PowerPoint
+
+**Lint / Validate**
+- `bun run lint` — Biome check
+- `bun run lint:fix` — Auto-fix
+- `bun run format` — Format all files
+- `bun run validate` — Validate manifest
 
 ### API Integration
 

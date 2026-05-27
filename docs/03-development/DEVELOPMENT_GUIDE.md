@@ -92,10 +92,9 @@ src/
 ```
 ├── package.json             # Dependencies and scripts
 ├── tsconfig.json           # TypeScript configuration
-├── webpack.config.js       # Build configuration
-├── babel.config.json       # Transpilation settings
+├── tsup.config.ts          # Build configuration (tsup/esbuild)
 ├── manifest.xml            # Office Add-in manifest
-└── .eslintrc.json         # Code quality rules
+└── biome.json              # Code quality rules
 ```
 
 ## Development Workflow
@@ -103,15 +102,19 @@ src/
 ### 1. Starting Development
 
 ```bash
-# Start development server with hot reload
-bun run dev-server
+# Dev server with live reload (no Office)
+bun run start
 
-# Start with automatic Office sideloading (recommended)
-bun start
+# Debug in a specific Office app (recommended)
+bun run debug:word
+bun run debug:excel
+bun run debug:ppt
 
-# Build for development (without server)
-bun run build:dev
+# Debug all three at once
+bun run debug:all
 ```
+
+Changes to `.tsx`, `.ts`, or `.css` files trigger automatic rebuild (~2-4s) and the add-in task pane reloads via SSE live reload.
 
 ### 2. Code Development Process
 
@@ -176,8 +179,10 @@ export class ExtendedService {
 #### Manual Testing
 
 ```bash
-# Start with specific Office application
-bun start --host word
+# Debug in specific Office application
+bun run debug:word
+bun run debug:excel
+bun run debug:ppt
 
 # Test specific scenarios
 # 1. Authentication flow with various phone numbers
