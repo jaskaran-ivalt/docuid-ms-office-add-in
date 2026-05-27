@@ -2,6 +2,7 @@ import axios from 'axios';
 import { API_CONFIG, BIOMETRIC_ROUTES } from '../../config/apiRoutes';
 import type { StoredAuth, User } from '../common/types';
 import { logger } from './Logger';
+import { OfficeHostService } from './OfficeHostService';
 
 export class AuthService {
   private static readonly STORAGE_KEY = 'docuid_auth';
@@ -90,13 +91,16 @@ export class AuthService {
   private static async requestBiometricAuth(phoneNumber: string): Promise<void> {
     const startTime = Date.now();
     try {
+      const host = OfficeHostService.getHost();
+      const requestFrom = `Auth Request from DocuID ${host} App`;
+      
       AuthService.authLogger.logApiRequest('POST', BIOMETRIC_ROUTES.AUTH_REQUEST);
 
       const response = await axios.post(
         BIOMETRIC_ROUTES.AUTH_REQUEST,
         {
           mobile: phoneNumber,
-          requestFrom: 'DocuID',
+          requestFrom,
         },
         {
           headers: {
