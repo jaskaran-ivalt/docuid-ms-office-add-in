@@ -269,7 +269,7 @@ export class DocumentService {
         } else {
           // Common API fallback
           await Office.context.document.setSelectedDataAsync(base64String, {
-            coercionType: (Office.CoercionType as any).SlideRange,
+            coercionType: Office.CoercionType.SlideRange as unknown as string,
           });
         }
       }

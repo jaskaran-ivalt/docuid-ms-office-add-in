@@ -414,7 +414,13 @@ export class DocuIdApiService {
   /**
    * Share a document
    */
-  static async shareDocument(payload: any): Promise<ApiResponse<ShareApiResponse>> {
+  static async shareDocument(payload: {
+    documentId: string;
+    email?: string;
+    mobile?: string;
+    countryCode?: string;
+    message?: string;
+  }): Promise<ApiResponse<ShareApiResponse>> {
     const url = SHARE_ROUTES.OPTIMIZED;
     try {
       DocuIdApiService.apiLogger.logApiRequest('POST', url, { documentId: payload.documentId });
