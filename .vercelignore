@@ -39,7 +39,7 @@ certs/
 *.key
 
 # Lock files (keep package-lock.json or bun.lock for reproducible builds)
-pnpm-lock.yaml
+bun.lockb
 
 # Environment files (set in Vercel dashboard instead)
 .env
