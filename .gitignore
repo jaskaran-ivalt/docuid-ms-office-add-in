@@ -10,6 +10,7 @@ node_modules_old
 # Production builds
 /build
 /dist
+/dist-tsup
 /.next/
 /out/
 
