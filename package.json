@@ -28,6 +28,7 @@
     "validate:excel": "office-addin-manifest validate manifest-excel.xml",
     "validate:powerpoint": "office-addin-manifest validate manifest-powerpoint.xml",
     "validate:prod": "office-addin-manifest validate manifest-production.xml",
+    "start:all": "bun run tools/start-all.ts",
     "installer:build": "powershell -NoProfile -ExecutionPolicy Bypass -File ./installer/Build-Installer.ps1",
     "installer:package": "bun run validate:prod && bun run installer:build",
     "format": "biome format --write .",
