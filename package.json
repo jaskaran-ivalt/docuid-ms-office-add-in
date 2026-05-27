@@ -14,8 +14,10 @@
   "scripts": {
     "build": "webpack --mode production",
     "build:quick": "tsup",
+    "start:quick": "tsup --watch",
     "build:dev": "webpack --mode development",
     "build:dev:quick": "tsup --minify false --sourcemap",
+    "start:dev:quick": "tsup --watch --minify false --sourcemap",
     "dev-server": "webpack serve --mode development",
     "format": "biome format --write .",
     "format:check": "biome format .",
