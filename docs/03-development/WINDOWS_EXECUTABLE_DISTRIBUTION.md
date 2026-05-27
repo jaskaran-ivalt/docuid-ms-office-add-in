@@ -14,7 +14,7 @@ This guide explains how to package and distribute the iVALT DocuID add-in as a W
 ## Prerequisites (build machine)
 
 - Windows 10/11
-- `pnpm` installed
+- `bun` installed
 - Inno Setup 6 installed (provides `ISCC.exe`)
 
 ## Build the installer
@@ -22,8 +22,8 @@ This guide explains how to package and distribute the iVALT DocuID add-in as a W
 From project root:
 
 ```powershell
-pnpm install
-pnpm run installer:package
+bun install
+bun run installer:package
 ```
 
 Output installer:
@@ -85,6 +85,6 @@ Uninstalling from Windows Apps/Programs performs cleanup:
 ### Re-deploy updated add-in
 
 1. Update `manifest-production.xml` version if needed.
-2. Build new installer (`pnpm run installer:package`).
+2. Build new installer (`bun run installer:package`).
 3. Uninstall old installer on demo machines.
 4. Install new executable as admin.

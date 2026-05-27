@@ -30,13 +30,13 @@ A Microsoft Office Add-in that enables secure biometric authentication and docum
 2. **Install dependencies**
 
    ```bash
-   pnpm install
+   bun install
    # or npm install
    ```
 
 3. **Start development**
    ```bash
-   pnpm start
+   bun start
    # This will build, start HTTPS server, and sideload in Word
    ```
 
@@ -181,13 +181,13 @@ DocuID/
 
 ### Available Scripts
 
-- `pnpm start` - Start development server and sideload add-in
-- `pnpm run build` - Build for production
-- `pnpm run build:dev` - Build for development
-- `pnpm run dev-server` - Start development server only
-- `pnpm run lint` - Run ESLint and fix issues
-- `pnpm run validate` - Validate manifest file
-- `pnpm run prettier` - Format code with Prettier
+- `bun start` - Start development server and sideload add-in
+- `bun run build` - Build for production
+- `bun run build:dev` - Build for development
+- `bun run dev-server` - Start development server only
+- `bun run lint` - Run ESLint and fix issues
+- `bun run validate` - Validate manifest file
+- `bun run prettier` - Format code with Prettier
 
 ### API Integration
 
@@ -279,7 +279,7 @@ For comprehensive testing procedures, see the [Testing Guide](docs/03-developmen
 
 ### Quick Testing
 
-1. Start development: `pnpm start`
+1. Start development: `bun start`
 2. Test phone numbers: `+1234567890` (success), `+1234567invalid` (error)
 3. Verify document operations and Office.js integration
 
@@ -317,7 +317,7 @@ Key settings in `manifest.xml`:
 2. Follow existing code patterns and TypeScript conventions
 3. Update documentation for any changes
 4. Test on both Windows and macOS platforms
-5. Run quality checks: `pnpm run lint && pnpm run prettier`
+5. Run quality checks: `bun run lint && bun run prettier`
 6. Submit PR with detailed description
 
 See [Development Guide](docs/03-development/DEVELOPMENT_GUIDE.md) for detailed workflows.

@@ -677,10 +677,10 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: "18"
-      - run: pnpm install
-      - run: pnpm run lint
-      - run: pnpm run test
-      - run: pnpm run build
+      - run: bun install
+      - run: bun run lint
+      - run: bun run test
+      - run: bun run build
 ```
 
 ## Test Data Management

@@ -27,7 +27,7 @@
 ### ✅ Completed Tasks (Phase 1)
 - [x] **1.1.1** - Install development prerequisites
   - [x] Node.js installation and configuration
-  - [x] Package manager setup (pnpm)
+  - [x] Package manager setup (bun)
   - [x] Office Add-in generator installation
   - [x] Git repository initialization
 
@@ -82,7 +82,7 @@
 #### Day 1 - [Date: 2025-06-28]
 **Focus:** Environment Setup and Project Initialization
 - ✅ **Task 1.1.1** - Install development prerequisites
-  - ✅ Node.js installation and pnpm setup
+  - ✅ Node.js installation and bun setup
   - ✅ Office Add-in generator and tools
   - ✅ Git repository initialization
 - ✅ **Task 1.2.1** - Generate Office Add-in project

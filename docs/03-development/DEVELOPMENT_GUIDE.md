@@ -9,7 +9,7 @@ This guide provides comprehensive instructions for setting up, developing, and m
 ### Required Software
 
 - **Node.js**: LTS version (18.x or higher)
-- **Package Manager**: pnpm (recommended) or npm
+- **Package Manager**: bun (recommended) or npm
 - **IDE**: Visual Studio Code (recommended)
 - **Office Application**: Microsoft Word (Office 365 or Office 2019+)
 - **Operating System**: Windows 10+ or macOS 10.14+
@@ -19,11 +19,11 @@ This guide provides comprehensive instructions for setting up, developing, and m
 ```bash
 # Install global dependencies
 npm install -g yo generator-office
-npm install -g pnpm
+npm install -g bun
 
 # Verify installations
 node --version    # Should be 18.x or higher
-pnpm --version    # Should be 7.x or higher
+bun --version    # Should be 1.x or higher
 yo --version      # Should be 4.x or higher
 ```
 
@@ -37,10 +37,10 @@ git clone <repository-url>
 cd DocuID
 
 # Install dependencies
-pnpm install
+bun install
 
 # Verify installation
-pnpm run build:dev
+bun run build:dev
 ```
 
 ### 2. Development Certificates
@@ -50,17 +50,17 @@ The project uses HTTPS for Office Add-in requirements. Certificates are automati
 ```bash
 # Certificates are auto-generated on first run
 # Trust the certificate when prompted
-pnpm run dev-server
+bun run dev-server
 ```
 
 ### 3. Office Configuration
 
 ```bash
 # Sign in to M365 account (if using Office 365)
-pnpm run signin
+bun run signin
 
 # Start development with automatic sideloading
-pnpm start
+bun start
 ```
 
 ## Project Structure Deep Dive
@@ -104,13 +104,13 @@ src/
 
 ```bash
 # Start development server with hot reload
-pnpm run dev-server
+bun run dev-server
 
 # Start with automatic Office sideloading (recommended)
-pnpm start
+bun start
 
 # Build for development (without server)
-pnpm run build:dev
+bun run build:dev
 ```
 
 ### 2. Code Development Process
@@ -177,7 +177,7 @@ export class ExtendedService {
 
 ```bash
 # Start with specific Office application
-pnpm start --host word
+bun start --host word
 
 # Test specific scenarios
 # 1. Authentication flow with various phone numbers
@@ -202,16 +202,16 @@ const testPhoneNumbers = {
 
 ```bash
 # Run ESLint
-pnpm run lint
+bun run lint
 
 # Auto-fix ESLint issues
-pnpm run lint:fix
+bun run lint:fix
 
 # Format code with Prettier
-pnpm run prettier
+bun run prettier
 
 # Validate manifest file
-pnpm run validate
+bun run validate
 ```
 
 ## Advanced Development
@@ -422,10 +422,10 @@ export class MockAPIServer {
 
 ```bash
 # Check if certificates are trusted
-pnpm run dev-server
+bun run dev-server
 
 # Verify manifest syntax
-pnpm run validate
+bun run validate
 
 # Check console for errors
 # Open browser developer tools in Office
