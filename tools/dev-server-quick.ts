@@ -69,16 +69,32 @@ async function handler(req: IncomingMessage, res: ServerResponse) {
   const url = new URL(req.url!, `https://localhost:${PORT}`);
   const pathname = url.pathname;
 
-  // API proxy
+  // API proxy with path rewriting (mirrors webpack config)
   if (pathname.startsWith('/api/')) {
-    const proxyReq = await fetch(`${BACKEND_URL}${pathname}${url.search}`, {
+    let targetPath = pathname;
+    if (pathname.startsWith('/api/docuid/biometric/')) {
+      targetPath = pathname.replace('/api/docuid/biometric', '/api/biometric');
+    } else if (pathname.startsWith('/api/docuid/documents/')) {
+      if (/\/api\/docuid\/documents\/\d+\/(download|content)$/.test(pathname)) {
+        targetPath = pathname.replace('/api/docuid/documents', '/api/documents');
+      } else {
+        targetPath = pathname.replace('/api/docuid/documents', '/api/dashboard/documents');
+      }
+    } else if (pathname.startsWith('/api/docuid/shares/')) {
+      targetPath = pathname.replace('/api/docuid/shares', '/api/dashboard/shares');
+    }
+
+    const body = req.method !== 'GET' && req.method !== 'HEAD'
+      ? await new Promise<Buffer>((r) => { const chunks: Buffer[] = []; req.on('data', (c) => chunks.push(c)); req.on('end', () => r(Buffer.concat(chunks))); })
+      : undefined;
+    const proxyReq = await fetch(`${BACKEND_URL}${targetPath}${url.search}`, {
       method: req.method,
-      headers: { 'content-type': req.headers['content-type'] || '' },
-      body: req.method !== 'GET' && req.method !== 'HEAD' ? await new Promise<Buffer>((r) => { const chunks: Buffer[] = []; req.on('data', (c) => chunks.push(c)); req.on('end', () => r(Buffer.concat(chunks))); }) : undefined,
+      headers: body ? { 'content-type': req.headers['content-type'] || '' } : {},
+      body,
     });
-    const body = await proxyReq.text();
+    const proxyBody = await proxyReq.text();
     res.writeHead(proxyReq.status, Object.fromEntries(proxyReq.headers));
-    res.end(body);
+    res.end(proxyBody);
     return;
   }
 
