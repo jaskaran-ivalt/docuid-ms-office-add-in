@@ -1,55 +1,54 @@
-import React, { useState, useEffect } from "react";
-import { 
-  ThemeProvider, 
-  Dialog, 
-  DialogType, 
-  DialogFooter, 
-  PrimaryButton, 
-  DefaultButton 
-} from "@fluentui/react";
-import LoginForm from "@/taskpane/components/LoginForm";
-import DocumentList from "@/taskpane/components/DocumentList";
-import Header from "@/taskpane/components/Header";
-import ProfilePage from "@/taskpane/components/profile/ProfilePage";
-import DebugPanel from "@/taskpane/components/DebugPanel";
-import { AuthService } from "@/taskpane/services/AuthService";
-import { DocuIdApiService } from "@/taskpane/services/DocuIdApiService";
-import { DocumentService } from "@/taskpane/services/DocumentService";
-import { OfficeHost } from "@/taskpane/services/OfficeHostService";
-import { docuIdTheme } from "./theme/fluentTheme";
-import { logger } from "@/taskpane/services/Logger";
-import { Document } from "./common/types";
-import "./App.css";
+import {
+  DefaultButton,
+  Dialog,
+  DialogFooter,
+  DialogType,
+  PrimaryButton,
+  ThemeProvider,
+} from '@fluentui/react';
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import DebugPanel from '@/taskpane/components/DebugPanel';
+import DocumentList from '@/taskpane/components/DocumentList';
+import Header from '@/taskpane/components/Header';
+import LoginForm from '@/taskpane/components/LoginForm';
+import ProfilePage from '@/taskpane/components/profile/ProfilePage';
+import { AuthService } from '@/taskpane/services/AuthService';
+import { DocuIdApiService } from '@/taskpane/services/DocuIdApiService';
+import { DocumentService } from '@/taskpane/services/DocumentService';
+import type { OfficeHost } from '@/taskpane/services/OfficeHostService';
+import type { Document } from './common/types';
+import { docuIdTheme } from './theme/fluentTheme';
+import './App.css';
 
 interface AppProps {
   officeHost?: OfficeHost;
 }
 
-const App: React.FC<AppProps> = ({ officeHost = "Unknown" }) => {
-
+const App: React.FC<AppProps> = ({ officeHost = 'Unknown' }) => {
   // CSS custom properties injected on the root container so every
   // descendant can reference var(--accent), var(--accent-dark), var(--accent-dim)
   // without knowing which Office host is active.
   const getHostVars = (): React.CSSProperties => {
     switch (officeHost) {
-      case "Excel":
+      case 'Excel':
         return {
-          "--accent": "#217346",
-          "--accent-dark": "#1a5c39",
-          "--accent-dim": "rgba(33,115,70,0.12)",
+          '--accent': '#217346',
+          '--accent-dark': '#1a5c39',
+          '--accent-dim': 'rgba(33,115,70,0.12)',
         } as React.CSSProperties;
-      case "PowerPoint":
+      case 'PowerPoint':
         return {
-          "--accent": "#c7421f",
-          "--accent-dark": "#b33519",
-          "--accent-dim": "rgba(199,66,31,0.12)",
+          '--accent': '#c7421f',
+          '--accent-dark': '#b33519',
+          '--accent-dim': 'rgba(199,66,31,0.12)',
         } as React.CSSProperties;
-      case "Word":
+      case 'Word':
       default:
         return {
-          "--accent": "#0067c0",
-          "--accent-dark": "#005fb8",
-          "--accent-dim": "rgba(0,103,192,0.12)",
+          '--accent': '#0067c0',
+          '--accent-dark': '#005fb8',
+          '--accent-dim': 'rgba(0,103,192,0.12)',
         } as React.CSSProperties;
     }
   };
@@ -60,8 +59,8 @@ const App: React.FC<AppProps> = ({ officeHost = "Unknown" }) => {
   const [isClosingDocument, setIsClosingDocument] = useState<string | null>(null);
   const [documents, setDocuments] = useState<Document[]>([]);
   const [user, setUser] = useState<{ phone: string; name?: string; email?: string } | null>(null);
-  const [error, setError] = useState<string>("");
-  const [currentPage, setCurrentPage] = useState<"documents" | "profile">("documents");
+  const [error, setError] = useState<string>('');
+  const [currentPage, setCurrentPage] = useState<'documents' | 'profile'>('documents');
   const [debugPanelOpen, setDebugPanelOpen] = useState(false);
   const [openDocumentId, setOpenDocumentId] = useState<string | null>(null);
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
@@ -69,7 +68,7 @@ const App: React.FC<AppProps> = ({ officeHost = "Unknown" }) => {
   useEffect(() => {
     // Inject host variables into body for global availability (portals/dialogs)
     const vars = getHostVars() as any;
-    Object.keys(vars).forEach(key => {
+    Object.keys(vars).forEach((key) => {
       document.body.style.setProperty(key, vars[key]);
     });
   }, [officeHost]);
@@ -78,10 +77,10 @@ const App: React.FC<AppProps> = ({ officeHost = "Unknown" }) => {
     // Session management via custom events from DocuIdApiService
     const handleUnauthorized = () => {
       handleLogout();
-      setError("Session expired. Please login again.");
+      setError('Session expired. Please login again.');
     };
 
-    window.addEventListener("docuid-unauthorized", handleUnauthorized);
+    window.addEventListener('docuid-unauthorized', handleUnauthorized);
 
     // Initial check for stored auth
     const auth = AuthService.getStoredAuth();
@@ -96,13 +95,13 @@ const App: React.FC<AppProps> = ({ officeHost = "Unknown" }) => {
     }
 
     return () => {
-      window.removeEventListener("docuid-unauthorized", handleUnauthorized);
+      window.removeEventListener('docuid-unauthorized', handleUnauthorized);
     };
   }, []);
 
   const handleLogin = async (phoneNumber: string) => {
     setIsLoadingLogin(true);
-    setError("");
+    setError('');
 
     try {
       await AuthService.login(phoneNumber);
@@ -119,7 +118,7 @@ const App: React.FC<AppProps> = ({ officeHost = "Unknown" }) => {
 
       await loadDocuments();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Login failed");
+      setError(err instanceof Error ? err.message : 'Login failed');
     } finally {
       setIsLoadingLogin(false);
     }
@@ -130,8 +129,8 @@ const App: React.FC<AppProps> = ({ officeHost = "Unknown" }) => {
       setIsLoadingDocuments(true);
       const docs = await DocumentService.getDocuments();
       setDocuments(docs);
-    } catch (err) {
-      setError("Failed to load documents");
+    } catch (_err) {
+      setError('Failed to load documents');
     } finally {
       setIsLoadingDocuments(false);
     }
@@ -141,12 +140,12 @@ const App: React.FC<AppProps> = ({ officeHost = "Unknown" }) => {
     setIsLogoutDialogOpen(false);
     // Clear document content on logout as requested
     await DocumentService.clearDocument();
-    
+
     AuthService.logout();
     setIsAuthenticated(false);
     setUser(null);
     setDocuments([]);
-    setError("");
+    setError('');
     setOpenDocumentId(null);
   };
 
@@ -155,8 +154,8 @@ const App: React.FC<AppProps> = ({ officeHost = "Unknown" }) => {
       setIsOpeningDocument(document.id);
       await DocumentService.openDocument(document.id);
       setOpenDocumentId(document.id);
-    } catch (err) {
-      setError("Failed to open document");
+    } catch (_err) {
+      setError('Failed to open document');
     } finally {
       setIsOpeningDocument(null);
     }
@@ -169,8 +168,8 @@ const App: React.FC<AppProps> = ({ officeHost = "Unknown" }) => {
       if (openDocumentId === documentId) {
         setOpenDocumentId(null);
       }
-    } catch (err) {
-      setError("Failed to close document");
+    } catch (_err) {
+      setError('Failed to close document');
     } finally {
       setIsClosingDocument(null);
     }
@@ -186,7 +185,7 @@ const App: React.FC<AppProps> = ({ officeHost = "Unknown" }) => {
     });
 
     if (!response.success) {
-      throw new Error(response.message || "Failed to share document");
+      throw new Error(response.message || 'Failed to share document');
     }
 
     return {
@@ -202,7 +201,7 @@ const App: React.FC<AppProps> = ({ officeHost = "Unknown" }) => {
         <Header
           user={user}
           onLogout={() => setIsLogoutDialogOpen(true)}
-          onNavigateToProfile={() => setCurrentPage("profile")}
+          onNavigateToProfile={() => setCurrentPage('profile')}
           onToggleDebug={() => setDebugPanelOpen(!debugPanelOpen)}
           officeHost={officeHost}
         />
@@ -210,7 +209,9 @@ const App: React.FC<AppProps> = ({ officeHost = "Unknown" }) => {
         {error && (
           <div className="error-banner">
             <span>{error}</span>
-            <button onClick={() => setError("")} className="error-close">×</button>
+            <button onClick={() => setError('')} className="error-close">
+              ×
+            </button>
           </div>
         )}
 
@@ -219,8 +220,8 @@ const App: React.FC<AppProps> = ({ officeHost = "Unknown" }) => {
             <LoginForm onLogin={handleLogin} isLoading={isLoadingLogin} />
           ) : (
             <>
-              {currentPage === "profile" ? (
-                <ProfilePage onBack={() => setCurrentPage("documents")} />
+              {currentPage === 'profile' ? (
+                <ProfilePage onBack={() => setCurrentPage('documents')} />
               ) : (
                 <DocumentList
                   documents={documents}
@@ -239,9 +240,10 @@ const App: React.FC<AppProps> = ({ officeHost = "Unknown" }) => {
                 onDismiss={() => setIsLogoutDialogOpen(false)}
                 dialogContentProps={{
                   type: DialogType.normal,
-                  title: "Sign Out",
-                  closeButtonAriaLabel: "Close",
-                  subText: "Are you sure you want to sign out? This will also clear the current document content for security.",
+                  title: 'Sign Out',
+                  closeButtonAriaLabel: 'Close',
+                  subText:
+                    'Are you sure you want to sign out? This will also clear the current document content for security.',
                 }}
                 modalProps={{
                   isBlocking: false,

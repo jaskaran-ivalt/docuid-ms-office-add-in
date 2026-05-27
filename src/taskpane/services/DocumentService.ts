@@ -1,8 +1,8 @@
-import { DocuIdApiService } from "./DocuIdApiService";
-import { logger } from "./Logger";
-import { Document, DocuIdDocument } from "../common/types";
-import { formatFileSize, getFileExtension, arrayBufferToBase64 } from "../common/utils";
-import { OfficeHostService } from "./OfficeHostService";
+import type { DocuIdDocument, Document } from '../common/types';
+import { arrayBufferToBase64, formatFileSize, getFileExtension } from '../common/utils';
+import { DocuIdApiService } from './DocuIdApiService';
+import { logger } from './Logger';
+import { OfficeHostService } from './OfficeHostService';
 
 /* global Word, Excel, PowerPoint */
 
@@ -16,7 +16,7 @@ interface DocumentContent {
 }
 
 export class DocumentService {
-  private static readonly docLogger = logger.createContextLogger("DocumentService");
+  private static readonly docLogger = logger.createContextLogger('DocumentService');
 
   /**
    * Get user's documents from the DocuID API.
@@ -25,7 +25,7 @@ export class DocumentService {
   static async getDocuments(): Promise<Document[]> {
     try {
       const host = OfficeHostService.getHost();
-      this.docLogger.info(`Fetching ${host} documents from DocuID API`);
+      DocumentService.docLogger.info(`Fetching ${host} documents from DocuID API`);
 
       const apiDocs = await DocuIdApiService.getDocuments();
 
@@ -40,10 +40,10 @@ export class DocumentService {
         description: doc.description,
       }));
 
-      this.docLogger.info("Documents fetched successfully", { count: documents.length });
+      DocumentService.docLogger.info('Documents fetched successfully', { count: documents.length });
       return documents;
     } catch (error) {
-      this.docLogger.error("Failed to fetch documents", error as Error);
+      DocumentService.docLogger.error('Failed to fetch documents', error as Error);
       throw error;
     }
   }
@@ -53,24 +53,24 @@ export class DocumentService {
    */
   static async openDocument(documentId: string): Promise<void> {
     try {
-      this.docLogger.info(`Opening document: ${documentId}`);
+      DocumentService.docLogger.info(`Opening document: ${documentId}`);
 
-      const docId = parseInt(documentId);
-      if (isNaN(docId)) {
-        throw new Error("Invalid document ID");
+      const docId = parseInt(documentId, 10);
+      if (Number.isNaN(docId)) {
+        throw new Error('Invalid document ID');
       }
 
       const accessInfo = await DocuIdApiService.getDocumentAccess(docId);
 
       if (!accessInfo.access.url) {
-        throw new Error("Document access URL not available");
+        throw new Error('Document access URL not available');
       }
 
       const blobContent = await DocuIdApiService.downloadDocumentContent(accessInfo.access.url);
 
       const documentContent: DocumentContent = {
         id: documentId,
-        content: "",
+        content: '',
         contentType: accessInfo.fileType,
         fileName: accessInfo.fileName,
         documentType: getFileExtension(accessInfo.fileName),
@@ -78,25 +78,25 @@ export class DocumentService {
       };
 
       // Clear document content before opening a new one to prevent appending
-      await this.clearDocument();
+      await DocumentService.clearDocument();
 
       // Dispatch to host-specific insertion logic
       const host = OfficeHostService.getHost();
-      if (host === "Excel") {
-        await this.insertIntoExcel(documentContent);
-      } else if (host === "PowerPoint") {
-        await this.insertIntoPowerPoint(documentContent);
+      if (host === 'Excel') {
+        await DocumentService.insertIntoExcel(documentContent);
+      } else if (host === 'PowerPoint') {
+        await DocumentService.insertIntoPowerPoint(documentContent);
       } else {
         // Default: Word (also handles Unknown)
-        await this.insertIntoWord(documentContent);
+        await DocumentService.insertIntoWord(documentContent);
       }
 
-      this.docLogger.info(`Successfully opened document: ${documentId}`, {
+      DocumentService.docLogger.info(`Successfully opened document: ${documentId}`, {
         fileName: documentContent.fileName,
         host,
       });
     } catch (error) {
-      this.docLogger.error(`Failed to open document: ${documentId}`, error as Error);
+      DocumentService.docLogger.error(`Failed to open document: ${documentId}`, error as Error);
       throw error;
     }
   }
@@ -105,20 +105,20 @@ export class DocumentService {
    * Insert document content into Word.
    */
   private static async insertIntoWord(documentContent: DocumentContent): Promise<void> {
-    const officeLogger = logger.createContextLogger("DocumentService.Word");
+    const officeLogger = logger.createContextLogger('DocumentService.Word');
 
     return Word.run(async (context) => {
       try {
         if (!documentContent.binaryContent) {
-          throw new Error("No binary content available for insertion");
+          throw new Error('No binary content available for insertion');
         }
 
-        officeLogger.debug("Clearing existing document content");
+        officeLogger.debug('Clearing existing document content');
         context.document.body.clear();
         // Also clear headers/footers to be thorough
-        context.document.sections.load("items");
+        context.document.sections.load('items');
         await context.sync();
-        
+
         context.document.sections.items.forEach((section) => {
           section.getHeader(Word.HeaderFooterType.primary).clear();
           section.getFooter(Word.HeaderFooterType.primary).clear();
@@ -130,11 +130,11 @@ export class DocumentService {
         const textContent = textDecoder.decode(arrayBuffer);
 
         if (
-          documentContent.contentType === "text/plain" ||
-          textContent.includes("demo document generated")
+          documentContent.contentType === 'text/plain' ||
+          textContent.includes('demo document generated')
         ) {
-          officeLogger.debug("Inserting demo text content as paragraphs");
-          const lines = textContent.split("\n");
+          officeLogger.debug('Inserting demo text content as paragraphs');
+          const lines = textContent.split('\n');
           lines.forEach((line, index) => {
             const insertLocation =
               index === 0 ? Word.InsertLocation.start : Word.InsertLocation.end;
@@ -142,14 +142,14 @@ export class DocumentService {
           });
         } else {
           const base64String = arrayBufferToBase64(arrayBuffer);
-          officeLogger.debug("Inserting file into Word");
+          officeLogger.debug('Inserting file into Word');
           context.document.body.insertFileFromBase64(base64String, Word.InsertLocation.start);
         }
 
         await context.sync();
-        officeLogger.logOfficeOperation("Document insertion (Word)", true);
+        officeLogger.logOfficeOperation('Document insertion (Word)', true);
       } catch (error) {
-        officeLogger.logOfficeOperation("Document insertion (Word)", false, error);
+        officeLogger.logOfficeOperation('Document insertion (Word)', false, error);
         throw error;
       }
     });
@@ -160,12 +160,12 @@ export class DocumentService {
    * CSV / plain-text content is parsed and written cell-by-cell starting at A1.
    */
   private static async insertIntoExcel(documentContent: DocumentContent): Promise<void> {
-    const officeLogger = logger.createContextLogger("DocumentService.Excel");
+    const officeLogger = logger.createContextLogger('DocumentService.Excel');
 
     return Excel.run(async (context) => {
       try {
         if (!documentContent.binaryContent) {
-          throw new Error("No binary content available for insertion");
+          throw new Error('No binary content available for insertion');
         }
 
         const arrayBuffer = await documentContent.binaryContent.arrayBuffer();
@@ -184,17 +184,17 @@ export class DocumentService {
         }
 
         if (
-          documentContent.contentType === "text/plain" ||
-          documentContent.contentType === "text/csv" ||
-          textContent.includes("demo document generated")
+          documentContent.contentType === 'text/plain' ||
+          documentContent.contentType === 'text/csv' ||
+          textContent.includes('demo document generated')
         ) {
-          officeLogger.debug("Inserting plain text / CSV content into Excel");
+          officeLogger.debug('Inserting plain text / CSV content into Excel');
 
           // Parse every non-empty line into cells by splitting on comma.
           const rawRows = textContent
-            .split("\n")
+            .split('\n')
             .filter((line) => line.trim().length > 0)
-            .map((line) => line.split(",").map((cell) => cell.trim()));
+            .map((line) => line.split(',').map((cell) => cell.trim()));
 
           if (rawRows.length > 0) {
             // All rows must have the same column count for range.values to work.
@@ -203,7 +203,7 @@ export class DocumentService {
             const rows: string[][] = rawRows.map((r) => {
               const padded = [...r];
               while (padded.length < maxCols) {
-                padded.push("");
+                padded.push('');
               }
               return padded;
             });
@@ -216,16 +216,16 @@ export class DocumentService {
         } else {
           // Real xlsx binary - write a placeholder note since Excel.run cannot
           // insert a binary workbook the same way Word can insertFileFromBase64.
-          officeLogger.debug("Non-text content: writing placeholder for real XLSX");
-          sheet.getRange("A1").values = [
+          officeLogger.debug('Non-text content: writing placeholder for real XLSX');
+          sheet.getRange('A1').values = [
             [`File: ${documentContent.fileName} - open directly for full fidelity.`],
           ];
           await context.sync();
         }
 
-        officeLogger.logOfficeOperation("Document insertion (Excel)", true);
+        officeLogger.logOfficeOperation('Document insertion (Excel)', true);
       } catch (error) {
-        officeLogger.logOfficeOperation("Document insertion (Excel)", false, error);
+        officeLogger.logOfficeOperation('Document insertion (Excel)', false, error);
         throw error;
       }
     });
@@ -236,11 +236,11 @@ export class DocumentService {
    * For demo / plain-text content a new slide with a text box is added.
    */
   private static async insertIntoPowerPoint(documentContent: DocumentContent): Promise<void> {
-    const officeLogger = logger.createContextLogger("DocumentService.PowerPoint");
+    const officeLogger = logger.createContextLogger('DocumentService.PowerPoint');
 
     try {
       if (!documentContent.binaryContent) {
-        throw new Error("No binary content available for insertion");
+        throw new Error('No binary content available for insertion');
       }
 
       const arrayBuffer = await documentContent.binaryContent.arrayBuffer();
@@ -248,36 +248,35 @@ export class DocumentService {
       const textContent = textDecoder.decode(arrayBuffer);
 
       if (
-        documentContent.contentType === "text/plain" ||
-        textContent.includes("demo document generated")
+        documentContent.contentType === 'text/plain' ||
+        textContent.includes('demo document generated')
       ) {
         // Use the Office.js Common API to insert a new slide with text
-        officeLogger.debug("Inserting plain text content as PowerPoint slide");
+        officeLogger.debug('Inserting plain text content as PowerPoint slide');
         await Office.context.document.setSelectedDataAsync(textContent, {
           coercionType: Office.CoercionType.Text,
         });
       } else {
         // For real pptx files use insertSelectedDataAsync with SlideRange (if available)
-        officeLogger.debug("Inserting base64 PPTX content into PowerPoint");
+        officeLogger.debug('Inserting base64 PPTX content into PowerPoint');
         const base64String = arrayBufferToBase64(arrayBuffer);
         // PowerPoint.run is used for modern API; fall back to common API for older hosts
-        if (typeof PowerPoint !== "undefined" && PowerPoint.run) {
+        if (typeof PowerPoint !== 'undefined' && PowerPoint.run) {
           await PowerPoint.run(async (context) => {
             context.presentation.insertSlidesFromBase64(base64String);
             await context.sync();
           });
         } else {
           // Common API fallback
-          await Office.context.document.setSelectedDataAsync(
-            base64String,
-            { coercionType: (Office.CoercionType as any).SlideRange },
-          );
+          await Office.context.document.setSelectedDataAsync(base64String, {
+            coercionType: (Office.CoercionType as any).SlideRange,
+          });
         }
       }
 
-      officeLogger.logOfficeOperation("Document insertion (PowerPoint)", true);
+      officeLogger.logOfficeOperation('Document insertion (PowerPoint)', true);
     } catch (error) {
-      officeLogger.logOfficeOperation("Document insertion (PowerPoint)", false, error);
+      officeLogger.logOfficeOperation('Document insertion (PowerPoint)', false, error);
       throw error;
     }
   }
@@ -287,33 +286,33 @@ export class DocumentService {
    */
   static async clearDocument(): Promise<void> {
     const host = OfficeHostService.getHost();
-    this.docLogger.info(`Clearing ${host} document content`);
+    DocumentService.docLogger.info(`Clearing ${host} document content`);
 
     try {
-      if (host === "Word") {
+      if (host === 'Word') {
         return Word.run(async (context) => {
           context.document.body.clear();
           await context.sync();
         });
-      } else if (host === "Excel") {
+      } else if (host === 'Excel') {
         return Excel.run(async (context) => {
           try {
             const sheet = context.workbook.worksheets.getActiveWorksheet();
             const usedRange = sheet.getUsedRange();
             usedRange.clear();
             await context.sync();
-          } catch (e) {
+          } catch (_e) {
             // Sheet is likely empty
           }
         });
-      } else if (host === "PowerPoint") {
+      } else if (host === 'PowerPoint') {
         // Use modern PowerPoint API to delete all slides
-        if (typeof PowerPoint !== "undefined" && PowerPoint.run) {
+        if (typeof PowerPoint !== 'undefined' && PowerPoint.run) {
           return PowerPoint.run(async (context) => {
             const slides = context.presentation.slides;
-            slides.load("items");
+            slides.load('items');
             await context.sync();
-            
+
             // We need at least one slide to exist in a presentation,
             // so we add a new blank slide before deleting others,
             // or just delete all but one and clear that one.
@@ -329,11 +328,11 @@ export class DocumentService {
             await context.sync();
           });
         } else {
-          this.docLogger.info("PowerPoint.run not available for clearing slides");
+          DocumentService.docLogger.info('PowerPoint.run not available for clearing slides');
         }
       }
     } catch (error) {
-      this.docLogger.error(`Failed to clear ${host} document`, error as Error);
+      DocumentService.docLogger.error(`Failed to clear ${host} document`, error as Error);
     }
   }
 
@@ -341,7 +340,7 @@ export class DocumentService {
    * Close a document and clear its content.
    */
   static async closeDocument(documentId: string): Promise<void> {
-    this.docLogger.info(`Closing document: ${documentId}`);
-    await this.clearDocument();
+    DocumentService.docLogger.info(`Closing document: ${documentId}`);
+    await DocumentService.clearDocument();
   }
 }

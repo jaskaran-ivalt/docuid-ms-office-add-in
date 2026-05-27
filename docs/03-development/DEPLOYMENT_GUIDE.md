@@ -60,8 +60,8 @@ MONITORING_ENABLED=true
 
 ```bash
 # Run all quality checks
-bun run lint                    # ESLint validation
-bun run prettier               # Code formatting
+bun run lint                    # Biome linter
+bun run format                  # Biome formatter
 bun run validate               # Manifest validation
 bun run build                  # Production build test
 ```

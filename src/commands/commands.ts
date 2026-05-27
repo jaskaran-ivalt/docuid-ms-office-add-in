@@ -16,14 +16,14 @@ Office.onReady(() => {
 function action(event: Office.AddinCommands.Event) {
   const message: Office.NotificationMessageDetails = {
     type: Office.MailboxEnums.ItemNotificationMessageType.InformationalMessage,
-    message: "Performed action.",
-    icon: "Icon.80x80",
+    message: 'Performed action.',
+    icon: 'Icon.80x80',
     persistent: true,
   };
 
   // Show a notification message.
   Office.context.mailbox.item.notificationMessages.replaceAsync(
-    "ActionPerformanceNotification",
+    'ActionPerformanceNotification',
     message
   );
 
@@ -32,4 +32,4 @@ function action(event: Office.AddinCommands.Event) {
 }
 
 // Register the function with Office.
-Office.actions.associate("action", action);
+Office.actions.associate('action', action);

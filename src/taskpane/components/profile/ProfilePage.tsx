@@ -1,26 +1,14 @@
-import React, { useState, useEffect } from "react";
-import {
-  PrimaryButton,
-  DefaultButton,
-  MessageBar,
-  MessageBarType,
-  Spinner,
-} from "@fluentui/react";
-import { X } from "lucide-react";
-import { AuthService } from "../../services/AuthService";
-import { User as UserProfile } from "../../common/types";
-import { 
-  validateEmail, 
-  validatePhone, 
-  validateIMEI, 
-  formatPhoneNumber,
-  sanitizeInput
-} from "../../common/utils";
-
-import ProfileCard from "./ProfileCard";
-import PersonalInfoSection from "./PersonalInfoSection";
-import AccountInfoSection from "./AccountInfoSection";
-import "./ProfilePage.css";
+import { DefaultButton, MessageBar, MessageBarType, PrimaryButton, Spinner } from '@fluentui/react';
+import { X } from 'lucide-react';
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import type { User as UserProfile } from '../../common/types';
+import { sanitizeInput, validateEmail, validateIMEI, validatePhone } from '../../common/utils';
+import { AuthService } from '../../services/AuthService';
+import AccountInfoSection from './AccountInfoSection';
+import PersonalInfoSection from './PersonalInfoSection';
+import ProfileCard from './ProfileCard';
+import './ProfilePage.css';
 
 interface ProfilePageProps {
   onBack: () => void;
@@ -29,8 +17,8 @@ interface ProfilePageProps {
 const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [success, setSuccess] = useState("");
-  const [error, setError] = useState("");
+  const [success, setSuccess] = useState('');
+  const [error, setError] = useState('');
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [formData, setFormData] = useState<UserProfile | null>(null);
 
@@ -47,20 +35,22 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
 
   const handleInputChange = (field: keyof UserProfile, value: any) => {
     if (!formData) return;
-    const sanitizedValue = typeof value === "string" ? sanitizeInput(value) : value;
-    setFormData(prev => ({ ...prev!, [field]: sanitizedValue }));
+    const sanitizedValue = typeof value === 'string' ? sanitizeInput(value) : value;
+    setFormData((prev) => ({ ...prev!, [field]: sanitizedValue }));
   };
 
   const validateForm = (): { isValid: boolean; errors: string[] } => {
     const errors: string[] = [];
-    if (!formData) return { isValid: false, errors: ["Form data not available"] };
+    if (!formData) return { isValid: false, errors: ['Form data not available'] };
 
-    if (!formData.name || formData.name.trim().length < 2) errors.push("Name too short");
-    if (!formData.email || !validateEmail(formData.email)) errors.push("Invalid email");
-    if (!formData.mobile || !validatePhone(formData.mobile)) errors.push("Invalid mobile");
-    if (!formData.country_code || formData.country_code.replace(/\D/g, "").length === 0) errors.push("Invalid country code");
-    if (!formData.address || formData.address.trim().length < 5) errors.push("Address too short");
-    if (formData.imei && formData.imei !== "N/A" && !validateIMEI(formData.imei)) errors.push("Invalid IMEI");
+    if (!formData.name || formData.name.trim().length < 2) errors.push('Name too short');
+    if (!formData.email || !validateEmail(formData.email)) errors.push('Invalid email');
+    if (!formData.mobile || !validatePhone(formData.mobile)) errors.push('Invalid mobile');
+    if (!formData.country_code || formData.country_code.replace(/\D/g, '').length === 0)
+      errors.push('Invalid country code');
+    if (!formData.address || formData.address.trim().length < 5) errors.push('Address too short');
+    if (formData.imei && formData.imei !== 'N/A' && !validateIMEI(formData.imei))
+      errors.push('Invalid IMEI');
 
     return { isValid: errors.length === 0, errors };
   };
@@ -69,22 +59,22 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
     if (!formData) return;
     const validation = validateForm();
     if (!validation.isValid) {
-      setError(`Validation failed: ${validation.errors.join(", ")}`);
+      setError(`Validation failed: ${validation.errors.join(', ')}`);
       return;
     }
 
     setIsLoading(true);
-    setError("");
-    setSuccess("");
+    setError('');
+    setSuccess('');
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       setProfile(formData);
-      setSuccess("Profile updated successfully!");
+      setSuccess('Profile updated successfully!');
       setIsEditing(false);
-      setTimeout(() => setSuccess(""), 3000);
-    } catch (err) {
-      setError("Failed to update profile.");
+      setTimeout(() => setSuccess(''), 3000);
+    } catch (_err) {
+      setError('Failed to update profile.');
     } finally {
       setIsLoading(false);
     }
@@ -93,14 +83,16 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
   const handleCancel = () => {
     setFormData(profile);
     setIsEditing(false);
-    setError("");
+    setError('');
   };
 
   if (!profile || !formData) {
     return (
       <div className="profile-page">
         <div className="profile-header">
-          <button className="back-button" onClick={onBack}><X size={20} /></button>
+          <button className="back-button" onClick={onBack}>
+            <X size={20} />
+          </button>
           <h1 className="profile-title">Profile Settings</h1>
         </div>
         <div className="loading-container">
@@ -113,7 +105,9 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
   return (
     <div className="profile-page">
       <div className="profile-header">
-        <button className="back-button" onClick={onBack} title="Back to documents"><X size={18} /></button>
+        <button className="back-button" onClick={onBack} title="Back to documents">
+          <X size={18} />
+        </button>
         <h1 className="profile-title">Profile</h1>
         {!isEditing && (
           <button className="edit-button" onClick={() => setIsEditing(true)}>
@@ -122,16 +116,24 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
         )}
       </div>
 
-      {error && <MessageBar messageBarType={MessageBarType.error} onDismiss={() => setError("")}>{error}</MessageBar>}
-      {success && <MessageBar messageBarType={MessageBarType.success} onDismiss={() => setSuccess("")}>{success}</MessageBar>}
+      {error && (
+        <MessageBar messageBarType={MessageBarType.error} onDismiss={() => setError('')}>
+          {error}
+        </MessageBar>
+      )}
+      {success && (
+        <MessageBar messageBarType={MessageBarType.success} onDismiss={() => setSuccess('')}>
+          {success}
+        </MessageBar>
+      )}
 
       <div className="profile-content">
         <ProfileCard profile={profile} />
-        
-        <PersonalInfoSection 
-          formData={formData} 
-          isEditing={isEditing} 
-          onInputChange={handleInputChange} 
+
+        <PersonalInfoSection
+          formData={formData}
+          isEditing={isEditing}
+          onInputChange={handleInputChange}
         />
 
         <AccountInfoSection profile={profile} />
@@ -139,15 +141,11 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
         {isEditing && (
           <div className="profile-actions">
             <PrimaryButton
-              text={isLoading ? "Saving..." : "Save Changes"}
+              text={isLoading ? 'Saving...' : 'Save Changes'}
               onClick={handleSave}
               disabled={isLoading}
             />
-            <DefaultButton
-              text="Cancel"
-              onClick={handleCancel}
-              disabled={isLoading}
-            />
+            <DefaultButton text="Cancel" onClick={handleCancel} disabled={isLoading} />
           </div>
         )}
       </div>

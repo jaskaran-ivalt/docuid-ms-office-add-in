@@ -1,16 +1,9 @@
-import React, { useState, useRef, useEffect } from "react";
-import {
-  Stack,
-  Persona,
-  PersonaSize,
-  IconButton,
-  Callout,
-  DirectionalHint,
-  Text,
-} from "@fluentui/react";
-import { User, LogOut, Bug } from "lucide-react";
-import { OfficeHost } from "@/taskpane/services/OfficeHostService";
-import "./Header.css";
+import { Callout, DirectionalHint, Stack, Text } from '@fluentui/react';
+import { LogOut, User } from 'lucide-react';
+import type React from 'react';
+import { useEffect, useRef, useState } from 'react';
+import type { OfficeHost } from '@/taskpane/services/OfficeHostService';
+import './Header.css';
 
 interface HeaderProps {
   user: { name: string; phone: string; email: string } | null;
@@ -20,7 +13,13 @@ interface HeaderProps {
   officeHost?: OfficeHost;
 }
 
-const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile, onToggleDebug, officeHost }) => {
+const Header: React.FC<HeaderProps> = ({
+  user,
+  onLogout,
+  onNavigateToProfile,
+  onToggleDebug,
+  officeHost,
+}) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -32,9 +31,9 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile, on
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
 
@@ -45,16 +44,16 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile, on
   // Generate initials from name
   const getInitials = (name: string) => {
     return name
-      .split(" ")
+      .split(' ')
       .map((word) => word.charAt(0))
-      .join("")
+      .join('')
       .toUpperCase();
   };
 
   // Truncate email for display
   const truncateEmail = (email: string) => {
     if (email.length <= 20) return email;
-    const [localPart, domain] = email.split("@");
+    const [localPart, domain] = email.split('@');
     if (localPart.length <= 12) {
       return `${localPart}@${domain.substring(0, 8)}...`;
     }
@@ -62,15 +61,15 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile, on
   };
 
   // Format phone number for display
-  const formatPhone = (phone: string) => {
-    if (!phone) return "";
+  const _formatPhone = (phone: string) => {
+    if (!phone) return '';
     // Remove + and format as needed
     return phone;
   };
 
   // Use actual user data
-  const displayName = user?.name ? user?.name : "User";
-  const displayEmail = user?.email || "";
+  const displayName = user?.name ? user?.name : 'User';
+  const displayEmail = user?.email || '';
 
   // Returns the gradient that matches each Office host's brand colour.
   // Word  : current blue  (#005fb8 → #0067c0)
@@ -78,13 +77,13 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile, on
   // PowerPoint : Microsoft orange-red  (#b33519 → #c7421f)
   const getHostBackground = (): string => {
     switch (officeHost) {
-      case "Excel":
-        return "linear-gradient(135deg, #1a5c39 0%, #217346 100%)";
-      case "PowerPoint":
-        return "linear-gradient(135deg, #b33519 0%, #c7421f 100%)";
-      case "Word":
+      case 'Excel':
+        return 'linear-gradient(135deg, #1a5c39 0%, #217346 100%)';
+      case 'PowerPoint':
+        return 'linear-gradient(135deg, #b33519 0%, #c7421f 100%)';
+      case 'Word':
       default:
-        return "linear-gradient(135deg, #005fb8 0%, #0067c0 100%)";
+        return 'linear-gradient(135deg, #005fb8 0%, #0067c0 100%)';
     }
   };
 
@@ -99,11 +98,8 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile, on
             <h1 className="brand-title">iVALT DocuID</h1>
             <span className="brand-subtitle">
               Document management
-              {officeHost && officeHost !== "Unknown" && (
-                <span
-                  className="host-badge"
-                  title={`Running in Microsoft ${officeHost}`}
-                >
+              {officeHost && officeHost !== 'Unknown' && (
+                <span className="host-badge" title={`Running in Microsoft ${officeHost}`}>
                   {officeHost}
                 </span>
               )}
@@ -154,42 +150,42 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile, on
               <div
                 onClick={toggleDropdown}
                 style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  cursor: "pointer",
-                  padding: "4px 8px",
-                  borderRadius: "4px",
-                  transition: "background-color 0.08s",
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  cursor: 'pointer',
+                  padding: '4px 8px',
+                  borderRadius: '4px',
+                  transition: 'background-color 0.08s',
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.1)";
+                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "transparent";
+                  e.currentTarget.style.backgroundColor = 'transparent';
                 }}
               >
                 <div
                   style={{
-                    width: "32px",
-                    height: "32px",
-                    borderRadius: "50%",
-                    backgroundColor: "rgba(255, 255, 255, 0.2)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "white",
-                    fontWeight: "600",
-                    fontSize: "14px",
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '50%',
+                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'white',
+                    fontWeight: '600',
+                    fontSize: '14px',
                   }}
                 >
-                  {getInitials(user?.name || "User")}
+                  {getInitials(user?.name || 'User')}
                 </div>
-                <div style={{ display: "flex", flexDirection: "column" }}>
-                  <span style={{ color: "white", fontSize: "14px", fontWeight: "600" }}>
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <span style={{ color: 'white', fontSize: '14px', fontWeight: '600' }}>
                     {displayName}
                   </span>
-                  <span style={{ color: "rgba(255, 255, 255, 0.8)", fontSize: "12px" }}>
+                  <span style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '12px' }}>
                     {truncateEmail(displayEmail)}
                   </span>
                 </div>
@@ -209,20 +205,20 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile, on
                     <Stack
                       horizontal
                       tokens={{ childrenGap: 12 }}
-                      styles={{ root: { paddingBottom: 8, borderBottom: "1px solid #edebe9" } }}
+                      styles={{ root: { paddingBottom: 8, borderBottom: '1px solid #edebe9' } }}
                     >
                       <div
                         style={{
-                          width: "40px",
-                          height: "40px",
-                          borderRadius: "50%",
-                          backgroundColor: "#f3f2f1",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          color: "#323130",
-                          fontWeight: "600",
-                          fontSize: "16px",
+                          width: '40px',
+                          height: '40px',
+                          borderRadius: '50%',
+                          backgroundColor: '#f3f2f1',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: '#323130',
+                          fontWeight: '600',
+                          fontSize: '16px',
                         }}
                       >
                         {displayName.charAt(0)}
@@ -230,11 +226,11 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile, on
                       <Stack tokens={{ childrenGap: 2 }}>
                         <Text
                           variant="medium"
-                          styles={{ root: { fontWeight: 600, color: "#323130" } }}
+                          styles={{ root: { fontWeight: 600, color: '#323130' } }}
                         >
                           {displayName}
                         </Text>
-                        <Text variant="small" styles={{ root: { color: "#605e5c" } }}>
+                        <Text variant="small" styles={{ root: { color: '#605e5c' } }}>
                           {displayEmail}
                         </Text>
                       </Stack>
@@ -252,10 +248,7 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigateToProfile, on
                           <span>Profile</span>
                         </button>
                       )}
-                      <button
-                        className="dropdown-menu-item logout-item"
-                        onClick={onLogout}
-                      >
+                      <button className="dropdown-menu-item logout-item" onClick={onLogout}>
                         <LogOut size={16} />
                         <span>Sign Out</span>
                       </button>

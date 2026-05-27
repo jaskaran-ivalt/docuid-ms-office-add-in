@@ -1,7 +1,7 @@
-import React from "react";
-import { Dialog, DialogType, PrimaryButton, Stack, Text } from "@fluentui/react";
-import { CheckCircle, Copy, ExternalLink, FileText, Mail, Phone, Calendar } from "lucide-react";
-import "./ShareSuccessModal.css";
+import { Dialog, DialogType, Stack, Text } from '@fluentui/react';
+import { Calendar, CheckCircle, Copy, ExternalLink, FileText, Mail, Phone } from 'lucide-react';
+import type React from 'react';
+import './ShareSuccessModal.css';
 
 interface ShareSuccessModalProps {
   isOpen: boolean;
@@ -31,10 +31,10 @@ const ShareSuccessModal: React.FC<ShareSuccessModalProps> = ({
   const getExpiryDate = (): string => {
     const expiryDate = new Date();
     expiryDate.setDate(expiryDate.getDate() + 7);
-    return expiryDate.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
+    return expiryDate.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
     });
   };
 
@@ -46,7 +46,7 @@ const ShareSuccessModal: React.FC<ShareSuccessModalProps> = ({
 
   const handleOpenLink = () => {
     if (shareDetails?.shareLink) {
-      window.open(shareDetails.shareLink, "_blank");
+      window.open(shareDetails.shareLink, '_blank');
     }
   };
 
@@ -56,15 +56,15 @@ const ShareSuccessModal: React.FC<ShareSuccessModalProps> = ({
       onDismiss={onDismiss}
       dialogContentProps={{
         type: DialogType.normal,
-        title: " ",
+        title: ' ',
         showCloseButton: true,
       }}
       modalProps={{
         isBlocking: false,
         styles: {
           main: {
-            maxWidth: "400px",
-            minHeight: "auto",
+            maxWidth: '400px',
+            minHeight: 'auto',
           },
         },
       }}
@@ -159,11 +159,14 @@ const ShareSuccessModal: React.FC<ShareSuccessModalProps> = ({
           <div className="share-link-section">
             <Text className="share-link-label">Share Link</Text>
             <div className="share-link-display">
-              <Text className="share-link-text">
-                {shareDetails.shareLink}
-              </Text>
+              <Text className="share-link-text">{shareDetails.shareLink}</Text>
             </div>
-            <Stack horizontal horizontalAlign="center" tokens={{ childrenGap: 8 }} className="share-link-actions">
+            <Stack
+              horizontal
+              horizontalAlign="center"
+              tokens={{ childrenGap: 8 }}
+              className="share-link-actions"
+            >
               <button className="share-link-button" onClick={handleCopyLink}>
                 <Copy size={14} />
                 <span>Copy Link</span>
@@ -175,7 +178,6 @@ const ShareSuccessModal: React.FC<ShareSuccessModalProps> = ({
             </Stack>
           </div>
         )}
-
       </div>
     </Dialog>
   );

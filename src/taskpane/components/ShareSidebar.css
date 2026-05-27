@@ -30,7 +30,6 @@
   justify-content: space-between;
   width: 100%;
   padding: 10px 10px 10px 40px;
-
 }
 
 .panel-header-title {
@@ -249,7 +248,7 @@
 }
 
 .divider::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: 0;
@@ -384,15 +383,20 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 @media (max-width: 480px) {
   .action-buttons {
     flex-direction: column;
   }
-  .share-submit-btn, .share-cancel-btn {
+  .share-submit-btn,
+  .share-cancel-btn {
     width: 100% !important;
   }
 }

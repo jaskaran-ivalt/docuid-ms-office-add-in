@@ -1,16 +1,16 @@
 /* eslint-disable no-undef */
 
-const devCerts = require("office-addin-dev-certs");
-const CopyWebpackPlugin = require("copy-webpack-plugin");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
+const devCerts = require('office-addin-dev-certs');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-const urlDev = "https://localhost:3000/";
+const urlDev = 'https://localhost:3000/';
 // Use environment variable for production URL (Vercel sets VERCEL_URL)
-const urlProd = process.env.VERCEL_URL 
-  ? `https://${process.env.VERCEL_URL}/` 
-  : process.env.PRODUCTION_URL 
-    ? process.env.PRODUCTION_URL 
-    : "https://addon.docuid.net/";
+const urlProd = process.env.VERCEL_URL
+  ? `https://${process.env.VERCEL_URL}/`
+  : process.env.PRODUCTION_URL
+    ? process.env.PRODUCTION_URL
+    : 'https://addon.docuid.net/';
 
 // ============================================================
 // API BACKEND CONFIGURATION
@@ -22,12 +22,12 @@ const USE_LOCAL_BACKEND = false;
 const API_TARGETS = {
   local: {
     url: 'http://localhost:3001',
-    secure: false
+    secure: false,
   },
   remote: {
     url: 'https://www.docuid.net',
-    secure: true
-  }
+    secure: true,
+  },
 };
 
 // Get current API target based on USE_LOCAL_BACKEND flag
@@ -39,27 +39,27 @@ async function getHttpsOptions() {
 }
 
 module.exports = async (env, options) => {
-  const dev = options.mode === "development";
-  
+  const dev = options.mode === 'development';
+
   // Log which backend is being used
   console.log(`\n🔌 API Backend: ${USE_LOCAL_BACKEND ? 'LOCAL' : 'REMOTE'} (${apiTarget.url})\n`);
-  
+
   const config = {
-    devtool: "source-map",
+    devtool: 'source-map',
     entry: {
-      polyfill: ["core-js/stable", "regenerator-runtime/runtime"],
-      taskpane: ["./src/taskpane/index.tsx"],
-      commands: "./src/commands/commands.ts",
+      polyfill: ['core-js/stable', 'regenerator-runtime/runtime'],
+      taskpane: ['./src/taskpane/index.tsx'],
+      commands: './src/commands/commands.ts',
     },
     output: {
       clean: true,
-      path: require("path").resolve(__dirname, "dist"),
-      publicPath: dev ? "/" : "/",
+      path: require('path').resolve(__dirname, 'dist'),
+      publicPath: dev ? '/' : '/',
     },
     resolve: {
-      extensions: [".ts", ".tsx", ".js", ".jsx", ".html"],
+      extensions: ['.ts', '.tsx', '.js', '.jsx', '.html'],
       alias: {
-        "@": require("path").resolve(__dirname, "src"),
+        '@': require('path').resolve(__dirname, 'src'),
       },
     },
     module: {
@@ -68,92 +68,98 @@ module.exports = async (env, options) => {
           test: /\.(ts|tsx)$/,
           exclude: /node_modules/,
           use: {
-            loader: "babel-loader",
+            loader: 'babel-loader',
           },
         },
         {
           test: /\.html$/,
           exclude: /node_modules/,
-          use: "html-loader",
+          use: 'html-loader',
         },
         {
           test: /\.(png|jpg|jpeg|gif|ico)$/,
-          type: "asset/resource",
+          type: 'asset/resource',
           generator: {
-            filename: "assets/[path][name][ext][query]",
+            filename: 'assets/[path][name][ext][query]',
           },
         },
         {
           test: /\.css$/,
-          use: ["style-loader", "css-loader", "postcss-loader"],
+          use: ['style-loader', 'css-loader', 'postcss-loader'],
         },
       ],
     },
     plugins: [
       new HtmlWebpackPlugin({
-        filename: "taskpane.html",
-        template: "./src/taskpane/taskpane.html",
-        chunks: ["polyfill", "taskpane"],
+        filename: 'taskpane.html',
+        template: './src/taskpane/taskpane.html',
+        chunks: ['polyfill', 'taskpane'],
       }),
       new CopyWebpackPlugin({
         patterns: [
           {
-            from: "assets/*",
-            to: "assets/[name][ext][query]",
+            from: 'assets/*',
+            to: 'assets/[name][ext][query]',
           },
           {
-            from: "assets/icons/*",
-            to: "assets/icons/[name][ext][query]",
+            from: 'assets/icons/*',
+            to: 'assets/icons/[name][ext][query]',
           },
           {
-            from: "manifest*.xml",
-            to: "[name]" + "[ext]",
+            from: 'manifest*.xml',
+            to: '[name]' + '[ext]',
             transform(content) {
               if (dev) {
                 return content;
               } else {
-                return content.toString().replace(new RegExp(urlDev, "g"), urlProd);
+                return content.toString().replace(new RegExp(urlDev, 'g'), urlProd);
               }
             },
           },
           // Copy production manifest in production builds
-          ...(dev ? [] : [{
-            from: "manifest-production.xml",
-            to: "manifest-production.xml",
-            transform(content) {
-              // Replace placeholder URL with actual production URL
-              return content.toString().replace(/https:\/\/docuid-addin\.vercel\.app\//g, urlProd);
-            },
-          }]),
+          ...(dev
+            ? []
+            : [
+                {
+                  from: 'manifest-production.xml',
+                  to: 'manifest-production.xml',
+                  transform(content) {
+                    // Replace placeholder URL with actual production URL
+                    return content
+                      .toString()
+                      .replace(/https:\/\/docuid-addin\.vercel\.app\//g, urlProd);
+                  },
+                },
+              ]),
         ],
       }),
       new HtmlWebpackPlugin({
-        filename: "commands.html",
-        template: "./src/commands/commands.html",
-        chunks: ["polyfill", "commands"],
+        filename: 'commands.html',
+        template: './src/commands/commands.html',
+        chunks: ['polyfill', 'commands'],
       }),
       new HtmlWebpackPlugin({
-        filename: "privacy-policy.html",
-        template: "./src/taskpane/privacy-policy.html",
-        chunks: ["polyfill"],
+        filename: 'privacy-policy.html',
+        template: './src/taskpane/privacy-policy.html',
+        chunks: ['polyfill'],
       }),
       new HtmlWebpackPlugin({
-        filename: "eula.html",
-        template: "./src/taskpane/eula.html",
-        chunks: ["polyfill"],
+        filename: 'eula.html',
+        template: './src/taskpane/eula.html',
+        chunks: ['polyfill'],
       }),
       new HtmlWebpackPlugin({
-        filename: "support.html",
-        template: "./src/taskpane/support.html",
-        chunks: ["polyfill"],
+        filename: 'support.html',
+        template: './src/taskpane/support.html',
+        chunks: ['polyfill'],
       }),
     ],
     devServer: {
       headers: {
-        "Access-Control-Allow-Origin": "*",
+        'Access-Control-Allow-Origin': '*',
       },
       server: {
-        type: "https",
+        type: 'https',
         options:
           env.WEBPACK_BUILD || options.https !== undefined
             ? options.https
@@ -168,9 +174,9 @@ module.exports = async (env, options) => {
           changeOrigin: true,
           secure: apiTarget.secure,
           pathRewrite: {
-            '^/api/docuid/biometric': '/api/biometric'
+            '^/api/docuid/biometric': '/api/biometric',
           },
-          logLevel: 'debug'
+          logLevel: 'debug',
         },
         // Document endpoints: handles both /api/documents/* and /api/dashboard/documents/*
         // Download/content endpoints go to /api/documents/
@@ -180,7 +186,7 @@ module.exports = async (env, options) => {
           target: apiTarget.url,
           changeOrigin: true,
           secure: apiTarget.secure,
-          pathRewrite: (path, req) => {
+          pathRewrite: (path, _req) => {
             console.log(`📡 Proxy pathRewrite: ${path}`);
             // Check if this is a download or content endpoint
             if (path.match(/\/api\/docuid\/documents\/\d+\/(download|content)$/)) {
@@ -193,7 +199,7 @@ module.exports = async (env, options) => {
             console.log(`   → Rewriting to: ${newPath} (dashboard)`);
             return newPath;
           },
-          logLevel: 'debug'
+          logLevel: 'debug',
         },
         // Share endpoints: /api/docuid/shares/* -> /api/dashboard/shares/*
         {
@@ -202,11 +208,11 @@ module.exports = async (env, options) => {
           changeOrigin: true,
           secure: apiTarget.secure,
           pathRewrite: {
-            '^/api/docuid/shares': '/api/dashboard/shares'
+            '^/api/docuid/shares': '/api/dashboard/shares',
           },
-          logLevel: 'debug'
-        }
-      ]
+          logLevel: 'debug',
+        },
+      ],
     },
   };
 

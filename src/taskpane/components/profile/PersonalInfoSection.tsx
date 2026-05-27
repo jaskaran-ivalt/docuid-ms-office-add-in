@@ -1,10 +1,9 @@
-import React from "react";
-import { Stack, TextField, Label } from "@fluentui/react";
-import { User as UserIcon } from "lucide-react";
-import { User as UserProfile } from "../../common/types";
-import { formatLocation } from "../../common/utils";
+import { Label, TextField } from '@fluentui/react';
+import { User as UserIcon } from 'lucide-react';
+import type React from 'react';
+import type { User as UserProfile } from '../../common/types';
 
-import { Card } from "../shared/Card";
+import { Card } from '../shared/Card';
 
 interface PersonalInfoSectionProps {
   formData: UserProfile;
@@ -12,10 +11,10 @@ interface PersonalInfoSectionProps {
   onInputChange: (field: keyof UserProfile, value: any) => void;
 }
 
-const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({ 
-  formData, 
-  isEditing, 
-  onInputChange 
+const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({
+  formData,
+  isEditing,
+  onInputChange,
 }) => {
   return (
     <Card className="profile-section">
@@ -29,11 +28,16 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({
           <Label className="form-label">Full Name</Label>
           <TextField
             value={formData.name}
-            onChange={(_, value) => onInputChange("name", value)}
+            onChange={(_, value) => onInputChange('name', value)}
             disabled={!isEditing}
             styles={{
-              field: { fontSize: "13px", border: "1px solid #d1d1d1", borderRadius: "4px", height: "32px" },
-              fieldGroup: { border: "none" },
+              field: {
+                fontSize: '13px',
+                border: '1px solid #d1d1d1',
+                borderRadius: '4px',
+                height: '32px',
+              },
+              fieldGroup: { border: 'none' },
             }}
           />
         </div>
@@ -42,11 +46,16 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({
           <Label className="form-label">Email Address</Label>
           <TextField
             value={formData.email}
-            onChange={(_, value) => onInputChange("email", value)}
+            onChange={(_, value) => onInputChange('email', value)}
             disabled={!isEditing}
             styles={{
-              field: { fontSize: "13px", border: "1px solid #d1d1d1", borderRadius: "4px", height: "32px" },
-              fieldGroup: { border: "none" },
+              field: {
+                fontSize: '13px',
+                border: '1px solid #d1d1d1',
+                borderRadius: '4px',
+                height: '32px',
+              },
+              fieldGroup: { border: 'none' },
             }}
           />
         </div>
@@ -55,11 +64,16 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({
           <Label className="form-label">Mobile Number</Label>
           <TextField
             value={formData.mobile}
-            onChange={(_, value) => onInputChange("mobile", value)}
+            onChange={(_, value) => onInputChange('mobile', value)}
             disabled={!isEditing}
             styles={{
-              field: { fontSize: "13px", border: "1px solid #d1d1d1", borderRadius: "4px", height: "32px" },
-              fieldGroup: { border: "none" },
+              field: {
+                fontSize: '13px',
+                border: '1px solid #d1d1d1',
+                borderRadius: '4px',
+                height: '32px',
+              },
+              fieldGroup: { border: 'none' },
             }}
           />
         </div>
@@ -68,11 +82,16 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({
           <Label className="form-label">Country Code</Label>
           <TextField
             value={formData.country_code}
-            onChange={(_, value) => onInputChange("country_code", value)}
+            onChange={(_, value) => onInputChange('country_code', value)}
             disabled={!isEditing}
             styles={{
-              field: { fontSize: "13px", border: "1px solid #d1d1d1", borderRadius: "4px", height: "32px" },
-              fieldGroup: { border: "none" },
+              field: {
+                fontSize: '13px',
+                border: '1px solid #d1d1d1',
+                borderRadius: '4px',
+                height: '32px',
+              },
+              fieldGroup: { border: 'none' },
             }}
           />
         </div>
@@ -81,13 +100,18 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({
           <Label className="form-label">Address</Label>
           <TextField
             value={formData.address}
-            onChange={(_, value) => onInputChange("address", value)}
+            onChange={(_, value) => onInputChange('address', value)}
             disabled={!isEditing}
             multiline
             rows={2}
             styles={{
-              field: { fontSize: "13px", border: "1px solid #d1d1d1", borderRadius: "4px", minHeight: "50px" },
-              fieldGroup: { border: "none", background: "white" },
+              field: {
+                fontSize: '13px',
+                border: '1px solid #d1d1d1',
+                borderRadius: '4px',
+                minHeight: '50px',
+              },
+              fieldGroup: { border: 'none', background: 'white' },
             }}
           />
         </div>
@@ -95,11 +119,21 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({
         <div className="form-group">
           <Label className="form-label">Location</Label>
           <TextField
-            value={formData.latitude && formData.longitude ? `${formData.latitude}, ${formData.longitude}` : "N/A"}
+            value={
+              formData.latitude && formData.longitude
+                ? `${formData.latitude}, ${formData.longitude}`
+                : 'N/A'
+            }
             disabled={true}
             styles={{
-              field: { fontSize: "13px", border: "1px solid #d1d1d1", borderRadius: "4px", height: "32px", backgroundColor: "#f8f9fa" },
-              fieldGroup: { border: "none" },
+              field: {
+                fontSize: '13px',
+                border: '1px solid #d1d1d1',
+                borderRadius: '4px',
+                height: '32px',
+                backgroundColor: '#f8f9fa',
+              },
+              fieldGroup: { border: 'none' },
             }}
           />
         </div>

@@ -185,9 +185,10 @@ DocuID/
 - `bun run build` - Build for production
 - `bun run build:dev` - Build for development
 - `bun run dev-server` - Start development server only
-- `bun run lint` - Run ESLint and fix issues
-- `bun run validate` - Validate manifest file
-- `bun run prettier` - Format code with Prettier
+- `bun run lint` - Run Biome linter
+- `bun run lint:fix` - Run Biome linter with auto-fix
+- `bun run format` - Format code with Biome
+- `bun run format:check` - Check code formatting with Biome
 
 ### API Integration
 

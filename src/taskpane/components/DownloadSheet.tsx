@@ -1,21 +1,22 @@
-import React, { useState, useEffect } from "react";
-import "./DownloadSheet.css";
-import { IOS_QR, ANDROID_QR } from "./qrCodes";
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import './DownloadSheet.css';
+import { ANDROID_QR, IOS_QR } from './qrCodes';
 
 interface DownloadSheetProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const IOS_URL = "https://apps.apple.com/in/app/ivalt/id1507945806";
+const IOS_URL = 'https://apps.apple.com/in/app/ivalt/id1507945806';
 const ANDROID_URL =
-  "https://play.google.com/store/apps/details?id=com.abisyscorp.ivalt&hl=en_IN&pli=1";
+  'https://play.google.com/store/apps/details?id=com.abisyscorp.ivalt&hl=en_IN&pli=1';
 
 const PLATFORM_DATA = {
   ios: {
-    label: "iOS",
+    label: 'iOS',
     url: IOS_URL,
-    store: "App Store",
+    store: 'App Store',
     icon: (
       <svg width="18" height="18" viewBox="0 0 22.773 22.773" fill="currentColor">
         <path d="M15.769,0c0.053,0,0.106,0,0.162,0c0.13,1.606-0.483,2.806-1.228,3.675c-0.731,0.863-1.732,1.7-3.351,1.573 c-0.108-1.583,0.506-2.694,1.25-3.561C13.292,0.879,14.557,0.16,15.769,0z" />
@@ -24,12 +25,15 @@ const PLATFORM_DATA = {
     ),
   },
   android: {
-    label: "Android",
+    label: 'Android',
     url: ANDROID_URL,
-    store: "Google Play",
+    store: 'Google Play',
     icon: (
       <svg width="18" height="18" viewBox="0 0 1920 1920" fill="currentColor">
-        <path d="M1306.086 25.225c17.167-25.976 52.29-33.091 78.267-15.698 25.976 17.28 32.978 52.29 15.698 78.266l-85.72 128.637c29.25 18.861 57.372 39.416 83.122 62.907 118.473 108.648 183.752 253.435 183.752 407.71v734.102c0 88.318-76.008 160.034-169.408 160.034h-169.409V1920H1129.45v-338.817H790.633V1920H677.694v-338.817H508.286c-93.4 0-169.408-71.716-169.408-160.034V709.296c0-200.58 107.292-380.266 269.246-488.913L519.58 87.906c-17.393-25.976-10.39-60.987 15.472-78.38 25.863-17.28 60.987-10.277 78.38 15.586l94.304 141.06c59.858-25.862 123.78-44.61 191.883-50.596 109.325-9.6 216.956 7.906 314.083 48.112ZM225.939 734.142v564.694H113V734.142h112.939Zm1581.144 0v564.694h-112.94V734.142h112.94Zm-621.164-282.347c-62.23 0-112.939 50.71-112.939 112.939 0 62.23 50.71 112.939 112.939 112.939 62.23 0 112.939-50.71 112.939-112.94 0-62.228-50.71-112.938-112.939-112.938Zm-451.755 0c-62.23 0-112.94 50.71-112.94 112.939 0 62.23 50.71 112.939 112.94 112.939 62.229 0 112.938-50.71 112.938-112.94 0-62.228-50.71-112.938-112.938-112.938Z" fillRule="evenodd" />
+        <path
+          d="M1306.086 25.225c17.167-25.976 52.29-33.091 78.267-15.698 25.976 17.28 32.978 52.29 15.698 78.266l-85.72 128.637c29.25 18.861 57.372 39.416 83.122 62.907 118.473 108.648 183.752 253.435 183.752 407.71v734.102c0 88.318-76.008 160.034-169.408 160.034h-169.409V1920H1129.45v-338.817H790.633V1920H677.694v-338.817H508.286c-93.4 0-169.408-71.716-169.408-160.034V709.296c0-200.58 107.292-380.266 269.246-488.913L519.58 87.906c-17.393-25.976-10.39-60.987 15.472-78.38 25.863-17.28 60.987-10.277 78.38 15.586l94.304 141.06c59.858-25.862 123.78-44.61 191.883-50.596 109.325-9.6 216.956 7.906 314.083 48.112ZM225.939 734.142v564.694H113V734.142h112.939Zm1581.144 0v564.694h-112.94V734.142h112.94Zm-621.164-282.347c-62.23 0-112.939 50.71-112.939 112.939 0 62.23 50.71 112.939 112.939 112.939 62.23 0 112.939-50.71 112.939-112.94 0-62.228-50.71-112.938-112.939-112.938Zm-451.755 0c-62.23 0-112.94 50.71-112.94 112.939 0 62.23 50.71 112.939 112.94 112.939 62.229 0 112.938-50.71 112.938-112.94 0-62.228-50.71-112.938-112.938-112.938Z"
+          fillRule="evenodd"
+        />
       </svg>
     ),
   },
@@ -41,7 +45,7 @@ const QR_IMAGES: Record<string, string> = {
 };
 
 const DownloadSheet: React.FC<DownloadSheetProps> = ({ isOpen, onClose }) => {
-  const [activeTab, setActiveTab] = useState<"ios" | "android">("ios");
+  const [activeTab, setActiveTab] = useState<'ios' | 'android'>('ios');
   const [isRendered, setIsRendered] = useState(false);
 
   useEffect(() => {
@@ -55,10 +59,10 @@ const DownloadSheet: React.FC<DownloadSheetProps> = ({ isOpen, onClose }) => {
 
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isOpen) onClose();
+      if (e.key === 'Escape' && isOpen) onClose();
     };
-    window.addEventListener("keydown", handleEsc);
-    return () => window.removeEventListener("keydown", handleEsc);
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
   }, [isOpen, onClose]);
 
   if (!isRendered) return null;
@@ -68,11 +72,11 @@ const DownloadSheet: React.FC<DownloadSheetProps> = ({ isOpen, onClose }) => {
   return (
     <>
       <div
-        className={`download-sheet-overlay ${isOpen ? "open" : ""}`}
+        className={`download-sheet-overlay ${isOpen ? 'open' : ''}`}
         onClick={onClose}
         role="presentation"
       />
-      <div className={`download-sheet ${isOpen ? "open" : ""}`} role="dialog" aria-modal="true">
+      <div className={`download-sheet ${isOpen ? 'open' : ''}`} role="dialog" aria-modal="true">
         <div className="download-sheet-header">
           <h3 className="download-sheet-title">Download iVALT App</h3>
           <button
@@ -87,16 +91,16 @@ const DownloadSheet: React.FC<DownloadSheetProps> = ({ isOpen, onClose }) => {
 
         <div className="download-sheet-tabs">
           <button
-            className={`download-sheet-tab ${activeTab === "ios" ? "active" : ""}`}
-            onClick={() => setActiveTab("ios")}
+            className={`download-sheet-tab ${activeTab === 'ios' ? 'active' : ''}`}
+            onClick={() => setActiveTab('ios')}
             type="button"
           >
             <span className="platform-icon">{PLATFORM_DATA.ios.icon}</span>
             iOS
           </button>
           <button
-            className={`download-sheet-tab ${activeTab === "android" ? "active" : ""}`}
-            onClick={() => setActiveTab("android")}
+            className={`download-sheet-tab ${activeTab === 'android' ? 'active' : ''}`}
+            onClick={() => setActiveTab('android')}
             type="button"
           >
             <span className="platform-icon">{PLATFORM_DATA.android.icon}</span>

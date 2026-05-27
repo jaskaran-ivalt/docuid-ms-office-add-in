@@ -1,19 +1,18 @@
-import React, { useState } from "react";
 import {
+  Callout,
+  DirectionalHint,
+  IconButton,
   PrimaryButton,
   Spinner,
   Stack,
-  TextField,
   Text,
-  IconButton,
-  Callout,
-  DirectionalHint,
-} from "@fluentui/react";
-import { Info } from "lucide-react";
-import PhoneInput from "react-phone-number-input";
-import "react-phone-number-input/style.css";
-import "./LoginForm.css";
-import DownloadSheet from "./DownloadSheet";
+} from '@fluentui/react';
+import { Info } from 'lucide-react';
+import React, { useState } from 'react';
+import PhoneInput from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
+import './LoginForm.css';
+import DownloadSheet from './DownloadSheet';
 
 interface LoginFormProps {
   onLogin: (phoneNumber: string) => Promise<void>;
@@ -21,7 +20,7 @@ interface LoginFormProps {
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
-  const [phoneNumber, setPhoneNumber] = useState<string>("");
+  const [phoneNumber, setPhoneNumber] = useState<string>('');
   const [isInfoPopupOpen, setIsInfoPopupOpen] = useState(false);
   const [isDownloadSheetOpen, setIsDownloadSheetOpen] = useState(false);
   const infoButtonRef = React.useRef<HTMLDivElement>(null);
@@ -38,18 +37,18 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
   return (
     <Stack
       tokens={{ padding: 24, childrenGap: 24 }}
-      styles={{ root: { justifyContent: "center", backgroundColor: "#f5f5f5" } }}
+      styles={{ root: { justifyContent: 'center', backgroundColor: '#f5f5f5' } }}
     >
       <Stack
         tokens={{ childrenGap: 16 }}
         styles={{
           root: {
             maxWidth: 400,
-            margin: "0 auto",
-            width: "100%",
-            backgroundColor: "white",
-            padding: "30px 15px",
-            border: "1px solid #edebe9",
+            margin: '0 auto',
+            width: '100%',
+            backgroundColor: 'white',
+            padding: '30px 15px',
+            border: '1px solid #edebe9',
           },
         }}
       >
@@ -58,12 +57,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
           <img
             src="assets/logo-transparent-bg.png"
             alt="iVALT DocuID"
-            style={{ width: "100px", objectFit: "contain" }}
+            style={{ width: '100px', objectFit: 'contain' }}
           />
-          <Text variant="medium" styles={{ root: { fontWeight: 600, color: "#323130" } }}>
+          <Text variant="medium" styles={{ root: { fontWeight: 600, color: '#323130' } }}>
             Security Platform
           </Text>
-          <Text variant="medium" styles={{ root: { textAlign: "center", color: "#605e5c" } }}>
+          <Text variant="medium" styles={{ root: { textAlign: 'center', color: '#605e5c' } }}>
             Secure your digital assets with our advanced file identity and verification system
             powered by iVALT technology
           </Text>
@@ -85,13 +84,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
                         width: 24,
                         height: 24,
                         marginBottom: 8,
-                        borderRadius: "50%",
-                        backgroundColor: "#e8f4fd",
-                        color: "#0078d4",
-                        border: "1px solid #b3e5fc",
+                        borderRadius: '50%',
+                        backgroundColor: '#e8f4fd',
+                        color: '#0078d4',
+                        border: '1px solid #b3e5fc',
                       },
                       rootHovered: {
-                        backgroundColor: "#b3e5fc",
+                        backgroundColor: '#b3e5fc',
                       },
                     }}
                   >
@@ -114,20 +113,20 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
                     tokens={{ padding: 16, childrenGap: 8 }}
                     styles={{
                       root: {
-                        backgroundColor: "white",
-                        border: "1px solid #edebe9",
+                        backgroundColor: 'white',
+                        border: '1px solid #edebe9',
                         borderRadius: 4,
-                        boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
                       },
                     }}
                   >
-                    <Text variant="medium" styles={{ root: { fontWeight: 600, color: "#323130" } }}>
+                    <Text variant="medium" styles={{ root: { fontWeight: 600, color: '#323130' } }}>
                       How to get started:
                     </Text>
                     <Stack
                       as="ol"
                       tokens={{ childrenGap: 4 }}
-                      styles={{ root: { paddingLeft: 20, margin: 0, color: "#605e5c" } }}
+                      styles={{ root: { paddingLeft: 20, margin: 0, color: '#605e5c' } }}
                     >
                       <Text as="li" variant="small">
                         Download the iVALT app from the links below
@@ -150,7 +149,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
                 international
                 defaultCountry="IN"
                 value={phoneNumber}
-                onChange={(value) => setPhoneNumber(value || "")}
+                onChange={(value) => setPhoneNumber(value || '')}
                 placeholder="Enter your mobile number"
                 disabled={isLoading}
                 className="phone-input-field"
@@ -160,7 +159,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
             <PrimaryButton
               type="submit"
               disabled={!isValidPhone || isLoading}
-              text={isLoading ? "Authenticating..." : "Login with Biometrics"}
+              text={isLoading ? 'Authenticating...' : 'Login with Biometrics'}
               styles={{
                 root: {
                   height: 40,
@@ -172,13 +171,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
             </PrimaryButton>
 
             <Stack horizontalAlign="center">
-              <Text variant="small" styles={{ root: { color: "#605e5c" } }}>
-                New to DocuID?{" "}
+              <Text variant="small" styles={{ root: { color: '#605e5c' } }}>
+                New to DocuID?{' '}
                 <a
                   href="https://www.docuid.net"
                   target="_blank"
                   rel="noopener noreferrer"
-                  style={{ color: "#0078d4", textDecoration: "none", fontWeight: 600 }}
+                  style={{ color: '#0078d4', textDecoration: 'none', fontWeight: 600 }}
                 >
                   Create an account
                 </a>
@@ -188,20 +187,20 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
         </form>
 
         <Stack horizontalAlign="center" tokens={{ childrenGap: 8 }}>
-          <Text variant="small" styles={{ root: { color: "#605e5c", textAlign: "center" } }}>
-            Need the iVALT app to authenticate?{" "}
+          <Text variant="small" styles={{ root: { color: '#605e5c', textAlign: 'center' } }}>
+            Need the iVALT app to authenticate?{' '}
             <button
               onClick={() => setIsDownloadSheetOpen(true)}
               style={{
-                background: "none",
-                border: "none",
+                background: 'none',
+                border: 'none',
                 padding: 0,
-                color: "#0078d4",
+                color: '#0078d4',
                 fontWeight: 600,
-                cursor: "pointer",
-                textDecoration: "none",
-                fontSize: "inherit",
-                fontFamily: "inherit",
+                cursor: 'pointer',
+                textDecoration: 'none',
+                fontSize: 'inherit',
+                fontFamily: 'inherit',
               }}
               type="button"
             >
@@ -210,10 +209,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
           </Text>
         </Stack>
 
-        <DownloadSheet
-          isOpen={isDownloadSheetOpen}
-          onClose={() => setIsDownloadSheetOpen(false)}
-        />
+        <DownloadSheet isOpen={isDownloadSheetOpen} onClose={() => setIsDownloadSheetOpen(false)} />
       </Stack>
     </Stack>
   );

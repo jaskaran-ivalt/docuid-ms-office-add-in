@@ -6,13 +6,13 @@
  * - Production: Uses Vercel rewrites (relative URLs) until backend CORS is configured
  */
 
-const isDevelopment = process.env.NODE_ENV === "development";
+const isDevelopment = process.env.NODE_ENV === 'development';
 // TODO: Switch to direct calls once backend adds CORS for addon.docuid.net
 // const API_BASE_URL = isDevelopment ? "" : "https://www.docuid.net";
-const API_BASE_URL = ""; // Always use relative URLs (proxied in both dev and prod)
+const API_BASE_URL = ''; // Always use relative URLs (proxied in both dev and prod)
 
 // Development prefix for webpack proxy - must match webpack.config.js proxy context
-const DEV_PREFIX = isDevelopment ? "/api/docuid" : "";
+const DEV_PREFIX = isDevelopment ? '/api/docuid' : '';
 
 /**
  * Get full API URL based on environment
@@ -22,7 +22,7 @@ const DEV_PREFIX = isDevelopment ? "/api/docuid" : "";
 const getApiUrl = (path: string): string => {
   // In development: webpack proxy adds /api/docuid prefix, so path should NOT have /api prefix
   // In production: Vercel rewrites need /api prefix, so path SHOULD have /api prefix
-  const apiPrefix = isDevelopment ? "" : "/api";
+  const apiPrefix = isDevelopment ? '' : '/api';
   return `${API_BASE_URL}${DEV_PREFIX}${apiPrefix}${path}`;
 };
 
@@ -30,8 +30,8 @@ const getApiUrl = (path: string): string => {
  * Biometric Authentication Routes
  */
 export const BIOMETRIC_ROUTES = {
-  AUTH_REQUEST: getApiUrl("/biometric/auth-request"),
-  AUTH_RESULT: getApiUrl("/biometric/auth-result"),
+  AUTH_REQUEST: getApiUrl('/biometric/auth-request'),
+  AUTH_RESULT: getApiUrl('/biometric/auth-result'),
 } as const;
 
 /**
@@ -39,9 +39,9 @@ export const BIOMETRIC_ROUTES = {
  */
 export const DOCUMENT_ROUTES = {
   // List and metadata endpoints (backend: /api/dashboard/documents/)
-  WORD_FILES: getApiUrl("/dashboard/documents/word-files"),
-  EXCEL_FILES: getApiUrl("/dashboard/documents/excel-files"),
-  POWERPOINT_FILES: getApiUrl("/dashboard/documents/powerpoint-files"),
+  WORD_FILES: getApiUrl('/dashboard/documents/word-files'),
+  EXCEL_FILES: getApiUrl('/dashboard/documents/excel-files'),
+  POWERPOINT_FILES: getApiUrl('/dashboard/documents/powerpoint-files'),
   GET_DOCUMENT: (id: number) => getApiUrl(`/dashboard/documents/${id}`),
   DOCUMENT_ACCESS: (id: number) => getApiUrl(`/dashboard/documents/${id}/access`),
 
@@ -54,7 +54,7 @@ export const DOCUMENT_ROUTES = {
  * Share Management Routes
  */
 export const SHARE_ROUTES = {
-  OPTIMIZED: getApiUrl("/dashboard/shares/optimized"),
+  OPTIMIZED: getApiUrl('/dashboard/shares/optimized'),
 } as const;
 
 /**
@@ -66,7 +66,7 @@ export const API_CONFIG = {
   IS_DEVELOPMENT: false,
   WITH_CREDENTIALS: false, // Use Bearer token, not cookies
   HEADERS: {
-    CONTENT_TYPE: "application/json",
-    API_KEY: "PKIqfASvBfaKQxsg6DVn92ANw7bLsWXSalEsg5Bz",
+    CONTENT_TYPE: 'application/json',
+    API_KEY: 'PKIqfASvBfaKQxsg6DVn92ANw7bLsWXSalEsg5Bz',
   },
 } as const;

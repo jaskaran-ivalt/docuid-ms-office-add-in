@@ -1,36 +1,19 @@
-import React, { useState, useEffect } from "react";
 import {
-  Stack,
-  TextField,
-  PrimaryButton,
   DefaultButton,
+  type IChoiceGroupOption,
   Label,
   MessageBar,
   MessageBarType,
+  PrimaryButton,
   Spinner,
-  Toggle,
-  ChoiceGroup,
-  IChoiceGroupOption,
-} from "@fluentui/react";
-import {
-  User as UserIcon,
-  Mail,
-  Phone,
-  MapPin,
-  Building,
-  Calendar,
-  Shield,
-  Bell,
-  Globe,
-  Save,
-  Edit,
-  X,
-  Check,
-  Smartphone,
-} from "lucide-react";
-import { AuthService } from "../services/AuthService";
-import { User as UserProfile } from "../types";
-import "./ProfilePage.css";
+  TextField,
+} from '@fluentui/react';
+import { Calendar, User as UserIcon, X } from 'lucide-react';
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import { AuthService } from '../services/AuthService';
+import type { User as UserProfile } from '../types';
+import './ProfilePage.css';
 
 interface ProfilePageProps {
   onBack: () => void;
@@ -39,8 +22,8 @@ interface ProfilePageProps {
 const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [success, setSuccess] = useState("");
-  const [error, setError] = useState("");
+  const [success, setSuccess] = useState('');
+  const [error, setError] = useState('');
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [formData, setFormData] = useState<UserProfile | null>(null);
 
@@ -57,30 +40,30 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
     loadUserData();
   }, []);
 
-  const languageOptions: IChoiceGroupOption[] = [
-    { key: "en", text: "English" },
-    { key: "es", text: "Spanish" },
-    { key: "fr", text: "French" },
-    { key: "de", text: "German" },
+  const _languageOptions: IChoiceGroupOption[] = [
+    { key: 'en', text: 'English' },
+    { key: 'es', text: 'Spanish' },
+    { key: 'fr', text: 'French' },
+    { key: 'de', text: 'German' },
   ];
 
-  const themeOptions: IChoiceGroupOption[] = [
-    { key: "light", text: "Light" },
-    { key: "dark", text: "Dark" },
-    { key: "auto", text: "Auto" },
+  const _themeOptions: IChoiceGroupOption[] = [
+    { key: 'light', text: 'Light' },
+    { key: 'dark', text: 'Dark' },
+    { key: 'auto', text: 'Auto' },
   ];
 
-  const privacyOptions: IChoiceGroupOption[] = [
-    { key: "public", text: "Public" },
-    { key: "private", text: "Private" },
-    { key: "friends", text: "Friends Only" },
+  const _privacyOptions: IChoiceGroupOption[] = [
+    { key: 'public', text: 'Public' },
+    { key: 'private', text: 'Private' },
+    { key: 'friends', text: 'Friends Only' },
   ];
 
   const handleInputChange = (field: keyof UserProfile, value: any) => {
     if (!formData) return;
 
     // Sanitize input
-    const sanitizedValue = typeof value === "string" ? sanitizeInput(value) : value;
+    const sanitizedValue = typeof value === 'string' ? sanitizeInput(value) : value;
 
     setFormData((prev) => ({
       ...prev!,
@@ -91,37 +74,37 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
   const validateForm = (): { isValid: boolean; errors: string[] } => {
     const errors: string[] = [];
 
-    if (!formData) return { isValid: false, errors: ["Form data not available"] };
+    if (!formData) return { isValid: false, errors: ['Form data not available'] };
 
     // Validate required fields
     if (!formData.name || formData.name.trim().length < 2) {
-      errors.push("Name must be at least 2 characters long");
+      errors.push('Name must be at least 2 characters long');
     }
 
     if (!formData.email || !validateEmail(formData.email)) {
-      errors.push("Please enter a valid email address");
+      errors.push('Please enter a valid email address');
     }
 
     if (!formData.mobile || !validatePhone(formData.mobile)) {
-      errors.push("Please enter a valid mobile number (at least 10 digits)");
+      errors.push('Please enter a valid mobile number (at least 10 digits)');
     }
 
-    if (!formData.country_code || formData.country_code.replace(/\D/g, "").length === 0) {
-      errors.push("Please enter a valid country code");
+    if (!formData.country_code || formData.country_code.replace(/\D/g, '').length === 0) {
+      errors.push('Please enter a valid country code');
     }
 
     if (!formData.address || formData.address.trim().length < 5) {
-      errors.push("Address must be at least 5 characters long");
+      errors.push('Address must be at least 5 characters long');
     }
 
-    if (formData.imei && formData.imei !== "N/A" && !validateIMEI(formData.imei)) {
-      errors.push("IMEI must be 15 digits long");
+    if (formData.imei && formData.imei !== 'N/A' && !validateIMEI(formData.imei)) {
+      errors.push('IMEI must be 15 digits long');
     }
 
     return { isValid: errors.length === 0, errors };
   };
 
-  const handlePreferenceChange = (field: keyof UserProfile["preferences"], value: any) => {
+  const _handlePreferenceChange = (field: keyof UserProfile['preferences'], value: any) => {
     if (!formData) return;
     setFormData((prev) => ({
       ...prev!,
@@ -138,13 +121,13 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
     // Validate form before saving
     const validation = validateForm();
     if (!validation.isValid) {
-      setError(`Validation failed: ${validation.errors.join(", ")}`);
+      setError(`Validation failed: ${validation.errors.join(', ')}`);
       return;
     }
 
     setIsLoading(true);
-    setError("");
-    setSuccess("");
+    setError('');
+    setSuccess('');
 
     try {
       // Simulate API call
@@ -158,12 +141,12 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
 
       setProfile(updatedFormData);
       setFormData(updatedFormData);
-      setSuccess("Profile updated successfully!");
+      setSuccess('Profile updated successfully!');
       setIsEditing(false);
 
-      setTimeout(() => setSuccess(""), 3000);
-    } catch (err) {
-      setError("Failed to update profile. Please try again.");
+      setTimeout(() => setSuccess(''), 3000);
+    } catch (_err) {
+      setError('Failed to update profile. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -173,14 +156,14 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
     if (!profile) return;
     setFormData(profile);
     setIsEditing(false);
-    setError("");
+    setError('');
   };
 
   const getInitials = (name: string) => {
     return name
-      .split(" ")
+      .split(' ')
       .map((n) => n[0])
-      .join("")
+      .join('')
       .toUpperCase();
   };
 
@@ -190,42 +173,42 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
   };
 
   const validatePhone = (phone: string): boolean => {
-    const phoneRegex = /^\+?[\d\s\-\(\)]+$/;
-    return phoneRegex.test(phone) && phone.replace(/\D/g, "").length >= 10;
+    const phoneRegex = /^\+?[\d\s\-()]+$/;
+    return phoneRegex.test(phone) && phone.replace(/\D/g, '').length >= 10;
   };
 
   const validateIMEI = (imei: string): boolean => {
-    if (!imei || imei === "N/A") return true; // Optional field
+    if (!imei || imei === 'N/A') return true; // Optional field
     const imeiRegex = /^\d{15}$/;
-    return imeiRegex.test(imei.replace(/\D/g, ""));
+    return imeiRegex.test(imei.replace(/\D/g, ''));
   };
 
   const formatPhoneNumber = (countryCode: string, mobile: string): string => {
-    if (!countryCode && !mobile) return "N/A";
-    const cleanCountryCode = countryCode?.replace(/\D/g, "") || "";
-    const cleanMobile = mobile?.replace(/\D/g, "") || "";
+    if (!countryCode && !mobile) return 'N/A';
+    const cleanCountryCode = countryCode?.replace(/\D/g, '') || '';
+    const cleanMobile = mobile?.replace(/\D/g, '') || '';
 
     if (cleanCountryCode && cleanMobile) {
       return `+${cleanCountryCode} ${cleanMobile}`;
     } else if (cleanMobile) {
       return cleanMobile;
     }
-    return "N/A";
+    return 'N/A';
   };
 
   const sanitizeInput = (value: string): string => {
-    return value.trim().replace(/[<>]/g, "");
+    return value.trim().replace(/[<>]/g, '');
   };
 
   const formatLocation = (latitude?: number, longitude?: number): string => {
     if (latitude && longitude) {
       return `Latitude ${latitude}, Longitude ${longitude}`;
     }
-    return "Location not available";
+    return 'Location not available';
   };
 
-  const formatTimestamp = (timestamp?: string) => {
-    if (!timestamp || timestamp === "N/A") return "N/A";
+  const _formatTimestamp = (timestamp?: string) => {
+    if (!timestamp || timestamp === 'N/A') return 'N/A';
     try {
       return new Date(timestamp).toLocaleString();
     } catch {
@@ -245,10 +228,10 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
         </div>
         <div
           style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "200px",
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '200px',
           }}
         >
           <Spinner size={3} label="Loading profile..." />
@@ -278,7 +261,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
       {error && (
         <MessageBar
           messageBarType={MessageBarType.error}
-          onDismiss={() => setError("")}
+          onDismiss={() => setError('')}
           className="profile-message"
         >
           {error}
@@ -288,7 +271,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
       {success && (
         <MessageBar
           messageBarType={MessageBarType.success}
-          onDismiss={() => setSuccess("")}
+          onDismiss={() => setSuccess('')}
           className="profile-message"
         >
           {success}
@@ -296,7 +279,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
       )}
 
       {/* Authentication Status Message */}
-      {profile.message && profile.message !== "N/A" && (
+      {profile.message && profile.message !== 'N/A' && (
         <MessageBar messageBarType={MessageBarType.info} className="profile-message">
           <strong>Authentication Status:</strong> {profile.message}
         </MessageBar>
@@ -312,7 +295,9 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
             <div className="profile-info">
               <h2 className="profile-name">{profile.name}</h2>
               <p className="profile-position">{profile.email}</p>
-              <p className="profile-company">{formatPhoneNumber(profile.country_code, profile.mobile)}</p>
+              <p className="profile-company">
+                {formatPhoneNumber(profile.country_code, profile.mobile)}
+              </p>
             </div>
           </div>
         </div>
@@ -329,17 +314,17 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
               <Label className="form-label">Full Name</Label>
               <TextField
                 value={formData.name}
-                onChange={(_, value) => handleInputChange("name", value)}
+                onChange={(_, value) => handleInputChange('name', value)}
                 disabled={!isEditing}
                 styles={{
                   field: {
-                    fontSize: "14px",
-                    border: "1px solid #d1d1d1",
-                    borderRadius: "6px",
-                    height: "40px",
+                    fontSize: '14px',
+                    border: '1px solid #d1d1d1',
+                    borderRadius: '6px',
+                    height: '40px',
                   },
                   fieldGroup: {
-                    border: "none",
+                    border: 'none',
                   },
                 }}
               />
@@ -349,17 +334,17 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
               <Label className="form-label">Email Address</Label>
               <TextField
                 value={formData.email}
-                onChange={(_, value) => handleInputChange("email", value)}
+                onChange={(_, value) => handleInputChange('email', value)}
                 disabled={!isEditing}
                 styles={{
                   field: {
-                    fontSize: "14px",
-                    border: "1px solid #d1d1d1",
-                    borderRadius: "6px",
-                    height: "40px",
+                    fontSize: '14px',
+                    border: '1px solid #d1d1d1',
+                    borderRadius: '6px',
+                    height: '40px',
                   },
                   fieldGroup: {
-                    border: "none",
+                    border: 'none',
                   },
                 }}
               />
@@ -369,17 +354,17 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
               <Label className="form-label">Mobile Number</Label>
               <TextField
                 value={formData.mobile}
-                onChange={(_, value) => handleInputChange("mobile", value)}
+                onChange={(_, value) => handleInputChange('mobile', value)}
                 disabled={!isEditing}
                 styles={{
                   field: {
-                    fontSize: "14px",
-                    border: "1px solid #d1d1d1",
-                    borderRadius: "6px",
-                    height: "40px",
+                    fontSize: '14px',
+                    border: '1px solid #d1d1d1',
+                    borderRadius: '6px',
+                    height: '40px',
                   },
                   fieldGroup: {
-                    border: "none",
+                    border: 'none',
                   },
                 }}
               />
@@ -389,17 +374,17 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
               <Label className="form-label">Country Code</Label>
               <TextField
                 value={formData.country_code}
-                onChange={(_, value) => handleInputChange("country_code", value)}
+                onChange={(_, value) => handleInputChange('country_code', value)}
                 disabled={!isEditing}
                 styles={{
                   field: {
-                    fontSize: "14px",
-                    border: "1px solid #d1d1d1",
-                    borderRadius: "6px",
-                    height: "40px",
+                    fontSize: '14px',
+                    border: '1px solid #d1d1d1',
+                    borderRadius: '6px',
+                    height: '40px',
                   },
                   fieldGroup: {
-                    border: "none",
+                    border: 'none',
                   },
                 }}
               />
@@ -409,20 +394,20 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
               <Label className="form-label">Address</Label>
               <TextField
                 value={formData.address}
-                onChange={(_, value) => handleInputChange("address", value)}
+                onChange={(_, value) => handleInputChange('address', value)}
                 disabled={!isEditing}
                 multiline
                 rows={2}
                 styles={{
                   field: {
-                    fontSize: "14px",
-                    border: "1px solid #d1d1d1",
-                    borderRadius: "6px",
-                    minHeight: "60px",
+                    fontSize: '14px',
+                    border: '1px solid #d1d1d1',
+                    borderRadius: '6px',
+                    minHeight: '60px',
                   },
                   fieldGroup: {
-                    border: "none",
-                    background: "white",
+                    border: 'none',
+                    background: 'white',
                   },
                 }}
               />
@@ -435,14 +420,14 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
                 disabled={true}
                 styles={{
                   field: {
-                    fontSize: "14px",
-                    border: "1px solid #d1d1d1",
-                    borderRadius: "6px",
-                    height: "40px",
-                    backgroundColor: "#f8f9fa",
+                    fontSize: '14px',
+                    border: '1px solid #d1d1d1',
+                    borderRadius: '6px',
+                    height: '40px',
+                    backgroundColor: '#f8f9fa',
                   },
                   fieldGroup: {
-                    border: "none",
+                    border: 'none',
                   },
                 }}
               />
@@ -464,7 +449,9 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
             </div>
             <div className="info-item">
               <span className="info-label">Phone Number:</span>
-              <span className="info-value">{formatPhoneNumber(profile.country_code, profile.mobile)}</span>
+              <span className="info-value">
+                {formatPhoneNumber(profile.country_code, profile.mobile)}
+              </span>
             </div>
             <div className="info-item">
               <span className="info-label">Account Status:</span>
@@ -477,34 +464,34 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
         {isEditing && (
           <div className="profile-actions">
             <PrimaryButton
-              text={isLoading ? "Saving..." : "Save Changes"}
+              text={isLoading ? 'Saving...' : 'Save Changes'}
               onClick={handleSave}
               disabled={isLoading}
               iconProps={isLoading ? undefined : { iconName: undefined }}
               styles={{
                 root: {
-                  height: "44px",
-                  fontSize: "14px",
-                  fontWeight: "600",
-                  borderRadius: "6px",
-                  border: "none",
+                  height: '44px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  borderRadius: '6px',
+                  border: 'none',
                   background: isLoading
-                    ? "#f3f2f1"
-                    : "linear-gradient(135deg, #0078d4 0%, #106ebe 100%)",
-                  color: isLoading ? "#605e5c" : "white",
-                  cursor: isLoading ? "not-allowed" : "pointer",
-                  transition: "all 0.2s ease",
-                  minWidth: "120px",
+                    ? '#f3f2f1'
+                    : 'linear-gradient(135deg, #0078d4 0%, #106ebe 100%)',
+                  color: isLoading ? '#605e5c' : 'white',
+                  cursor: isLoading ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.2s ease',
+                  minWidth: '120px',
                 },
                 rootHovered: {
                   background: isLoading
-                    ? "#f3f2f1"
-                    : "linear-gradient(135deg, #106ebe 0%, #005a9e 100%)",
-                  transform: isLoading ? "none" : "translateY(-1px)",
-                  boxShadow: isLoading ? "none" : "0 4px 12px rgba(0, 120, 212, 0.3)",
+                    ? '#f3f2f1'
+                    : 'linear-gradient(135deg, #106ebe 0%, #005a9e 100%)',
+                  transform: isLoading ? 'none' : 'translateY(-1px)',
+                  boxShadow: isLoading ? 'none' : '0 4px 12px rgba(0, 120, 212, 0.3)',
                 },
                 rootPressed: {
-                  transform: "translateY(0)",
+                  transform: 'translateY(0)',
                 },
               }}
             >
@@ -516,25 +503,25 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
               disabled={isLoading}
               styles={{
                 root: {
-                  height: "44px",
-                  fontSize: "14px",
-                  fontWeight: "500",
-                  borderRadius: "6px",
-                  border: "1px solid #d1d1d1",
-                  background: "white",
-                  color: "#323130",
-                  transition: "all 0.2s ease",
-                  minWidth: "80px",
+                  height: '44px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  borderRadius: '6px',
+                  border: '1px solid #d1d1d1',
+                  background: 'white',
+                  color: '#323130',
+                  transition: 'all 0.2s ease',
+                  minWidth: '80px',
                 },
                 rootHovered: {
-                  background: "#f8f9fa",
-                  borderColor: "#0078d4",
-                  color: "#0078d4",
-                  transform: "translateY(-1px)",
-                  boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+                  background: '#f8f9fa',
+                  borderColor: '#0078d4',
+                  color: '#0078d4',
+                  transform: 'translateY(-1px)',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
                 },
                 rootPressed: {
-                  transform: "translateY(0)",
+                  transform: 'translateY(0)',
                 },
               }}
             />

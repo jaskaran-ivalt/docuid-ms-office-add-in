@@ -114,7 +114,7 @@
   flex-shrink: 0;
   gap: 6px;
   margin-left: 0 !important;
-  margin-top: 8px !important; 
+  margin-top: 8px !important;
 }
 
 .document-open-button {
@@ -582,7 +582,6 @@
   animation: skeletonPulse 1.5s ease-in-out infinite;
 }
 
-
 .no-documents {
   display: flex;
   flex-direction: column;
@@ -754,7 +753,8 @@
 
 /* Animations */
 @keyframes skeletonPulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
@@ -774,8 +774,12 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Mobile Responsive Styles */
@@ -1049,4 +1053,4 @@
     font-size: 15px !important;
     min-width: 90px !important;
   }
-} 
+}

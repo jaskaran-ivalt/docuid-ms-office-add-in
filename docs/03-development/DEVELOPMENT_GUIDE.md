@@ -201,17 +201,17 @@ const testPhoneNumbers = {
 ### 4. Code Quality and Linting
 
 ```bash
-# Run ESLint
+# Run Biome linter
 bun run lint
 
-# Auto-fix ESLint issues
+# Auto-fix Biome issues
 bun run lint:fix
 
-# Format code with Prettier
-bun run prettier
+# Format code with Biome
+bun run format
 
-# Validate manifest file
-bun run validate
+# Check formatting
+bun run format:check
 ```
 
 ## Advanced Development
