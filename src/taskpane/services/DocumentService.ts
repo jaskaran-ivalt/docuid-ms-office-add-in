@@ -233,7 +233,8 @@ export class DocumentService {
 
   /**
    * Insert document content into PowerPoint.
-   * For demo / plain-text content a new slide with a text box is added.
+   * For demo / plain-text content, creates rich slides with logo and welcome info.
+   * For real pptx files, uses insertSlidesFromBase64.
    */
   private static async insertIntoPowerPoint(documentContent: DocumentContent): Promise<void> {
     const officeLogger = logger.createContextLogger('DocumentService.PowerPoint');
@@ -251,23 +252,100 @@ export class DocumentService {
         documentContent.contentType === 'text/plain' ||
         textContent.includes('demo document generated')
       ) {
-        // Use the Office.js Common API to insert a new slide with text
-        officeLogger.debug('Inserting plain text content as PowerPoint slide');
-        await Office.context.document.setSelectedDataAsync(textContent, {
-          coercionType: Office.CoercionType.Text,
-        });
+        officeLogger.debug('Inserting demo PowerPoint slides with welcome info');
+
+        const useModernApi = typeof PowerPoint !== 'undefined' && PowerPoint.run;
+        if (useModernApi) {
+          await PowerPoint.run(async (context) => {
+            const slides = context.presentation.slides;
+            slides.load('items');
+            await context.sync();
+
+            for (let i = slides.items.length - 1; i >= 0; i--) {
+              slides.items[i].delete();
+            }
+
+            // Slide 1: Welcome slide
+            const slide1 = context.presentation.slides.add();
+
+            const titleShape = slide1.shapes.addTextBox('Welcome to iVALT DocuID', {
+              left: 50, top: 50, width: 600, height: 70,
+            });
+            titleShape.textRange.font.size = 40;
+            titleShape.textRange.font.bold = true;
+
+            const subtitleShape = slide1.shapes.addTextBox(
+              'Biometric-Secured Document Management\nfor Microsoft Office',
+              { left: 50, top: 130, width: 600, height: 60 },
+            );
+            subtitleShape.textRange.font.size = 20;
+
+            const descShape = slide1.shapes.addTextBox(
+              'Access, manage, and share your documents securely with\none-tap biometric authentication via the iVALT mobile app.',
+              { left: 50, top: 210, width: 600, height: 50 },
+            );
+            descShape.textRange.font.size = 15;
+
+            const footerShape = slide1.shapes.addTextBox('                    iVALT DocuID', {
+              left: 50, top: 290, width: 600, height: 30,
+            });
+            footerShape.textRange.font.size = 12;
+            footerShape.textRange.font.color = '#888888';
+
+            // Slide 2: Key Features
+            const slide2 = context.presentation.slides.add();
+
+            const featTitle = slide2.shapes.addTextBox('Key Features', {
+              left: 50, top: 30, width: 600, height: 60,
+            });
+            featTitle.textRange.font.size = 32;
+            featTitle.textRange.font.bold = true;
+
+            const featList = slide2.shapes.addTextBox(
+              '  Biometric document access with one-tap login\n' +
+              '  Secure sharing with full audit trail\n' +
+              '  Works across Word, Excel, and PowerPoint\n' +
+              '  Real-time document activity tracking\n' +
+              '  End-to-end encrypted file storage',
+              { left: 50, top: 110, width: 600, height: 200 },
+            );
+            featList.textRange.font.size = 18;
+
+            // Slide 3: How It Works
+            const slide3 = context.presentation.slides.add();
+
+            const howTitle = slide3.shapes.addTextBox('How It Works', {
+              left: 50, top: 30, width: 600, height: 60,
+            });
+            howTitle.textRange.font.size = 32;
+            howTitle.textRange.font.bold = true;
+
+            const howList = slide3.shapes.addTextBox(
+              '1. Login with your registered mobile number\n' +
+              '2. Approve the biometric request on the iVALT app\n' +
+              '3. Browse and open documents from the task pane\n' +
+              '4. Share documents securely with colleagues',
+              { left: 50, top: 110, width: 600, height: 180 },
+            );
+            howList.textRange.font.size = 18;
+
+            await context.sync();
+          });
+        } else {
+          await Office.context.document.setSelectedDataAsync(textContent, {
+            coercionType: Office.CoercionType.Text,
+          });
+        }
       } else {
-        // For real pptx files use insertSelectedDataAsync with SlideRange (if available)
+        // For real pptx files use insertSlidesFromBase64 (if available)
         officeLogger.debug('Inserting base64 PPTX content into PowerPoint');
         const base64String = arrayBufferToBase64(arrayBuffer);
-        // PowerPoint.run is used for modern API; fall back to common API for older hosts
         if (typeof PowerPoint !== 'undefined' && PowerPoint.run) {
           await PowerPoint.run(async (context) => {
             context.presentation.insertSlidesFromBase64(base64String);
             await context.sync();
           });
         } else {
-          // Common API fallback
           await Office.context.document.setSelectedDataAsync(base64String, {
             coercionType: Office.CoercionType.SlideRange as unknown as string,
           });
