@@ -38,7 +38,7 @@
     "lint:fix": "biome check --write .",
     "signin": "office-addin-dev-settings m365-account login",
     "signout": "office-addin-dev-settings m365-account logout",
-    "vercel-build": "bun run build"
+    "vercel-build": "npm run build"
   },
   "dependencies": {
     "@fluentui/react": "^8.123.0",
