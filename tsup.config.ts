@@ -23,7 +23,7 @@ export default defineConfig({
     taskpane: 'src/taskpane/index.tsx',
     commands: 'src/commands/commands.ts',
   },
-  outDir: 'dist-tsup',
+  outDir: 'dist',
   format: ['iife'],
   platform: 'browser',
   target: 'es2015',

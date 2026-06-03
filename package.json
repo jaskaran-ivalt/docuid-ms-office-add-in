@@ -14,7 +14,7 @@
   },
   "scripts": {
     "preinstall": "node scripts/check-pm.cjs",
-    "build": "tsup",
+    "build": "tsup && node scripts/build.mjs",
     "build:dev": "tsup --minify false --sourcemap",
     "build:all": "tsup",
     "start": "bun run tools/dev-server-quick.ts",

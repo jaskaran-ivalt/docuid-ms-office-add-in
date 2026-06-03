@@ -5,7 +5,7 @@ import { join, extname } from 'node:path';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 
 const PORT = 3000;
-const DIST = join(import.meta.dirname, '..', 'dist-tsup');
+const DIST = join(import.meta.dirname, '..', 'dist');
 const SRC = join(import.meta.dirname, '..', 'src');
 const ROOT = join(import.meta.dirname, '..');
 const BACKEND_URL = 'https://www.docuid.net';
@@ -152,7 +152,7 @@ export async function startDevServer() {
   const server = createServer({ key: certs.key, cert: certs.cert }, handler);
   await new Promise<void>((resolve) => server.listen(PORT, resolve));
 
-  // Watch dist-tsup for changes and notify SSE clients
+  // Watch dist for changes and notify SSE clients
   let reloadTimer: ReturnType<typeof setTimeout> | null = null;
   const triggerReload = () => {
     if (reloadTimer) return;
