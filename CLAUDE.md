@@ -83,7 +83,7 @@ Use these commands to test against the live deployed build.
 - **Authentication**: Real API via DocuIdApiService (docuid.net + iVALT biometric)
 - **HTTP Client**: Axios
 - **Styling**: Vanilla CSS per component (no CSS framework)
-- **Runtime**: Bun
+- **Runtime**: Bun (enforced as the exclusive package manager)
 
 ### Project Structure
 

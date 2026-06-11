@@ -6,12 +6,14 @@
     "url": "https://github.com/OfficeDev/Office-Addin-TaskPane.git"
   },
   "license": "MIT",
+  "packageManager": "bun@1.3.14",
   "config": {
     "app_to_debug": "word",
     "app_type_to_debug": "desktop",
     "dev_server_port": 3000
   },
   "scripts": {
+    "preinstall": "node -e \"if (!/bun/i.test(process.env.npm_execpath || '') && !/bun/i.test(process.env.npm_config_user_agent || '')) { console.error('\\u001b[31mError: This repository is configured to use Bun as its package manager. Running npm/pnpm/yarn install is blocked. Please use \\u0027bun install\\u0027.\\u001b[0m\\n'); process.exit(1); }\"",
     "build": "webpack --mode production",
     "build:dev": "webpack --mode development",
     "dev-server": "webpack serve --mode development",
@@ -48,7 +50,7 @@
     "installer:build": "powershell -NoProfile -ExecutionPolicy Bypass -File ./installer/Build-Installer.ps1",
     "installer:package": "bun run validate:prod && bun run installer:build",
     "watch": "webpack --mode development --watch",
-    "vercel-build": "npm run build"
+    "vercel-build": "bun run build"
   },
   "dependencies": {
     "@fluentui/react": "^8.123.0",
