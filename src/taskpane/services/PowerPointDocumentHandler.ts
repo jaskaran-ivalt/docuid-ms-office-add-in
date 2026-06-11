@@ -109,7 +109,16 @@ export const PowerPointDocumentHandler: IDocumentHandler = {
             let textTop = 30;
             if (logoBase64) {
               try {
-                const logoShape = slide.shapes.addImage(logoBase64);
+                const logoShape = (
+                  slide.shapes as unknown as {
+                    addPicture: (base64: string) => {
+                      left: number;
+                      top: number;
+                      width: number;
+                      height: number;
+                    };
+                  }
+                ).addPicture(logoBase64);
                 // Position: top-left, reasonable size
                 logoShape.left = 30;
                 logoShape.top = 20;

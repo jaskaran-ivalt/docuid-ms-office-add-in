@@ -4,12 +4,13 @@
     "baseUrl": ".",
     "esModuleInterop": true,
     "experimentalDecorators": true,
-    "jsx": "react",
+    "jsx": "react-jsx",
     "noEmitOnError": true,
     "outDir": "lib",
     "sourceMap": true,
     "target": "es5",
     "resolveJsonModule": true,
+    "skipLibCheck": true,
     "lib": ["es2015", "dom"],
     "paths": {
       "@/*": ["./src/*"]
