@@ -112,3 +112,26 @@ export interface ShareApiResponse {
   shareLink?: string;
   message?: string;
 }
+
+/**
+ * Unified ShareData type for UI components
+ */
+export interface ShareData {
+  documentId: string;
+  email?: string;
+  countryCode?: string;
+  mobile?: string;
+  message?: string;
+}
+
+/**
+ * Share API response with optional enriched fields for UI notifications
+ */
+export interface ShareResponse {
+  shareId?: number;
+  shareLink?: string;
+  message?: string;
+  recipientEmail?: string;
+  recipientMobile?: string;
+  customMessage?: string;
+}

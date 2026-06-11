@@ -17,7 +17,7 @@ import { AuthService } from '@/taskpane/services/AuthService';
 import { DocuIdApiService } from '@/taskpane/services/DocuIdApiService';
 import { DocumentService } from '@/taskpane/services/DocumentService';
 import type { OfficeHost } from '@/taskpane/services/OfficeHostService';
-import type { AddinShareRequest, Document } from './common/types';
+import type { Document, ShareData, ShareResponse } from './common/types';
 import { docuIdTheme } from './theme/fluentTheme';
 import './App.css';
 
@@ -175,7 +175,7 @@ const App: React.FC<AppProps> = ({ officeHost = 'Unknown' }) => {
     }
   };
 
-  const handleDocumentShare = async (shareData: AddinShareRequest) => {
+  const handleDocumentShare = async (shareData: ShareData): Promise<ShareResponse> => {
     const response = await DocuIdApiService.shareDocument({
       documentId: Number(shareData.documentId),
       email: shareData.email,
