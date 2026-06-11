@@ -248,7 +248,8 @@ export class DocuIdApiService {
 
         // PowerPoint demo docs
         if (documentId === 3001 || documentId === 3002) {
-          const pptUrl = documentId === 3001 ? 'demo-ppt-presentation-url' : 'demo-ppt-investor-url';
+          const pptUrl =
+            documentId === 3001 ? 'demo-ppt-presentation-url' : 'demo-ppt-investor-url';
           return {
             documentId,
             fileName: documentId === 3001 ? 'Demo Presentation.pptx' : 'Investor Deck.pptx',
@@ -375,7 +376,10 @@ export class DocuIdApiService {
         'Operating Expenses,30000,32000,34000,36000,132000\n' +
         'Net Income,18000,22000,25200,28800,94000';
       mimeType = 'text/csv';
-    } else if (accessUrl === 'demo-ppt-presentation-url' || accessUrl === 'demo-powerpoint-content-url') {
+    } else if (
+      accessUrl === 'demo-ppt-presentation-url' ||
+      accessUrl === 'demo-powerpoint-content-url'
+    ) {
       // Demo Presentation — product showcase deck
       text =
         'iVALT DocuID  |  Product Showcase\n' +
@@ -400,7 +404,8 @@ export class DocuIdApiService {
         '  Microsoft Word  |  Microsoft Excel  |  Microsoft PowerPoint\n' +
         '\n' +
         'demo.docuid.net  |  support@docuid.net\n' +
-        'Generated: ' + new Date().toLocaleString();
+        'Generated: ' +
+        new Date().toLocaleString();
       mimeType = 'text/plain';
     } else if (accessUrl === 'demo-ppt-investor-url') {
       // Investor Deck — business overview
@@ -431,7 +436,8 @@ export class DocuIdApiService {
         '\n' +
         'Contact\n' +
         '  investors@docuid.net  |  www.docuid.net\n' +
-        'Generated: ' + new Date().toLocaleString();
+        'Generated: ' +
+        new Date().toLocaleString();
       mimeType = 'text/plain';
     } else {
       // Word (demo-word-content-url or legacy demo-document-content-url)

@@ -93,7 +93,7 @@ export class AuthService {
     try {
       const host = OfficeHostService.getHost();
       const requestFrom = `Auth Request from DocuID ${host} App`;
-      
+
       AuthService.authLogger.logApiRequest('POST', BIOMETRIC_ROUTES.AUTH_REQUEST);
 
       const response = await axios.post(
