@@ -5,7 +5,7 @@
  * and clearing the active PowerPoint presentation via the PowerPoint JavaScript
  * API and the Office Common API.
  *
- * - Plain-text / demo content is inserted via Office.CoercionType.Text.
+ * - Plain-text / demo content is inserted as a text box on a blank slide.
  * - Real PPTX binaries are inserted via PowerPoint.run insertSlidesFromBase64,
  *   with a Common API fallback for older hosts.
  */
@@ -18,12 +18,35 @@ import { logger } from './Logger';
 
 const pptLogger = logger.createContextLogger('PowerPointDocumentHandler');
 
+/**
+ * Remove every shape from a slide so it is completely blank (no placeholders).
+ * Must be called inside a PowerPoint.run context after shapes are loaded.
+ */
+async function clearSlideShapes(
+  slide: PowerPoint.Slide,
+  context: PowerPoint.RequestContext
+): Promise<void> {
+  const shapes = slide.shapes;
+  shapes.load('items');
+  await context.sync();
+
+  for (const shape of shapes.items) {
+    shape.delete();
+  }
+  await context.sync();
+}
+
 export const PowerPointDocumentHandler: IDocumentHandler = {
   /**
    * Insert document content into the active PowerPoint presentation.
-   * - Plain-text content uses setSelectedDataAsync with CoercionType.Text.
-   * - Binary PPTX content uses PowerPoint.run insertSlidesFromBase64 (modern API)
-   *   or falls back to setSelectedDataAsync with SlideRange coercion (older hosts).
+   *
+   * For plain-text / demo content:
+   *   - Clears all shapes from the first slide (removes placeholders).
+   *   - Adds a text box that fills the slide area with the content.
+   *
+   * For binary PPTX files:
+   *   - Uses PowerPoint.run insertSlidesFromBase64 (modern API).
+   *   - Falls back to setSelectedDataAsync with SlideRange coercion (older hosts).
    */
   async insert(documentContent: DocumentContent): Promise<void> {
     try {
@@ -35,17 +58,53 @@ export const PowerPointDocumentHandler: IDocumentHandler = {
       const textDecoder = new TextDecoder();
       const textContent = textDecoder.decode(arrayBuffer);
 
-      if (
+      const isTextContent =
         documentContent.contentType === 'text/plain' ||
-        textContent.includes('demo document generated')
-      ) {
-        // Use the Office.js Common API to insert text onto the current slide
-        pptLogger.debug('Inserting plain text content as PowerPoint slide');
-        await Office.context.document.setSelectedDataAsync(textContent, {
-          coercionType: Office.CoercionType.Text,
-        });
+        textContent.includes('demo document generated');
+
+      if (isTextContent) {
+        pptLogger.debug('Inserting plain text content as a text box on a blank slide');
+
+        if (typeof PowerPoint !== 'undefined' && PowerPoint.run) {
+          await PowerPoint.run(async (context) => {
+            const slides = context.presentation.slides;
+            slides.load('items');
+            await context.sync();
+
+            // Ensure at least one slide exists
+            if (slides.items.length === 0) {
+              slides.add();
+              await context.sync();
+              slides.load('items');
+              await context.sync();
+            }
+
+            const slide = slides.items[0];
+
+            // Delete every shape (including title/subtitle placeholders) so
+            // the text box we add is the only content on the slide.
+            await clearSlideShapes(slide, context);
+
+            // Add a text box that covers most of the slide (standard slide is
+            // 10 in x 7.5 in = 914400 x 6858000 EMUs; the API uses points,
+            // where 1 pt = 12700 EMUs. A 10-in slide = 720 pt wide).
+            slide.shapes.addTextBox(textContent, {
+              left: 30,
+              top: 30,
+              width: 660,
+              height: 480,
+            });
+
+            await context.sync();
+          });
+        } else {
+          // Common API fallback for older hosts that do not support PowerPoint.run
+          await Office.context.document.setSelectedDataAsync(textContent, {
+            coercionType: Office.CoercionType.Text,
+          });
+        }
       } else {
-        // For real pptx files use insertSlidesFromBase64 (modern API) or fall back
+        // Binary PPTX: insert slides from base64
         pptLogger.debug('Inserting base64 PPTX content into PowerPoint');
         const base64String = arrayBufferToBase64(arrayBuffer);
 
@@ -70,8 +129,13 @@ export const PowerPointDocumentHandler: IDocumentHandler = {
   },
 
   /**
-   * Clear the active PowerPoint presentation by deleting all existing slides
-   * and adding one fresh blank slide.
+   * Clear the active PowerPoint presentation by removing all shapes from every
+   * slide, then leaving only a single blank slide with no placeholders.
+   *
+   * Strategy:
+   *   1. Keep slide[0] and delete all others (avoids an empty-presentation error).
+   *   2. Strip every shape off slide[0] so it has no placeholders.
+   *
    * Falls back silently when PowerPoint.run is not available.
    */
   async clear(): Promise<void> {
@@ -85,15 +149,18 @@ export const PowerPointDocumentHandler: IDocumentHandler = {
       slides.load('items');
       await context.sync();
 
-      // Delete all slides from last to first to avoid index-shifting issues,
-      // then add a single blank slide so the presentation remains valid.
-      if (slides.items.length > 0) {
-        for (let i = slides.items.length - 1; i >= 0; i--) {
-          slides.items[i].delete();
-        }
-        context.presentation.slides.add();
+      if (slides.items.length === 0) {
+        return;
+      }
+
+      // Delete all slides after the first one (back-to-front to avoid index shift)
+      for (let i = slides.items.length - 1; i > 0; i--) {
+        slides.items[i].delete();
       }
       await context.sync();
+
+      // Strip all shapes (title/subtitle placeholders) off the remaining slide
+      await clearSlideShapes(slides.items[0], context);
     });
   },
 };
