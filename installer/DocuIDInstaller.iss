@@ -21,7 +21,7 @@ WizardStyle=modern
 UninstallDisplayIcon={sys}\WindowsPowerShell\v1.0\powershell.exe
 
 [Files]
-Source: "..\manifest-production.xml"; DestDir: "{commonappdata}\DocuID\OfficeAddin"; DestName: "manifest-production.xml"; Flags: ignoreversion
+Source: "..\manifests\manifest-production.xml"; DestDir: "{commonappdata}\DocuID\OfficeAddin"; DestName: "manifest-production.xml"; Flags: ignoreversion
 Source: "Install-DocuIDAddin.ps1"; DestDir: "{commonappdata}\DocuID\OfficeAddin"; Flags: ignoreversion
 Source: "Uninstall-DocuIDAddin.ps1"; DestDir: "{commonappdata}\DocuID\OfficeAddin"; Flags: ignoreversion
 Source: "Set-DocuIDCatalogForCurrentUser.ps1"; DestDir: "{commonappdata}\DocuID\OfficeAddin"; Flags: ignoreversion

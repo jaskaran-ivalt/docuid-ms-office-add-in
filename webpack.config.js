@@ -106,8 +106,8 @@ module.exports = async (env, options) => {
             to: 'assets/icons/[name][ext][query]',
           },
           {
-            from: 'manifest*.xml',
-            to: '[name]' + '[ext]',
+            from: 'manifests/manifest*.xml',
+            to: '[name][ext]',
             transform(content) {
               if (dev) {
                 return content;
@@ -121,7 +121,7 @@ module.exports = async (env, options) => {
             ? []
             : [
                 {
-                  from: 'manifest-production.xml',
+                  from: 'manifests/manifest-production.xml',
                   to: 'manifest-production.xml',
                   transform(content) {
                     // Replace placeholder URL with actual production URL
