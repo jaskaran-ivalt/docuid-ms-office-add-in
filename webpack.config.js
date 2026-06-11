@@ -1,6 +1,5 @@
 /* eslint-disable no-undef */
 
-const devCerts = require('office-addin-dev-certs');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
@@ -34,6 +33,7 @@ const API_TARGETS = {
 const apiTarget = USE_LOCAL_BACKEND ? API_TARGETS.local : API_TARGETS.remote;
 
 async function getHttpsOptions() {
+  const devCerts = require('office-addin-dev-certs');
   const httpsOptions = await devCerts.getHttpsServerOptions();
   return { ca: httpsOptions.ca, key: httpsOptions.key, cert: httpsOptions.cert };
 }
@@ -161,9 +161,9 @@ module.exports = async (env, options) => {
       server: {
         type: 'https',
         options:
-          env.WEBPACK_BUILD || options.https !== undefined
-            ? options.https
-            : await getHttpsOptions(),
+          dev
+            ? (env.WEBPACK_BUILD || options.https !== undefined ? options.https : await getHttpsOptions())
+            : {},
       },
       port: process.env.npm_package_config_dev_server_port || 3000,
       proxy: [
