@@ -33,7 +33,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
     loadUserData();
   }, []);
 
-  const handleInputChange = (field: keyof UserProfile, value: any) => {
+  const handleInputChange = (field: keyof UserProfile, value: UserProfile[keyof UserProfile]) => {
     if (!formData) return;
     const sanitizedValue = typeof value === 'string' ? sanitizeInput(value) : value;
     setFormData((prev) => ({ ...prev!, [field]: sanitizedValue }));

@@ -59,7 +59,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
     { key: 'friends', text: 'Friends Only' },
   ];
 
-  const handleInputChange = (field: keyof UserProfile, value: any) => {
+  const handleInputChange = (field: keyof UserProfile, value: UserProfile[keyof UserProfile]) => {
     if (!formData) return;
 
     // Sanitize input
@@ -104,7 +104,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
     return { isValid: errors.length === 0, errors };
   };
 
-  const _handlePreferenceChange = (field: keyof UserProfile['preferences'], value: any) => {
+  const _handlePreferenceChange = (field: string, value: unknown) => {
     if (!formData) return;
     setFormData((prev) => ({
       ...prev!,

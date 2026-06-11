@@ -1,6 +1,7 @@
 import axios, { type AxiosError, type AxiosInstance } from 'axios';
 import { API_CONFIG, DOCUMENT_ROUTES, SHARE_ROUTES } from '../../config/apiRoutes';
 import type {
+  AddinShareRequest,
   ApiResponse,
   DocuIdDocument,
   DocumentAccess,
@@ -465,7 +466,7 @@ export class DocuIdApiService {
   /**
    * Share a document
    */
-  static async shareDocument(payload: any): Promise<ApiResponse<ShareApiResponse>> {
+  static async shareDocument(payload: AddinShareRequest): Promise<ApiResponse<ShareApiResponse>> {
     const url = SHARE_ROUTES.OPTIMIZED;
     try {
       DocuIdApiService.apiLogger.logApiRequest('POST', url, { documentId: payload.documentId });

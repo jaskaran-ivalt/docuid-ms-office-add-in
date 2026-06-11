@@ -17,7 +17,7 @@ import { AuthService } from '@/taskpane/services/AuthService';
 import { DocuIdApiService } from '@/taskpane/services/DocuIdApiService';
 import { DocumentService } from '@/taskpane/services/DocumentService';
 import type { OfficeHost } from '@/taskpane/services/OfficeHostService';
-import type { Document } from './common/types';
+import type { AddinShareRequest, Document } from './common/types';
 import { docuIdTheme } from './theme/fluentTheme';
 import './App.css';
 
@@ -67,7 +67,7 @@ const App: React.FC<AppProps> = ({ officeHost = 'Unknown' }) => {
 
   useEffect(() => {
     // Inject host variables into body for global availability (portals/dialogs)
-    const vars = getHostVars() as any;
+    const vars = getHostVars() as React.CSSProperties;
     Object.keys(vars).forEach((key) => {
       document.body.style.setProperty(key, vars[key]);
     });
@@ -175,7 +175,7 @@ const App: React.FC<AppProps> = ({ officeHost = 'Unknown' }) => {
     }
   };
 
-  const handleDocumentShare = async (shareData: any) => {
+  const handleDocumentShare = async (shareData: AddinShareRequest) => {
     const response = await DocuIdApiService.shareDocument({
       documentId: Number(shareData.documentId),
       email: shareData.email,
@@ -196,7 +196,7 @@ const App: React.FC<AppProps> = ({ officeHost = 'Unknown' }) => {
   };
 
   return (
-    <ThemeProvider theme={docuIdTheme} style={getHostVars() as any}>
+    <ThemeProvider theme={docuIdTheme} style={getHostVars() as React.CSSProperties}>
       <div className="app-container">
         <Header
           user={user}

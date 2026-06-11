@@ -15,7 +15,7 @@ export interface LogEntry {
   level: LogLevel;
   context: string;
   message: string;
-  data?: any;
+  data?: unknown;
   error?: Error;
 }
 
@@ -121,7 +121,13 @@ export class Logger {
   /**
    * Internal logging method
    */
-  private log(level: LogLevel, context: string, message: string, data?: any, error?: Error): void {
+  private log(
+    level: LogLevel,
+    context: string,
+    message: string,
+    data?: unknown,
+    error?: Error
+  ): void {
     const entry: LogEntry = {
       timestamp: new Date().toISOString(),
       level,
@@ -169,35 +175,35 @@ export class Logger {
   /**
    * Debug level logging
    */
-  public debug(context: string, message: string, data?: any): void {
+  public debug(context: string, message: string, data?: unknown): void {
     this.log(LogLevel.DEBUG, context, message, data);
   }
 
   /**
    * Info level logging
    */
-  public info(context: string, message: string, data?: any): void {
+  public info(context: string, message: string, data?: unknown): void {
     this.log(LogLevel.INFO, context, message, data);
   }
 
   /**
    * Warning level logging
    */
-  public warn(context: string, message: string, data?: any): void {
+  public warn(context: string, message: string, data?: unknown): void {
     this.log(LogLevel.WARN, context, message, data);
   }
 
   /**
    * Error level logging
    */
-  public error(context: string, message: string, error?: Error, data?: any): void {
+  public error(context: string, message: string, error?: Error, data?: unknown): void {
     this.log(LogLevel.ERROR, context, message, data, error);
   }
 
   /**
    * Log API request
    */
-  public logApiRequest(context: string, method: string, url: string, data?: any): void {
+  public logApiRequest(context: string, method: string, url: string, data?: unknown): void {
     this.debug(context, `API Request: ${method} ${url}`, data);
   }
 
@@ -222,7 +228,7 @@ export class Logger {
   /**
    * Log authentication events
    */
-  public logAuthEvent(context: string, event: string, userId?: string, data?: any): void {
+  public logAuthEvent(context: string, event: string, userId?: string, data?: unknown): void {
     const message = `Auth Event: ${event}${userId ? ` (User: ${userId})` : ''}`;
     this.info(context, message, data);
   }
@@ -234,7 +240,7 @@ export class Logger {
     context: string,
     operation: string,
     success: boolean,
-    error?: any
+    error?: unknown
   ): void {
     const message = `Office Operation: ${operation} - ${success ? 'SUCCESS' : 'FAILED'}`;
     if (success) {
@@ -261,23 +267,23 @@ export class ContextualLogger {
     private context: string
   ) {}
 
-  debug(message: string, data?: any): void {
+  debug(message: string, data?: unknown): void {
     this.logger.debug(this.context, message, data);
   }
 
-  info(message: string, data?: any): void {
+  info(message: string, data?: unknown): void {
     this.logger.info(this.context, message, data);
   }
 
-  warn(message: string, data?: any): void {
+  warn(message: string, data?: unknown): void {
     this.logger.warn(this.context, message, data);
   }
 
-  error(message: string, error?: Error, data?: any): void {
+  error(message: string, error?: Error, data?: unknown): void {
     this.logger.error(this.context, message, error, data);
   }
 
-  logApiRequest(method: string, url: string, data?: any): void {
+  logApiRequest(method: string, url: string, data?: unknown): void {
     this.logger.logApiRequest(this.context, method, url, data);
   }
 
@@ -285,11 +291,11 @@ export class ContextualLogger {
     this.logger.logApiResponse(this.context, method, url, status, responseTime);
   }
 
-  logAuthEvent(event: string, userId?: string, data?: any): void {
+  logAuthEvent(event: string, userId?: string, data?: unknown): void {
     this.logger.logAuthEvent(this.context, event, userId, data);
   }
 
-  logOfficeOperation(operation: string, success: boolean, error?: any): void {
+  logOfficeOperation(operation: string, success: boolean, error?: unknown): void {
     this.logger.logOfficeOperation(this.context, operation, success, error);
   }
 }

@@ -8,7 +8,7 @@ import { Card } from '../shared/Card';
 interface PersonalInfoSectionProps {
   formData: UserProfile;
   isEditing: boolean;
-  onInputChange: (field: keyof UserProfile, value: any) => void;
+  onInputChange: (field: keyof UserProfile, value: UserProfile[keyof UserProfile]) => void;
 }
 
 const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({

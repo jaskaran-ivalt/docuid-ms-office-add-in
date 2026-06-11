@@ -152,7 +152,7 @@ export const PowerPointDocumentHandler: IDocumentHandler = {
         } else {
           // Common API fallback
           await Office.context.document.setSelectedDataAsync(base64String, {
-            coercionType: (Office.CoercionType as any).SlideRange,
+            coercionType: (Office.CoercionType as unknown as Record<string, number>).SlideRange,
           });
         }
       }
