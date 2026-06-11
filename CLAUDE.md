@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to AI assistants when working with code in this repository.
 
 ## AI Assistant Rules
 
@@ -8,197 +8,279 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Development Commands
 
-### Primary Development Commands
+### Build Commands
 
-- `bun run dev-server` - Start HTTPS development server on port 3000
-- `bun run start` - Start development server and sideload add-in in Word
-- `bun run build` - Production build
-- `bun run build:dev` - Development build
-- `bun run lint` - Run ESLint with Office Add-ins plugin
-- `bun run lint:fix` - Auto-fix ESLint issues
-- `bun run validate` - Validate manifest.xml
-- `bun run prettier` - Format code with Prettier
+| Command                  | Description                          |
+|--------------------------|--------------------------------------|
+| `bun run build`          | Production build (webpack)           |
+| `bun run build:dev`      | Development build (webpack)          |
+| `bun run dev-server`     | Start HTTPS dev server on port 3000  |
+| `bun run watch`          | Webpack watch mode (development)     |
+| `bun run vercel-build`   | Vercel CI production build           |
 
-### Office Add-in Specific Commands
+### Code Quality
+
+| Command              | Description                      |
+|----------------------|----------------------------------|
+| `bun run lint`       | Run Biome linter (check only)    |
+| `bun run lint:fix`   | Run Biome linter with auto-fix   |
+| `bun run format`     | Format all files with Biome      |
+| `bun run format:check` | Check formatting without writing |
+
+### Office Add-in - Dev Mode (localhost:3000)
+
+Use these commands during local development. They load code from the local webpack dev server.
+
+| Command                        | Target application         |
+|--------------------------------|----------------------------|
+| `bun run dev` / `dev:word`     | Microsoft Word (DEV)       |
+| `bun run dev:excel`            | Microsoft Excel (DEV)      |
+| `bun run dev:powerpoint`       | Microsoft PowerPoint (DEV) |
+| `bun run dev:stop:word`        | Stop Word dev sideload     |
+| `bun run dev:stop:excel`       | Stop Excel dev sideload    |
+| `bun run dev:stop:powerpoint`  | Stop PowerPoint dev sideload |
+
+### Office Add-in - Production Mode (addon.docuid.net)
+
+Use these commands to test against the live deployed build.
+
+| Command                          | Target application            |
+|----------------------------------|-------------------------------|
+| `bun run start` / `start:word`   | Microsoft Word (prod)         |
+| `bun run start:excel`            | Microsoft Excel (prod)        |
+| `bun run start:powerpoint`       | Microsoft PowerPoint (prod)   |
+| `bun run stop:word`              | Stop Word prod sideload       |
+| `bun run stop:excel`             | Stop Excel prod sideload      |
+| `bun run stop:powerpoint`        | Stop PowerPoint prod sideload |
+
+### Manifest Validation
+
+| Command                          | Manifest validated                        |
+|----------------------------------|-------------------------------------------|
+| `bun run validate:word`          | manifests/manifest.xml (prod Word)        |
+| `bun run validate:excel`         | manifests/manifest-excel.xml (prod Excel) |
+| `bun run validate:powerpoint`    | manifests/manifest-powerpoint.xml         |
+| `bun run validate:prod`          | manifests/manifest-production.xml         |
+| `bun run validate:dev`           | manifests/manifest-dev.xml                |
+| `bun run validate:dev:excel`     | manifests/manifest-excel-dev.xml          |
+| `bun run validate:dev:powerpoint`| manifests/manifest-powerpoint-dev.xml     |
+
+### Account & Installer
 
 - `bun run signin` - Sign in to M365 account for testing
 - `bun run signout` - Sign out of M365 account
-
-#### Per-host start/stop/validate
-
-| Command                       | Target application |
-|-------------------------------|--------------------|
-| `bun run start` / `start:word`      | Microsoft Word     |
-| `bun run start:excel`               | Microsoft Excel    |
-| `bun run start:powerpoint`          | Microsoft PowerPoint |
-| `bun run stop:word`                 | Stop Word sideload |
-| `bun run stop:excel`                | Stop Excel sideload |
-| `bun run stop:powerpoint`           | Stop PowerPoint sideload |
-| `bun run validate:word`             | Validate Word manifest |
-| `bun run validate:excel`            | Validate Excel manifest |
-| `bun run validate:powerpoint`       | Validate PowerPoint manifest |
-
-### Testing Commands
-
-- Manual testing is done through `bun run start` which sideloads in Word
-- Test with different phone numbers in AuthService: include "invalid" or "error" to test error scenarios
+- `bun run installer:build` - Build Windows installer (PowerShell)
+- `bun run installer:package` - Validate prod manifest then build installer
 
 ## Architecture Overview
 
 ### Technology Stack
 
-- **Frontend**: React 19 with TypeScript, targeting ES5 for Office compatibility
-- **Build System**: Webpack 5 with Babel for transpilation
-- **Office Integration**: Office.js API for Word document manipulation
-- **Authentication**: Mock biometric authentication via phone number (production: docuid.net + iVALT)
-- **Styling**: CSS modules with responsive design for Office task pane
+- **Frontend**: React 19 with TypeScript, ES5 target for Office compatibility
+- **Build System**: Webpack 5 with Babel transpilation
+- **Linter/Formatter**: Biome (replaces ESLint + Prettier)
+- **Office Integration**: Office.js API for Word, Excel, PowerPoint manipulation
+- **Authentication**: Real API via DocuIdApiService (docuid.net + iVALT biometric)
+- **HTTP Client**: Axios
+- **Styling**: Vanilla CSS per component (no CSS framework)
+- **Runtime**: Bun
 
 ### Project Structure
 
 ```
+manifests/                         # All Office Add-in XML manifests
+├── manifest.xml                   # Word (production -> addon.docuid.net)
+├── manifest-excel.xml             # Excel (production)
+├── manifest-powerpoint.xml        # PowerPoint (production)
+├── manifest-production.xml        # Used for installer packaging
+├── manifest-dev.xml               # Word (dev -> localhost:3000)
+├── manifest-excel-dev.xml         # Excel (dev -> localhost:3000)
+└── manifest-powerpoint-dev.xml    # PowerPoint (dev -> localhost:3000)
+
 src/
-├── taskpane/          # Main React application
-│   ├── App.tsx        # Root component with auth state management
-│   ├── components/    # React components (Header, LoginForm, DocumentList)
-│   ├── services/      # Business logic (AuthService, DocumentService)
-│   └── index.tsx      # Entry point
-└── commands/          # Office ribbon commands
+├── taskpane/                      # Main React application (task pane UI)
+│   ├── App.tsx                    # Root component, auth state management, host routing
+│   ├── App.css                    # Root styles
+│   ├── taskpane.html              # HTML entry point
+│   ├── taskpane.ts                # Office.js initialization
+│   ├── taskpane.css               # Task pane base styles
+│   ├── index.tsx                  # React DOM render entry
+│   ├── common/                    # Shared utilities and constants
+│   ├── theme/                     # Design tokens and theme definitions
+│   ├── icons/                     # SVG icon assets
+│   ├── components/                # React UI components
+│   │   ├── Header.tsx             # App header with navigation and profile
+│   │   ├── LoginForm.tsx          # Phone number auth UI
+│   │   ├── DocumentList.tsx       # Document browse, search, insert
+│   │   ├── ShareSidebar.tsx       # Document sharing UI
+│   │   ├── ShareSuccessModal.tsx  # Post-share confirmation modal
+│   │   ├── DownloadSheet.tsx      # Document download flow
+│   │   ├── DebugPanel.tsx         # Developer debug overlay
+│   │   ├── AppDownloadButtons.tsx # Mobile app download links
+│   │   ├── DesignSystem.tsx       # Design system showcase component
+│   │   ├── qrCodes.ts             # QR code generation utilities
+│   │   ├── profile/               # Profile page components
+│   │   │   ├── ProfilePage.tsx
+│   │   │   ├── ProfileCard.tsx
+│   │   │   ├── PersonalInfoSection.tsx
+│   │   │   └── AccountInfoSection.tsx
+│   │   └── shared/                # Reusable primitive components
+│   │       ├── Button.tsx
+│   │       ├── Card.tsx
+│   │       ├── Avatar.tsx
+│   │       ├── SearchBox.tsx
+│   │       └── index.ts
+│   └── services/                  # Business logic and API layer
+│       ├── AuthService.ts         # Auth state, token management, localStorage
+│       ├── DocuIdApiService.ts    # All REST API calls to docuid.net
+│       ├── DocumentService.ts     # Document fetch and management logic
+│       ├── IDocumentHandler.ts    # Interface for host-specific handlers
+│       ├── OfficeHostService.ts   # Detects current Office host (Word/Excel/PPT)
+│       ├── WordDocumentHandler.ts # Word.run() document insertion logic
+│       ├── ExcelDocumentHandler.ts# Excel-specific insertion logic
+│       ├── PowerPointDocumentHandler.ts # PowerPoint-specific insertion logic
+│       └── Logger.ts              # Structured logging utility
+└── commands/                      # Office ribbon command handlers
 ```
 
 ### Key Architectural Patterns
 
+#### Multi-Host Office Support
+
+The add-in supports Word, Excel, and PowerPoint via a shared `IDocumentHandler` interface. `OfficeHostService` detects the current host at runtime and `App.tsx` instantiates the appropriate handler:
+- `WordDocumentHandler` - uses `Word.run()` and paragraph insertion
+- `ExcelDocumentHandler` - uses `Excel.run()` and cell/sheet operations
+- `PowerPointDocumentHandler` - uses `PowerPoint.run()` and slide shape insertion
+
 #### Authentication Flow
 
-- Phone number input → Mock biometric verification → Session token storage
-- AuthService handles localStorage persistence with 24-hour expiration
-- Production ready for docuid.net API integration (currently commented out)
+- Phone number input -> iVALT biometric verification via `DocuIdApiService`
+- `AuthService` persists JWT token in localStorage with expiration tracking
+- All API requests include `Authorization: Bearer <token>` header
 
-#### Document Management
+#### Manifest Strategy
 
-- DocumentService provides mock documents for development
-- Office.js integration inserts content into Word documents using Word.run()
-- Supports document metadata display (title, type, size, date)
+Two manifest sets exist side-by-side in `manifests/`:
+- **Dev manifests** (`*-dev.xml`): Point to `https://localhost:3000` - used with `bun run dev:*`
+- **Prod manifests** (`manifest*.xml`): Point to `https://addon.docuid.net` - used with `bun run start:*`
+- Never edit prod manifests during local development; use the `-dev` variants
 
 #### State Management
 
-- React hooks (useState, useEffect) for component state
-- No external state management library - using local component state
-- Authentication state managed in App.tsx and persisted via AuthService
-
-#### Office Add-in Architecture
-
-- manifest.xml configures add-in permissions and entry points
-- Webpack replaces localhost URLs with production URLs for deployment
-- HTTPS required for Office Add-in security requirements
+- React hooks (`useState`, `useEffect`) for all component and app-level state
+- No external state management library
+- Authentication state lives in `App.tsx` and is hydrated from `AuthService` on mount
 
 ## Development Environment
 
 ### Configuration Files
 
 - `tsconfig.json` - TypeScript with ES5 target for Office compatibility
-- `webpack.config.js` - Configures HTTPS dev server, manifest URL replacement
-- `babel.config.json` - Transpilation for React/TypeScript to ES5
-- `package.json` - Development server runs on port 3000
-- `.eslintrc.json` - Uses office-addins plugin for Office-specific linting
+- `webpack.config.js` - HTTPS dev server, asset copying, URL replacement
+- `babel.config.json` - React/TypeScript to ES5 transpilation
+- `biome.json` - Linting and formatting rules (replaces .eslintrc + .prettierrc)
+- `package.json` - All scripts; dev server on port 3000
 
 ### Path Aliases
 
 - `@/*` resolves to `./src/*` for cleaner imports
-- Configured in both tsconfig.json and webpack.config.js
+- Configured in both `tsconfig.json` and `webpack.config.js`
 
 ### Development vs Production
 
-- Development: Uses localhost:3000 with self-signed certificates
-- Production: URLs replaced with production domain in manifest.xml during build
-- Mock authentication and documents in development mode
+| Aspect         | Dev (`dev:*` scripts)              | Prod (`start:*` scripts)            |
+|----------------|------------------------------------|-------------------------------------|
+| Manifest       | `manifests/*-dev.xml`              | `manifests/manifest*.xml`           |
+| Source URL     | `https://localhost:3000`           | `https://addon.docuid.net`          |
+| Code served by | Webpack dev server (hot reload)    | Vercel-deployed static build        |
+| Ribbon label   | "iVALT DocuID (DEV)"              | "iVALT DocuID"                      |
 
 ## API Integration
 
-### Current Implementation
+### DocuIdApiService
 
-- **AuthService**: Mock authentication with localStorage session management
-- **DocumentService**: Mock document data with simulated API delays
-- Production API calls commented out but ready for integration
-
-### Production API Integration
-
-- Base URL: https://dev.docuid.net
-- JWT token authentication
+All REST API calls live in `DocuIdApiService.ts`:
+- Base URL: `https://dev.docuid.net` (configurable)
+- JWT Bearer token authentication
 - Document CRUD operations
-- Error handling for network failures and authentication errors
+- Share, download, and QR code endpoints
+- Axios instance with interceptors for auth headers and error handling
+
+### AuthService
+
+Manages session lifecycle:
+- Token storage and retrieval from localStorage
+- Expiration checking
+- Login, logout, and session refresh logic
 
 ## Office.js Integration
 
-### Word API Usage
+### Per-Host API Usage
 
-- `Word.run()` for document manipulation
-- Inserts content using `context.document.body.insertParagraph()`
-- Applies Word built-in styles (Title, Normal)
-- Includes metadata and timestamps in inserted content
+- **Word**: `Word.run()` + `context.document.body.insertParagraph()`, content controls
+- **Excel**: `Excel.run()` + range/cell value setting and sheet operations
+- **PowerPoint**: `PowerPoint.run()` + slide shape and image insertion
 
-### Add-in Manifest
+### Add-in Manifests
 
-- Targets Word (Document host)
-- ReadWriteDocument permissions
-- Ribbon button in Home tab
-- Desktop form factor support
+- All manifests are in `manifests/` directory
+- Each host has a prod manifest and a `-dev` variant
+- `manifest-production.xml` is used exclusively for the Windows installer package
+- ReadWriteDocument permissions; ribbon button in Home tab; Desktop form factor
 
 ## Testing Strategy
 
-### Development Testing
+### Local Development Testing
 
-- Use `bun run start` to sideload in Word
-- Test authentication with different phone numbers
-- Verify document list loading and Office.js integration
+1. Start dev server: `bun run dev-server`
+2. Sideload into target app: `bun run dev:word` / `dev:excel` / `dev:powerpoint`
+3. The ribbon button will show "(DEV)" label to confirm local code is running
+4. Stop sideload: `bun run dev:stop:word` etc.
 
 ### Error Scenarios
 
-- Phone numbers containing "invalid" or "error" trigger test failures
-- Network simulation with setTimeout delays
-- Token expiration handling
+- Network and auth errors are surfaced via Logger.ts and displayed in DebugPanel
+- Use `DebugPanel.tsx` during development to inspect state and API responses
 
 ## Security Considerations
 
-- HTTPS enforced for Office Add-in requirements
-- Session tokens stored in localStorage with expiration
-- Input validation for phone numbers
-- CORS headers configured for Office Add-in domains
-- No sensitive data in localStorage (production will use secure token storage)
+- HTTPS enforced (Office Add-in requirement); self-signed certs via office-addin-dev-certs
+- JWT tokens stored in localStorage with expiration; cleared on logout
+- Input validation applied before all API calls
+- CORS configured for `docuid.net` and `addon.docuid.net` domains
 
 ## Deployment Notes
 
-### Development Deployment
+### Development
 
-- Self-signed certificates via office-addin-dev-certs
-- Webpack dev server with HTTPS on port 3000
-- Automatic add-in sideloading for testing
+- Self-signed certs generated by `office-addin-dev-certs`
+- Webpack dev server on `https://localhost:3000`
+- Use `*-dev.xml` manifests exclusively
 
-### Production Deployment
+### Production
 
-- Update webpack.config.js production URL (line 8)
-- Build with `bun run build`
-- Deploy to HTTPS-enabled hosting
-- Update manifest.xml URLs to production endpoints
-- Configure API base URLs in service classes
+- Build: `bun run build` -> outputs to `dist/`
+- Host: Vercel (`vercel.json` configured); `bun run vercel-build` used in CI
+- Manifests already reference `https://addon.docuid.net` - no changes needed
+- Installer: `bun run installer:package` validates prod manifest then runs PowerShell build
 
 ## Code Conventions
 
-### TypeScript Patterns
+### TypeScript
 
-- Interface definitions for API responses and data structures
-- Async/await for all API calls
-- Error handling with try/catch blocks
-- Type safety for Office.js API calls
+- Interface definitions for all API responses and domain models
+- Async/await for all async operations
+- Try/catch with Logger.ts for error handling
+- Strict typing for Office.js API calls
 
-### React Patterns
+### React
 
-- Functional components with hooks
-- Props interfaces for type safety
-- Error boundary pattern for graceful error handling
-- Loading states for all async operations
+- Functional components with hooks only (no class components)
+- Props interfaces defined inline or in adjacent `.types.ts` files
+- Loading and error states required for all async operations
 
-### Office Add-in Patterns
+### Office Add-in
 
-- Office.js API calls wrapped in service methods
-- Proper context synchronization with `await context.sync()`
-- Graceful fallbacks for unsupported Office features
+- All Office.js calls wrapped in service methods, never called directly from components
+- Always `await context.sync()` after batched Office operations
+- Graceful fallbacks for Office features not available in all hosts
