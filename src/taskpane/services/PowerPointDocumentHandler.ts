@@ -6,6 +6,7 @@
  * API and the Office Common API.
  *
  * - Plain-text / demo content is inserted as a text box on a blank slide.
+ *   A DocuID logo is added above the text when available.
  * - Real PPTX binaries are inserted via PowerPoint.run insertSlidesFromBase64,
  *   with a Common API fallback for older hosts.
  */
@@ -36,13 +37,30 @@ async function clearSlideShapes(
   await context.sync();
 }
 
+/**
+ * Fetch the DocuID logo from the add-in server and return it as a base64 string.
+ * Returns null if the fetch fails (e.g. offline, asset not found).
+ */
+async function fetchLogoBase64(): Promise<string | null> {
+  try {
+    const logoUrl = `${window.location.origin}/assets/logo-transparent-bg.png`;
+    const response = await fetch(logoUrl);
+    if (!response.ok) return null;
+    const arrayBuffer = await response.arrayBuffer();
+    return arrayBufferToBase64(arrayBuffer);
+  } catch {
+    return null;
+  }
+}
+
 export const PowerPointDocumentHandler: IDocumentHandler = {
   /**
    * Insert document content into the active PowerPoint presentation.
    *
    * For plain-text / demo content:
    *   - Clears all shapes from the first slide (removes placeholders).
-   *   - Adds a text box that fills the slide area with the content.
+   *   - Embeds the DocuID logo at the top of the slide (if available).
+   *   - Adds a text box below the logo with the document content.
    *
    * For binary PPTX files:
    *   - Uses PowerPoint.run insertSlidesFromBase64 (modern API).
@@ -65,6 +83,9 @@ export const PowerPointDocumentHandler: IDocumentHandler = {
       if (isTextContent) {
         pptLogger.debug('Inserting plain text content as a text box on a blank slide');
 
+        // Fetch the logo before entering PowerPoint.run (async fetch not allowed inside)
+        const logoBase64 = await fetchLogoBase64();
+
         if (typeof PowerPoint !== 'undefined' && PowerPoint.run) {
           await PowerPoint.run(async (context) => {
             const slides = context.presentation.slides;
@@ -81,18 +102,33 @@ export const PowerPointDocumentHandler: IDocumentHandler = {
 
             const slide = slides.items[0];
 
-            // Delete every shape (including title/subtitle placeholders) so
-            // the text box we add is the only content on the slide.
+            // Strip all shapes (title/subtitle placeholders) so the slide is blank
             await clearSlideShapes(slide, context);
 
-            // Add a text box that covers most of the slide (standard slide is
-            // 10 in x 7.5 in = 914400 x 6858000 EMUs; the API uses points,
-            // where 1 pt = 12700 EMUs. A 10-in slide = 720 pt wide).
+            // Add the DocuID logo at the top-left of the slide
+            let textTop = 30;
+            if (logoBase64) {
+              try {
+                const logoShape = slide.shapes.addImage(logoBase64);
+                // Position: top-left, reasonable size
+                logoShape.left = 30;
+                logoShape.top = 20;
+                logoShape.width = 150;
+                logoShape.height = 50;
+                await context.sync();
+                // Push text down to sit below the logo with a small gap
+                textTop = 85;
+              } catch {
+                pptLogger.info('Logo shape insertion not supported on this host version');
+              }
+            }
+
+            // Add the text box below the logo (standard slide is ~720 pt wide, 540 pt tall)
             slide.shapes.addTextBox(textContent, {
               left: 30,
-              top: 30,
+              top: textTop,
               width: 660,
-              height: 480,
+              height: 540 - textTop - 20,
             });
 
             await context.sync();
