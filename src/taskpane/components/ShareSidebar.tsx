@@ -14,6 +14,7 @@ import { useState } from 'react';
 import PhoneInput, { parsePhoneNumber } from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 import './ShareSidebar.css';
+import type { ShareData, ShareResponse } from '../common/types';
 
 interface Document {
   id: string;
@@ -30,23 +31,6 @@ interface ShareSidebarProps {
   onShare: (shareData: ShareData) => Promise<ShareResponse>;
   onCloseDocument?: (documentId: string) => Promise<void>;
   onShareSuccess?: (response: ShareResponse) => void;
-}
-
-interface ShareData {
-  documentId: string;
-  email?: string;
-  countryCode?: string;
-  mobile?: string;
-  message?: string;
-}
-
-interface ShareResponse {
-  shareLink?: string;
-  shareId?: number;
-  message?: string;
-  recipientEmail?: string;
-  recipientMobile?: string;
-  customMessage?: string;
 }
 
 const ShareSidebar: React.FC<ShareSidebarProps> = ({

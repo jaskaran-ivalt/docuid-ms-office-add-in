@@ -133,3 +133,5 @@ nul
 # Vendored CLI binaries and archives (large; download locally if needed)
 /tools/innoextract/
 /tools/*.zip
+
+package-lock.json

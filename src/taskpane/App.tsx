@@ -15,9 +15,9 @@ import LoginForm from '@/taskpane/components/LoginForm';
 import ProfilePage from '@/taskpane/components/profile/ProfilePage';
 import { AuthService } from '@/taskpane/services/AuthService';
 import { DocuIdApiService } from '@/taskpane/services/DocuIdApiService';
-import { DocumentService } from '@/taskpane/services/document';
+import { DocumentService } from '@/taskpane/services/DocumentService';
 import type { OfficeHost } from '@/taskpane/services/OfficeHostService';
-import type { Document } from './common/types';
+import type { Document, ShareData, ShareResponse } from './common/types';
 import { docuIdTheme } from './theme/fluentTheme';
 import './App.css';
 
@@ -67,7 +67,7 @@ const App: React.FC<AppProps> = ({ officeHost = 'Unknown' }) => {
 
   useEffect(() => {
     // Inject host variables into body for global availability (portals/dialogs)
-    const vars = getHostVars();
+    const vars = getHostVars() as React.CSSProperties;
     Object.keys(vars).forEach((key) => {
       document.body.style.setProperty(key, vars[key]);
     });
@@ -175,13 +175,7 @@ const App: React.FC<AppProps> = ({ officeHost = 'Unknown' }) => {
     }
   };
 
-  const handleDocumentShare = async (shareData: {
-    documentId: string;
-    email?: string;
-    countryCode?: string;
-    mobile?: string;
-    message?: string;
-  }) => {
+  const handleDocumentShare = async (shareData: ShareData): Promise<ShareResponse> => {
     const response = await DocuIdApiService.shareDocument({
       documentId: Number(shareData.documentId),
       email: shareData.email,
@@ -202,7 +196,7 @@ const App: React.FC<AppProps> = ({ officeHost = 'Unknown' }) => {
   };
 
   return (
-    <ThemeProvider theme={docuIdTheme} style={getHostVars()}>
+    <ThemeProvider theme={docuIdTheme} style={getHostVars() as React.CSSProperties}>
       <div className="app-container">
         <Header
           user={user}

@@ -10,6 +10,7 @@
     "sourceMap": true,
     "target": "es5",
     "resolveJsonModule": true,
+    "skipLibCheck": true,
     "lib": ["es2015", "dom"],
     "paths": {
       "@/*": ["./src/*"]

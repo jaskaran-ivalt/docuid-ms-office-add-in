@@ -102,16 +102,14 @@ src/
 ### 1. Starting Development
 
 ```bash
-# Dev server with live reload (no Office)
-bun run start
+# Start development server with hot reload
+bun run dev-server
 
-# Debug in a specific Office app (recommended)
-bun run debug:word
-bun run debug:excel
-bun run debug:ppt
+# Start with automatic Office sideloading (recommended)
+bun start
 
-# Debug all three at once
-bun run debug:all
+# Build for development (without server)
+bun run build:dev
 ```
 
 Changes to `.tsx`, `.ts`, or `.css` files trigger automatic rebuild (~2-4s) and the add-in task pane reloads via SSE live reload.
@@ -179,10 +177,8 @@ export class ExtendedService {
 #### Manual Testing
 
 ```bash
-# Debug in specific Office application
-bun run debug:word
-bun run debug:excel
-bun run debug:ppt
+# Start with specific Office application
+bun start --host word
 
 # Test specific scenarios
 # 1. Authentication flow with various phone numbers

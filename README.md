@@ -27,6 +27,30 @@ bun install
 bun run debug:word     # launches Word with live-reload dev server
 ```
 
+   ```bash
+   git clone <repository-url>
+   cd DocuID
+   ```
+
+2. **Install dependencies**
+
+   ```bash
+   bun install
+   # or npm install
+   ```
+
+3. **Start development**
+   ```bash
+   bun start
+   # This will build, start HTTPS server, and sideload in Word
+   ```
+
+This will automatically:
+
+- Start the HTTPS development server on port 3000
+- Launch Microsoft Word
+- Sideload the add-in for testing
+
 ## ⚙️ Configuration
 
 ### API Key Setup
@@ -163,9 +187,14 @@ DocuID/
 
 ### Available Scripts
 
-**Build (tsup ~2-4s)**
-- `bun run build` — Production build
-- `bun run build:dev` — Dev build (sourcemaps)
+- `bun start` - Start development server and sideload add-in
+- `bun run build` - Build for production
+- `bun run build:dev` - Build for development
+- `bun run dev-server` - Start development server only
+- `bun run lint` - Run Biome linter
+- `bun run lint:fix` - Run Biome linter with auto-fix
+- `bun run format` - Format code with Biome
+- `bun run format:check` - Check code formatting with Biome
 
 **Start (dev server + live reload)**
 - `bun run start` — Dev server + watch + auto-reload on save

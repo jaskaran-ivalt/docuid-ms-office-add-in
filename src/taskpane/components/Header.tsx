@@ -6,7 +6,7 @@ import type { OfficeHost } from '@/taskpane/services/OfficeHostService';
 import './Header.css';
 
 interface HeaderProps {
-  user: { name: string; phone: string; email: string } | null;
+  user: { name?: string; phone: string; email?: string } | null;
   onLogout: () => void;
   onNavigateToProfile?: () => void;
   onToggleDebug?: () => void;

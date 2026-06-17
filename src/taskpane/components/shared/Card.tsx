@@ -19,6 +19,11 @@ export const Card: React.FC<CardProps> = ({
     3: '0 6.4px 14.4px rgba(0,0,0,0.13), 0 1.2px 3.6px rgba(0,0,0,0.11)',
   };
 
+  const customRootStyles =
+    styles && typeof styles === 'object' && 'root' in styles
+      ? (styles.root as Record<string, unknown>)
+      : undefined;
+
   return (
     <Stack
       {...props}
@@ -34,7 +39,7 @@ export const Card: React.FC<CardProps> = ({
                 boxShadow: shadowMap[elevation === 3 ? 3 : ((elevation + 1) as 2 | 3)],
               }
             : undefined,
-          ...styles?.root,
+          ...customRootStyles,
         },
       }}
     >

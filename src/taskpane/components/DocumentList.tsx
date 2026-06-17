@@ -7,14 +7,7 @@ import ShareSuccessModal from './ShareSuccessModal';
 import { Card } from './shared/Card';
 import './DocumentList.css';
 
-import type { Document, ShareApiResponse as ShareResponse } from '../common/types';
-
-interface ShareData {
-  documentId: string;
-  email?: string;
-  mobile?: string;
-  message?: string;
-}
+import type { Document, ShareData, ShareResponse } from '../common/types';
 
 interface DocumentListProps {
   documents: Document[];
