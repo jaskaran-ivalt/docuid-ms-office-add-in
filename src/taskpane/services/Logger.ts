@@ -15,14 +15,14 @@ export interface LogEntry {
   level: LogLevel;
   context: string;
   message: string;
-  data?: any;
+  data?: unknown;
   error?: Error;
 }
 
 export class Logger {
   private static instance: Logger;
   private logLevel: LogLevel = LogLevel.INFO;
-  private enableConsoleOutput: boolean = process.env.NODE_ENV === "development";
+  private enableConsoleOutput: boolean = process.env.NODE_ENV === 'development';
   private logHistory: LogEntry[] = [];
   private maxHistorySize: number = 1000;
 
@@ -43,8 +43,8 @@ export class Logger {
    */
   private loadSettings(): void {
     try {
-      const storedLevel = window.localStorage.getItem("docuid_log_level");
-      const storedConsole = window.localStorage.getItem("docuid_console_logging");
+      const storedLevel = window.localStorage.getItem('docuid_log_level');
+      const storedConsole = window.localStorage.getItem('docuid_console_logging');
 
       if (storedLevel !== null) {
         const level = parseInt(storedLevel, 10);
@@ -54,14 +54,14 @@ export class Logger {
       }
 
       if (storedConsole !== null) {
-        this.enableConsoleOutput = storedConsole === "true";
+        this.enableConsoleOutput = storedConsole === 'true';
       }
 
       // Default to DEBUG in development
-      if (process.env.NODE_ENV === "development") {
+      if (process.env.NODE_ENV === 'development') {
         this.logLevel = LogLevel.DEBUG;
       }
-    } catch (error) {
+    } catch (_error) {
       // Silently ignore storage errors in production
     }
   }
@@ -72,8 +72,8 @@ export class Logger {
   public setLogLevel(level: LogLevel): void {
     this.logLevel = level;
     try {
-      window.localStorage.setItem("docuid_log_level", level.toString());
-    } catch (e) {
+      window.localStorage.setItem('docuid_log_level', level.toString());
+    } catch (_e) {
       // Ignore storage errors
     }
   }
@@ -84,8 +84,8 @@ export class Logger {
   public setConsoleOutput(enabled: boolean): void {
     this.enableConsoleOutput = enabled;
     try {
-      window.localStorage.setItem("docuid_console_logging", enabled.toString());
-    } catch (e) {
+      window.localStorage.setItem('docuid_console_logging', enabled.toString());
+    } catch (_e) {
       // Ignore storage errors
     }
   }
@@ -121,7 +121,13 @@ export class Logger {
   /**
    * Internal logging method
    */
-  private log(level: LogLevel, context: string, message: string, data?: any, error?: Error): void {
+  private log(
+    level: LogLevel,
+    context: string,
+    message: string,
+    data?: unknown,
+    error?: Error
+  ): void {
     const entry: LogEntry = {
       timestamp: new Date().toISOString(),
       level,
@@ -152,16 +158,16 @@ export class Logger {
 
     switch (entry.level) {
       case LogLevel.DEBUG:
-        console.debug(prefix, entry.message, entry.data || "");
+        console.debug(prefix, entry.message, entry.data || '');
         break;
       case LogLevel.INFO:
-        console.info(prefix, entry.message, entry.data || "");
+        console.info(prefix, entry.message, entry.data || '');
         break;
       case LogLevel.WARN:
-        console.warn(prefix, entry.message, entry.data || "");
+        console.warn(prefix, entry.message, entry.data || '');
         break;
       case LogLevel.ERROR:
-        console.error(prefix, entry.message, entry.error || entry.data || "");
+        console.error(prefix, entry.message, entry.error || entry.data || '');
         break;
     }
   }
@@ -169,35 +175,35 @@ export class Logger {
   /**
    * Debug level logging
    */
-  public debug(context: string, message: string, data?: any): void {
+  public debug(context: string, message: string, data?: unknown): void {
     this.log(LogLevel.DEBUG, context, message, data);
   }
 
   /**
    * Info level logging
    */
-  public info(context: string, message: string, data?: any): void {
+  public info(context: string, message: string, data?: unknown): void {
     this.log(LogLevel.INFO, context, message, data);
   }
 
   /**
    * Warning level logging
    */
-  public warn(context: string, message: string, data?: any): void {
+  public warn(context: string, message: string, data?: unknown): void {
     this.log(LogLevel.WARN, context, message, data);
   }
 
   /**
    * Error level logging
    */
-  public error(context: string, message: string, error?: Error, data?: any): void {
+  public error(context: string, message: string, error?: Error, data?: unknown): void {
     this.log(LogLevel.ERROR, context, message, data, error);
   }
 
   /**
    * Log API request
    */
-  public logApiRequest(context: string, method: string, url: string, data?: any): void {
+  public logApiRequest(context: string, method: string, url: string, data?: unknown): void {
     this.debug(context, `API Request: ${method} ${url}`, data);
   }
 
@@ -211,7 +217,7 @@ export class Logger {
     status: number,
     responseTime?: number
   ): void {
-    const message = `API Response: ${method} ${url} - ${status}${responseTime ? ` (${responseTime}ms)` : ""}`;
+    const message = `API Response: ${method} ${url} - ${status}${responseTime ? ` (${responseTime}ms)` : ''}`;
     if (status >= 400) {
       this.warn(context, message);
     } else {
@@ -222,8 +228,8 @@ export class Logger {
   /**
    * Log authentication events
    */
-  public logAuthEvent(context: string, event: string, userId?: string, data?: any): void {
-    const message = `Auth Event: ${event}${userId ? ` (User: ${userId})` : ""}`;
+  public logAuthEvent(context: string, event: string, userId?: string, data?: unknown): void {
+    const message = `Auth Event: ${event}${userId ? ` (User: ${userId})` : ''}`;
     this.info(context, message, data);
   }
 
@@ -234,9 +240,9 @@ export class Logger {
     context: string,
     operation: string,
     success: boolean,
-    error?: any
+    error?: unknown
   ): void {
-    const message = `Office Operation: ${operation} - ${success ? "SUCCESS" : "FAILED"}`;
+    const message = `Office Operation: ${operation} - ${success ? 'SUCCESS' : 'FAILED'}`;
     if (success) {
       this.debug(context, message);
     } else {
@@ -261,23 +267,23 @@ export class ContextualLogger {
     private context: string
   ) {}
 
-  debug(message: string, data?: any): void {
+  debug(message: string, data?: unknown): void {
     this.logger.debug(this.context, message, data);
   }
 
-  info(message: string, data?: any): void {
+  info(message: string, data?: unknown): void {
     this.logger.info(this.context, message, data);
   }
 
-  warn(message: string, data?: any): void {
+  warn(message: string, data?: unknown): void {
     this.logger.warn(this.context, message, data);
   }
 
-  error(message: string, error?: Error, data?: any): void {
+  error(message: string, error?: Error, data?: unknown): void {
     this.logger.error(this.context, message, error, data);
   }
 
-  logApiRequest(method: string, url: string, data?: any): void {
+  logApiRequest(method: string, url: string, data?: unknown): void {
     this.logger.logApiRequest(this.context, method, url, data);
   }
 
@@ -285,11 +291,11 @@ export class ContextualLogger {
     this.logger.logApiResponse(this.context, method, url, status, responseTime);
   }
 
-  logAuthEvent(event: string, userId?: string, data?: any): void {
+  logAuthEvent(event: string, userId?: string, data?: unknown): void {
     this.logger.logAuthEvent(this.context, event, userId, data);
   }
 
-  logOfficeOperation(operation: string, success: boolean, error?: any): void {
+  logOfficeOperation(operation: string, success: boolean, error?: unknown): void {
     this.logger.logOfficeOperation(this.context, operation, success, error);
   }
 }

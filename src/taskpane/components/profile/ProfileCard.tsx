@@ -1,6 +1,8 @@
-import React from "react";
-import { User as UserProfile } from "../../common/types";
-import { formatPhoneNumber } from "../../common/utils";
+import type React from 'react';
+import type { User as UserProfile } from '../../common/types';
+import { formatPhoneNumber } from '../../common/utils';
+
+import { Card } from '../shared/Card';
 
 interface ProfileCardProps {
   profile: UserProfile;
@@ -9,14 +11,14 @@ interface ProfileCardProps {
 const ProfileCard: React.FC<ProfileCardProps> = ({ profile }) => {
   const getInitials = (name: string) => {
     return name
-      .split(" ")
+      .split(' ')
       .map((n) => n[0])
-      .join("")
+      .join('')
       .toUpperCase();
   };
 
   return (
-    <div className="profile-card">
+    <Card className="profile-card">
       <div className="profile-avatar-section">
         <div className="profile-avatar">
           <div className="avatar-placeholder">{getInitials(profile.name)}</div>
@@ -24,10 +26,12 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile }) => {
         <div className="profile-info">
           <h2 className="profile-name">{profile.name}</h2>
           <p className="profile-position">{profile.email}</p>
-          <p className="profile-company">{formatPhoneNumber(profile.country_code, profile.mobile)}</p>
+          <p className="profile-company">
+            {formatPhoneNumber(profile.country_code, profile.mobile)}
+          </p>
         </div>
       </div>
-    </div>
+    </Card>
   );
 };
 

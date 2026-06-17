@@ -1,20 +1,19 @@
-import React, { useState } from "react";
 import {
-  Panel,
-  PanelType,
-  TextField,
-  PrimaryButton,
   DefaultButton,
-  Stack,
+  Label,
   MessageBar,
   MessageBarType,
-  Spinner,
-  Label,
-} from "@fluentui/react";
-import { Share, Mail, Phone, FileText, Calendar, HardDrive, X, Loader2 } from "lucide-react";
-import PhoneInput, { parsePhoneNumber } from "react-phone-number-input";
-import "react-phone-number-input/style.css";
-import "./ShareSidebar.css";
+  Panel,
+  PanelType,
+  PrimaryButton,
+  TextField,
+} from '@fluentui/react';
+import { Calendar, FileText, Loader2, Mail, Share, X } from 'lucide-react';
+import type React from 'react';
+import { useState } from 'react';
+import PhoneInput, { parsePhoneNumber } from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
+import './ShareSidebar.css';
 
 interface Document {
   id: string;
@@ -58,15 +57,15 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({
   onCloseDocument,
   onShareSuccess,
 }) => {
-  const [email, setEmail] = useState("");
-  const [phoneValue, setPhoneValue] = useState<string | undefined>("");
-  const [countryCode, setCountryCode] = useState(""); // e.g., "US", "IN"
-  const [mobile, setMobile] = useState(""); // e.g., "9530654704" (without country code)
-  const [message, setMessage] = useState("");
+  const [email, setEmail] = useState('');
+  const [phoneValue, setPhoneValue] = useState<string | undefined>('');
+  const [countryCode, setCountryCode] = useState(''); // e.g., "US", "IN"
+  const [mobile, setMobile] = useState(''); // e.g., "9530654704" (without country code)
+  const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-  const [shareResponse, setShareResponse] = useState<ShareResponse | null>(null);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [_shareResponse, setShareResponse] = useState<ShareResponse | null>(null);
 
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -78,52 +77,52 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({
   };
 
   const handlePhoneChange = (value: string | undefined) => {
-    setPhoneValue(value || "");
+    setPhoneValue(value || '');
 
     if (value) {
       const phoneNumber = parsePhoneNumber(value);
       if (phoneNumber) {
-        setCountryCode(phoneNumber.countryCallingCode || "");
-        setMobile(phoneNumber.nationalNumber || "");
+        setCountryCode(phoneNumber.countryCallingCode || '');
+        setMobile(phoneNumber.nationalNumber || '');
       } else {
-        setCountryCode("");
-        setMobile("");
+        setCountryCode('');
+        setMobile('');
       }
     } else {
-      setCountryCode("");
-      setMobile("");
+      setCountryCode('');
+      setMobile('');
     }
   };
 
   const handleShare = async () => {
     if (!document) return;
 
-    setError("");
-    setSuccess("");
+    setError('');
+    setSuccess('');
 
     if (!email && !mobile) {
-      setError("Please enter either an email address or mobile number.");
+      setError('Please enter either an email address or mobile number.');
       return;
     }
 
     if (email && !validateEmail(email)) {
-      setError("Please enter a valid email address.");
+      setError('Please enter a valid email address.');
       return;
     }
 
     if (mobile && !validateMobile(mobile)) {
-      setError("Please enter a valid mobile number.");
+      setError('Please enter a valid mobile number.');
       return;
     }
 
     if (mobile && !countryCode) {
-      setError("Please select a valid country code.");
+      setError('Please select a valid country code.');
       return;
     }
 
     setIsLoading(true);
-    setError("");
-    setSuccess("");
+    setError('');
+    setSuccess('');
 
     try {
       const shareData: ShareData = {
@@ -141,7 +140,7 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({
         customMessage: message || undefined,
       };
       setShareResponse(enrichedResponse);
-      setSuccess("Document shared successfully!");
+      setSuccess('Document shared successfully!');
 
       // Notify parent component of successful share
       if (onShareSuccess) {
@@ -153,60 +152,60 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({
         onDismiss();
         // Reset form after sidebar closes
         setTimeout(() => {
-          setEmail("");
-          setPhoneValue("");
-          setCountryCode("");
-          setMobile("");
-          setMessage("");
-          setSuccess("");
+          setEmail('');
+          setPhoneValue('');
+          setCountryCode('');
+          setMobile('');
+          setMessage('');
+          setSuccess('');
           setShareResponse(null);
         }, 300);
       }, 500);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to share document. Please try again.");
+      setError(err instanceof Error ? err.message : 'Failed to share document. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleDismiss = () => {
-    setEmail("");
-    setPhoneValue("");
-    setCountryCode("");
-    setMobile("");
-    setMessage("");
-    setError("");
-    setSuccess("");
+    setEmail('');
+    setPhoneValue('');
+    setCountryCode('');
+    setMobile('');
+    setMessage('');
+    setError('');
+    setSuccess('');
     setShareResponse(null);
     onDismiss();
   };
 
-  const handleCloseDocument = async () => {
+  const _handleCloseDocument = async () => {
     if (!document || !onCloseDocument) return;
 
     try {
       await onCloseDocument(document.id);
-      setSuccess("Document closed successfully!");
+      setSuccess('Document closed successfully!');
       setTimeout(() => {
         onDismiss();
       }, 1500);
-    } catch (err) {
-      setError("Failed to close document. Please try again.");
+    } catch (_err) {
+      setError('Failed to close document. Please try again.');
     }
   };
 
   const getDocumentIcon = (type: string) => {
     switch (type.toLowerCase()) {
-      case "pdf":
+      case 'pdf':
         return <FileText size={20} color="#dc3545" />;
-      case "doc":
-      case "docx":
+      case 'doc':
+      case 'docx':
         return <FileText size={20} color="#0d6efd" />;
-      case "xls":
-      case "xlsx":
+      case 'xls':
+      case 'xlsx':
         return <FileText size={20} color="#198754" />;
-      case "ppt":
-      case "pptx":
+      case 'ppt':
+      case 'pptx':
         return <FileText size={20} color="#fd7e14" />;
       default:
         return <FileText size={20} color="#6c757d" />;
@@ -265,30 +264,13 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({
                 <TextField
                   placeholder="Enter email address"
                   value={email}
-                  onChange={(_, value) => setEmail(value || "")}
+                  onChange={(_, value) => setEmail(value || '')}
                   disabled={isLoading}
                   styles={{
-                    field: {
-                      paddingLeft: "44px",
-                      fontSize: "14px",
-                      height: "40px",
-                      transition: "all 0.2s ease",
-                    },
-                    fieldGroup: {
-                      border: "1px solid #d1d1d1",
-                      borderRadius: "6px",
-                      transition: "all 0.2s ease",
-                      selectors: {
-                        ":focus-within": {
-                          border: "2px solid #0078d4",
-                          boxShadow: "0 0 0 3px rgba(0, 120, 212, 0.1)",
-                        },
-                        "::after": {
-                          display: "none",
-                        },
-                      },
-                    },
+                    field: { paddingLeft: '44px' },
+                    fieldGroup: { border: 'none' },
                   }}
+                  className="share-textfield"
                 />
               </div>
             </div>
@@ -314,34 +296,15 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({
               <TextField
                 placeholder="Add a personal message..."
                 value={message}
-                onChange={(_, value) => setMessage(value || "")}
+                onChange={(_, value) => setMessage(value || '')}
                 multiline
                 rows={3}
                 disabled={isLoading}
                 styles={{
-                  field: {
-                    fontSize: "14px",
-                    border: "1px solid #d1d1d1",
-                    borderRadius: "6px",
-                    padding: "12px",
-                    resize: "none",
-                    transition: "all 0.2s ease",
-                  },
-                  fieldGroup: {
-                    border: "1px solid #d1d1d1",
-                    borderRadius: "6px",
-                    transition: "all 0.2s ease",
-                    selectors: {
-                      ":focus-within": {
-                        border: "2px solid #0078d4",
-                        boxShadow: "0 0 0 3px rgba(0, 120, 212, 0.1)",
-                      },
-                      "::after": {
-                        display: "none",
-                      },
-                    },
-                  },
+                  field: { padding: '10px' },
+                  fieldGroup: { border: 'none' },
                 }}
+                className="share-textfield-multiline"
               />
             </div>
           </div>
@@ -350,11 +313,11 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({
           {error && (
             <MessageBar
               messageBarType={MessageBarType.error}
-              onDismiss={() => setError("")}
+              onDismiss={() => setError('')}
               styles={{
                 root: {
-                  marginBottom: success ? "8px" : "0",
-                  borderRadius: "6px",
+                  marginBottom: success ? '8px' : '0',
+                  borderRadius: '6px',
                 },
               }}
             >
@@ -365,11 +328,11 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({
           {success && (
             <MessageBar
               messageBarType={MessageBarType.success}
-              onDismiss={() => setSuccess("")}
+              onDismiss={() => setSuccess('')}
               styles={{
                 root: {
-                  marginBottom: "0",
-                  borderRadius: "6px",
+                  marginBottom: '0',
+                  borderRadius: '6px',
                 },
               }}
             >
@@ -382,42 +345,7 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({
             <PrimaryButton
               onClick={handleShare}
               disabled={isLoading || (!email && !mobile)}
-              styles={{
-                root: {
-                  height: "44px",
-                  fontSize: "14px",
-                  fontWeight: "600",
-                  borderRadius: "8px",
-                  border: "none",
-                  background:
-                    (!email && !mobile) || isLoading
-                      ? "#f3f2f1"
-                      : "linear-gradient(135deg, #0078d4 0%, #106ebe 100%)",
-                  color: (!email && !mobile) || isLoading ? "#605e5c" : "white",
-                  cursor: (!email && !mobile) || isLoading ? "not-allowed" : "pointer",
-                  transition: "all 0.2s ease",
-                  flex: 1,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "8px",
-                  minWidth: "120px",
-                  boxShadow: (!email && !mobile) || isLoading ? "none" : "0 2px 8px rgba(0, 120, 212, 0.2)",
-                },
-                rootHovered: {
-                  background:
-                    (!email && !mobile) || isLoading
-                      ? "#f3f2f1"
-                      : "linear-gradient(135deg, #106ebe 0%, #005a9e 100%)",
-                  transform: (!email && !mobile) || isLoading ? "none" : "translateY(-2px)",
-                  boxShadow:
-                    (!email && !mobile) || isLoading ? "none" : "0 6px 16px rgba(0, 120, 212, 0.3)",
-                },
-                rootPressed: {
-                  transform: "translateY(0)",
-                  boxShadow: (!email && !mobile) || isLoading ? "none" : "0 2px 4px rgba(0, 120, 212, 0.2)",
-                },
-              }}
+              className="share-submit-btn"
             >
               {isLoading ? (
                 <>
@@ -425,38 +353,17 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({
                   <span>Sharing...</span>
                 </>
               ) : (
-                <span>Share Document</span>
+                <>
+                  <Share size={16} />
+                  <span>Share Document</span>
+                </>
               )}
             </PrimaryButton>
             <DefaultButton
               text="Cancel"
               onClick={handleDismiss}
               disabled={isLoading}
-              styles={{
-                root: {
-                  height: "44px",
-                  fontSize: "14px",
-                  fontWeight: "500",
-                  borderRadius: "8px",
-                  border: "1px solid #d1d1d1",
-                  background: "white",
-                  color: "#323130",
-                  transition: "all 0.2s ease",
-                  minWidth: "80px",
-                  boxShadow: "0 1px 3px rgba(0, 0, 0, 0.08)",
-                },
-                rootHovered: {
-                  background: "#f8f9fa",
-                  borderColor: "#0078d4",
-                  color: "#0078d4",
-                  transform: "translateY(-2px)",
-                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.12)",
-                },
-                rootPressed: {
-                  transform: "translateY(0)",
-                  boxShadow: "0 1px 2px rgba(0, 0, 0, 0.08)",
-                },
-              }}
+              className="share-cancel-btn"
             />
           </div>
         </div>

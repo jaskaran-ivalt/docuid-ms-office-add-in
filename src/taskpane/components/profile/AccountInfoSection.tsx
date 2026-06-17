@@ -1,7 +1,9 @@
-import React from "react";
-import { Calendar } from "lucide-react";
-import { User as UserProfile } from "../../common/types";
-import { formatPhoneNumber } from "../../common/utils";
+import { Calendar } from 'lucide-react';
+import type React from 'react';
+import type { User as UserProfile } from '../../common/types';
+import { formatPhoneNumber } from '../../common/utils';
+
+import { Card } from '../shared/Card';
 
 interface AccountInfoSectionProps {
   profile: UserProfile;
@@ -9,7 +11,7 @@ interface AccountInfoSectionProps {
 
 const AccountInfoSection: React.FC<AccountInfoSectionProps> = ({ profile }) => {
   return (
-    <div className="profile-section">
+    <Card className="profile-section">
       <h3 className="section-title">
         <Calendar size={18} />
         Account Information
@@ -22,14 +24,16 @@ const AccountInfoSection: React.FC<AccountInfoSectionProps> = ({ profile }) => {
         </div>
         <div className="info-item">
           <span className="info-label">Phone Number:</span>
-          <span className="info-value">{formatPhoneNumber(profile.country_code, profile.mobile)}</span>
+          <span className="info-value">
+            {formatPhoneNumber(profile.country_code, profile.mobile)}
+          </span>
         </div>
         <div className="info-item">
           <span className="info-label">Account Status:</span>
           <span className="info-value status-active">Active</span>
         </div>
       </div>
-    </div>
+    </Card>
   );
 };
 

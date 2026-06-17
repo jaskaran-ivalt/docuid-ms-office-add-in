@@ -1,13 +1,16 @@
 # Dependencies
 node_modules/
+node_mod*
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
+bun-debug.log*
 
+node_modules_old
 # Production builds
 /build
 /dist
+/dist-tsup
 /.next/
 /out/
 

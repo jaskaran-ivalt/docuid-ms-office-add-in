@@ -60,10 +60,10 @@ MONITORING_ENABLED=true
 
 ```bash
 # Run all quality checks
-pnpm run lint                    # ESLint validation
-pnpm run prettier               # Code formatting
-pnpm run validate               # Manifest validation
-pnpm run build                  # Production build test
+bun run lint                    # Biome linter
+bun run format                  # Biome formatter
+bun run validate               # Manifest validation
+bun run build                  # Production build test
 ```
 
 ### Security Checklist
@@ -125,7 +125,7 @@ module.exports = merge(common, {
 rm -rf dist/
 
 # Create production build
-NODE_ENV=production pnpm run build
+NODE_ENV=production bun run build
 
 # Verify build output
 ls -la dist/
@@ -389,7 +389,7 @@ updateManifestUrls(environment);
 ```bash
 # Clean and build
 rm -rf dist/
-NODE_ENV=production pnpm run build
+NODE_ENV=production bun run build
 
 # Update manifest for production
 node deployment/update-manifest.js production
@@ -459,7 +459,7 @@ jobs:
 
       - name: Build for production
         run: |
-          NODE_ENV=production pnpm run build
+          NODE_ENV=production bun run build
           node deployment/update-manifest.js production
 
       - name: Deploy to server
@@ -507,7 +507,7 @@ steps:
     displayName: "Run quality checks"
 
   - script: |
-      NODE_ENV=production pnpm run build
+      NODE_ENV=production bun run build
       node deployment/update-manifest.js production
     displayName: "Build for production"
 

@@ -8,27 +8,38 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Development Commands
 
-### Primary Development Commands
+### Build
+- `bun run build` — Production build (tsup, ~2-4s)
+- `bun run build:dev` — Dev build with sourcemaps
 
-- `bun run dev-server` - Start HTTPS development server on port 3000
-- `bun run start` - Start development server and sideload add-in in Word
-- `bun run build` - Production build
-- `bun run build:dev` - Development build
-- `bun run lint` - Run ESLint with Office Add-ins plugin
-- `bun run lint:fix` - Auto-fix ESLint issues
-- `bun run validate` - Validate manifest.xml
-- `bun run prettier` - Format code with Prettier
+### Start (dev server + live reload)
+- `bun run start` — Dev server, tsup --watch, auto-reload on save
+- `bun run stop` — Stop all debugging
 
-### Office Add-in Specific Commands
+### Debug (launch add-in in Office app)
+- `bun run debug:word` — Debug in Word
+- `bun run debug:excel` — Debug in Excel
+- `bun run debug:ppt` — Debug in PowerPoint
+- `bun run debug:all` — Debug all 3 at once
+- `bun run stop:word` — Stop Word debugging
+- `bun run stop:excel` — Stop Excel debugging
+- `bun run stop:ppt` — Stop PowerPoint debugging
 
-- `bun run signin` - Sign in to M365 account for testing
-- `bun run signout` - Sign out of M365 account
-- `bun run stop` - Stop sideloaded add-in
+### Validate
+- `bun run validate` — Validate manifest.xml
+- `bun run validate:excel` — Validate Excel manifest
+- `bun run validate:ppt` — Validate PowerPoint manifest
+- `bun run validate:prod` — Validate production manifest
 
-### Testing Commands
+### Lint / Format
+- `bun run lint` — Biome check
+- `bun run lint:fix` — Auto-fix
+- `bun run format` — Format all files
+- `bun run format:check` — Check formatting
 
-- Manual testing is done through `bun run start` which sideloads in Word
-- Test with different phone numbers in AuthService: include "invalid" or "error" to test error scenarios
+### Account
+- `bun run signin` — Sign in to M365 account
+- `bun run signout` — Sign out of M365 account
 
 ## Architecture Overview
 

@@ -1,6 +1,6 @@
 # Windows Executable Distribution (Demo)
 
-This guide explains how to package and distribute the iVALT Docuid add-in as a Windows installer so users can use it in Microsoft Word before Store publication.
+This guide explains how to package and distribute the iVALT DocuID add-in as a Windows installer so users can use it in Microsoft Word before Store publication.
 
 ## What this installer does
 
@@ -14,7 +14,7 @@ This guide explains how to package and distribute the iVALT Docuid add-in as a W
 ## Prerequisites (build machine)
 
 - Windows 10/11
-- `pnpm` installed
+- `bun` installed
 - Inno Setup 6 installed (provides `ISCC.exe`)
 
 ## Build the installer
@@ -22,19 +22,19 @@ This guide explains how to package and distribute the iVALT Docuid add-in as a W
 From project root:
 
 ```powershell
-pnpm install
-pnpm run installer:package
+bun install
+bun run installer:package
 ```
 
 Output installer:
 
-- `dist\installer\iVALT-Docuid-WordAddin-Installer.exe`
+- `dist\installer\iVALT-DocuID-WordAddin-Installer.exe`
 
 If build fails with `ISCC.exe not found`, install Inno Setup 6 and rerun.
 
 ## Install on demo machine
 
-1. Copy `iVALT-Docuid-WordAddin-Installer.exe` to the target machine.
+1. Copy `iVALT-DocuID-WordAddin-Installer.exe` to the target machine.
 2. Right-click and select **Run as administrator**.
 3. Complete setup.
 4. **Sign out of Windows and sign back in** once (so Active Setup runs for your profile), **or** run the per-user script below.
@@ -43,7 +43,7 @@ If build fails with `ISCC.exe not found`, install Inno Setup 6 and rerun.
 ## Verify in Word
 
 1. Open Word.
-2. Go to **Home** tab and look for the **iVALT Docuid** ribbon button.
+2. Go to **Home** tab and look for the **iVALT DocuID** ribbon button.
 3. Click it and verify task pane opens from `addon.docuid.net`.
 
 If not visible immediately:
@@ -52,7 +52,7 @@ If not visible immediately:
    `powershell -NoProfile -ExecutionPolicy Bypass -File "%ProgramData%\DocuID\OfficeAddin\Register-ForCurrentUser.ps1"`
 2. Fully close Word (`WIN + R` -> `taskkill /IM WINWORD.EXE /F`).
 3. Open Word again.
-4. Check **Insert > My Add-ins** and verify **iVALT Docuid** appears.
+4. Check **Insert > My Add-ins** and verify **iVALT DocuID** appears.
 
 ## Uninstall behavior
 
@@ -85,6 +85,6 @@ Uninstalling from Windows Apps/Programs performs cleanup:
 ### Re-deploy updated add-in
 
 1. Update `manifest-production.xml` version if needed.
-2. Build new installer (`pnpm run installer:package`).
+2. Build new installer (`bun run installer:package`).
 3. Uninstall old installer on demo machines.
 4. Install new executable as admin.

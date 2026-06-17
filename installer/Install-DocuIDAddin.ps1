@@ -89,7 +89,7 @@ $activeSetupRegPath = "HKLM:\SOFTWARE\Microsoft\Active Setup\Installed Component
 $stubPath = "powershell.exe -NoProfile -ExecutionPolicy Bypass -File `"$currentUserSetupScriptPath`" -ManifestPath `"$manifestPath`""
 
 New-Item -Path $activeSetupRegPath -Force | Out-Null
-New-ItemProperty -Path $activeSetupRegPath -Name "(Default)" -PropertyType String -Value "iVALT Docuid Office Add-in User Bootstrap" -Force | Out-Null
+New-ItemProperty -Path $activeSetupRegPath -Name "(Default)" -PropertyType String -Value "iVALT DocuID Office Add-in User Bootstrap" -Force | Out-Null
 New-ItemProperty -Path $activeSetupRegPath -Name "Version" -PropertyType String -Value "1,0,3,0" -Force | Out-Null
 New-ItemProperty -Path $activeSetupRegPath -Name "StubPath" -PropertyType String -Value $stubPath -Force | Out-Null
 New-ItemProperty -Path $activeSetupRegPath -Name "IsInstalled" -PropertyType DWord -Value 1 -Force | Out-Null
@@ -123,4 +123,4 @@ Register-WefDeveloperForLoadedUserHives -AddinId $addinId -ManifestFileName $man
 # Ensure the add-in is available for the installing admin context immediately (legacy).
 & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $currentUserSetupScriptPath -ManifestPath $manifestPath
 
-Write-Output "iVALT Docuid add-in installation completed successfully."
+Write-Output "iVALT DocuID add-in installation completed successfully."

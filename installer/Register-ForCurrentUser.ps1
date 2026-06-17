@@ -17,4 +17,4 @@ if (-not (Test-Path -LiteralPath $CatalogScript)) {
 }
 
 & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $CatalogScript -ManifestPath $ManifestPath
-Write-Output "Done. Close all Word windows, reopen Word, and check the Home tab for iVALT Docuid."
+Write-Output "Done. Close all Word windows, reopen Word, and check the Home tab for iVALT DocuID."

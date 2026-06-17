@@ -1,6 +1,6 @@
-import React from "react";
-import { Stack, Text } from "@fluentui/react";
-import "./AppDownloadButtons.css";
+import { Stack, Text } from '@fluentui/react';
+import type React from 'react';
+import './AppDownloadButtons.css';
 
 const AppDownloadButtons: React.FC = () => {
   return (
@@ -8,16 +8,16 @@ const AppDownloadButtons: React.FC = () => {
       className="app-download-buttons-container"
       horizontalAlign="center"
       tokens={{ childrenGap: 12 }}
-      styles={{ root: { padding: "16px 0" } }}
+      styles={{ root: { padding: '16px 0' } }}
     >
-      <Text variant="small" styles={{ root: { color: "#605e5c", textAlign: "center" } }}>
-        Download the iVALT app, then register or log in to access Docuid ID and use this add-in
+      <Text variant="small" styles={{ root: { color: '#605e5c', textAlign: 'center' } }}>
+        Download the iVALT app, then register or log in to access DocuID ID and use this add-in
       </Text>
       <Stack
         horizontal
         className="app-download-buttons-inner"
         tokens={{ childrenGap: 8 }}
-        styles={{ root: { width: "100%", gap: 10 } }}
+        styles={{ root: { width: '100%', gap: 10 } }}
       >
         <a
           target="_blank"

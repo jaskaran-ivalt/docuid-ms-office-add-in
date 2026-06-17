@@ -9,7 +9,7 @@ This guide provides comprehensive instructions for setting up, developing, and m
 ### Required Software
 
 - **Node.js**: LTS version (18.x or higher)
-- **Package Manager**: pnpm (recommended) or npm
+- **Package Manager**: bun (recommended) or npm
 - **IDE**: Visual Studio Code (recommended)
 - **Office Application**: Microsoft Word (Office 365 or Office 2019+)
 - **Operating System**: Windows 10+ or macOS 10.14+
@@ -19,11 +19,11 @@ This guide provides comprehensive instructions for setting up, developing, and m
 ```bash
 # Install global dependencies
 npm install -g yo generator-office
-npm install -g pnpm
+npm install -g bun
 
 # Verify installations
 node --version    # Should be 18.x or higher
-pnpm --version    # Should be 7.x or higher
+bun --version    # Should be 1.x or higher
 yo --version      # Should be 4.x or higher
 ```
 
@@ -37,10 +37,10 @@ git clone <repository-url>
 cd DocuID
 
 # Install dependencies
-pnpm install
+bun install
 
 # Verify installation
-pnpm run build:dev
+bun run build:dev
 ```
 
 ### 2. Development Certificates
@@ -50,17 +50,17 @@ The project uses HTTPS for Office Add-in requirements. Certificates are automati
 ```bash
 # Certificates are auto-generated on first run
 # Trust the certificate when prompted
-pnpm run dev-server
+bun run dev-server
 ```
 
 ### 3. Office Configuration
 
 ```bash
 # Sign in to M365 account (if using Office 365)
-pnpm run signin
+bun run signin
 
 # Start development with automatic sideloading
-pnpm start
+bun start
 ```
 
 ## Project Structure Deep Dive
@@ -92,10 +92,9 @@ src/
 ```
 ├── package.json             # Dependencies and scripts
 ├── tsconfig.json           # TypeScript configuration
-├── webpack.config.js       # Build configuration
-├── babel.config.json       # Transpilation settings
+├── tsup.config.ts          # Build configuration (tsup/esbuild)
 ├── manifest.xml            # Office Add-in manifest
-└── .eslintrc.json         # Code quality rules
+└── biome.json              # Code quality rules
 ```
 
 ## Development Workflow
@@ -103,15 +102,19 @@ src/
 ### 1. Starting Development
 
 ```bash
-# Start development server with hot reload
-pnpm run dev-server
+# Dev server with live reload (no Office)
+bun run start
 
-# Start with automatic Office sideloading (recommended)
-pnpm start
+# Debug in a specific Office app (recommended)
+bun run debug:word
+bun run debug:excel
+bun run debug:ppt
 
-# Build for development (without server)
-pnpm run build:dev
+# Debug all three at once
+bun run debug:all
 ```
+
+Changes to `.tsx`, `.ts`, or `.css` files trigger automatic rebuild (~2-4s) and the add-in task pane reloads via SSE live reload.
 
 ### 2. Code Development Process
 
@@ -176,8 +179,10 @@ export class ExtendedService {
 #### Manual Testing
 
 ```bash
-# Start with specific Office application
-pnpm start --host word
+# Debug in specific Office application
+bun run debug:word
+bun run debug:excel
+bun run debug:ppt
 
 # Test specific scenarios
 # 1. Authentication flow with various phone numbers
@@ -201,17 +206,17 @@ const testPhoneNumbers = {
 ### 4. Code Quality and Linting
 
 ```bash
-# Run ESLint
-pnpm run lint
+# Run Biome linter
+bun run lint
 
-# Auto-fix ESLint issues
-pnpm run lint:fix
+# Auto-fix Biome issues
+bun run lint:fix
 
-# Format code with Prettier
-pnpm run prettier
+# Format code with Biome
+bun run format
 
-# Validate manifest file
-pnpm run validate
+# Check formatting
+bun run format:check
 ```
 
 ## Advanced Development
@@ -422,10 +427,10 @@ export class MockAPIServer {
 
 ```bash
 # Check if certificates are trusted
-pnpm run dev-server
+bun run dev-server
 
 # Verify manifest syntax
-pnpm run validate
+bun run validate
 
 # Check console for errors
 # Open browser developer tools in Office

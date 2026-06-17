@@ -9,7 +9,7 @@ graph TD
     end
 
     subgraph "Cloud Services"
-        B -- "HTTPS API Calls" --> D["Docuid.net Backend"]
+        B -- "HTTPS API Calls" --> D["DocuID.net Backend"]
         D -- "iVALT API" --> E["iVALT Service"]
         D -- "Manages" --> G["Document Storage (e.g., S3)"]
         E -- "Push Notification" --> F

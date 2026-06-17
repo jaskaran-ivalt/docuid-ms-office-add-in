@@ -1,19 +1,57 @@
-import React, { useState, useEffect } from "react";
-import { ThemeProvider } from "@fluentui/react";
-import LoginForm from "@/taskpane/components/LoginForm";
-import DocumentList from "@/taskpane/components/DocumentList";
-import Header from "@/taskpane/components/Header";
-import ProfilePage from "@/taskpane/components/profile/ProfilePage";
-import DebugPanel from "@/taskpane/components/DebugPanel";
-import { AuthService } from "@/taskpane/services/AuthService";
-import { DocuIdApiService } from "@/taskpane/services/DocuIdApiService";
-import { DocumentService } from "@/taskpane/services/DocumentService";
-import { docuIdTheme } from "./theme/fluentTheme";
-import { logger } from "@/taskpane/services/Logger";
-import { Document } from "./common/types";
-import "./App.css";
+import {
+  DefaultButton,
+  Dialog,
+  DialogFooter,
+  DialogType,
+  PrimaryButton,
+  ThemeProvider,
+} from '@fluentui/react';
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import DebugPanel from '@/taskpane/components/DebugPanel';
+import DocumentList from '@/taskpane/components/DocumentList';
+import Header from '@/taskpane/components/Header';
+import LoginForm from '@/taskpane/components/LoginForm';
+import ProfilePage from '@/taskpane/components/profile/ProfilePage';
+import { AuthService } from '@/taskpane/services/AuthService';
+import { DocuIdApiService } from '@/taskpane/services/DocuIdApiService';
+import { DocumentService } from '@/taskpane/services/document';
+import type { OfficeHost } from '@/taskpane/services/OfficeHostService';
+import type { Document } from './common/types';
+import { docuIdTheme } from './theme/fluentTheme';
+import './App.css';
 
-const App: React.FC = () => {
+interface AppProps {
+  officeHost?: OfficeHost;
+}
+
+const App: React.FC<AppProps> = ({ officeHost = 'Unknown' }) => {
+  // CSS custom properties injected on the root container so every
+  // descendant can reference var(--accent), var(--accent-dark), var(--accent-dim)
+  // without knowing which Office host is active.
+  const getHostVars = (): React.CSSProperties => {
+    switch (officeHost) {
+      case 'Excel':
+        return {
+          '--accent': '#217346',
+          '--accent-dark': '#1a5c39',
+          '--accent-dim': 'rgba(33,115,70,0.12)',
+        } as React.CSSProperties;
+      case 'PowerPoint':
+        return {
+          '--accent': '#c7421f',
+          '--accent-dark': '#b33519',
+          '--accent-dim': 'rgba(199,66,31,0.12)',
+        } as React.CSSProperties;
+      case 'Word':
+      default:
+        return {
+          '--accent': '#0067c0',
+          '--accent-dark': '#005fb8',
+          '--accent-dim': 'rgba(0,103,192,0.12)',
+        } as React.CSSProperties;
+    }
+  };
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoadingDocuments, setIsLoadingDocuments] = useState(false);
   const [isLoadingLogin, setIsLoadingLogin] = useState(false);
@@ -21,18 +59,28 @@ const App: React.FC = () => {
   const [isClosingDocument, setIsClosingDocument] = useState<string | null>(null);
   const [documents, setDocuments] = useState<Document[]>([]);
   const [user, setUser] = useState<{ phone: string; name?: string; email?: string } | null>(null);
-  const [error, setError] = useState<string>("");
-  const [currentPage, setCurrentPage] = useState<"documents" | "profile">("documents");
+  const [error, setError] = useState<string>('');
+  const [currentPage, setCurrentPage] = useState<'documents' | 'profile'>('documents');
   const [debugPanelOpen, setDebugPanelOpen] = useState(false);
+  const [openDocumentId, setOpenDocumentId] = useState<string | null>(null);
+  const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
+
+  useEffect(() => {
+    // Inject host variables into body for global availability (portals/dialogs)
+    const vars = getHostVars();
+    Object.keys(vars).forEach((key) => {
+      document.body.style.setProperty(key, vars[key]);
+    });
+  }, [officeHost]);
 
   useEffect(() => {
     // Session management via custom events from DocuIdApiService
     const handleUnauthorized = () => {
       handleLogout();
-      setError("Session expired. Please login again.");
+      setError('Session expired. Please login again.');
     };
 
-    window.addEventListener("docuid-unauthorized", handleUnauthorized);
+    window.addEventListener('docuid-unauthorized', handleUnauthorized);
 
     // Initial check for stored auth
     const auth = AuthService.getStoredAuth();
@@ -47,13 +95,13 @@ const App: React.FC = () => {
     }
 
     return () => {
-      window.removeEventListener("docuid-unauthorized", handleUnauthorized);
+      window.removeEventListener('docuid-unauthorized', handleUnauthorized);
     };
   }, []);
 
   const handleLogin = async (phoneNumber: string) => {
     setIsLoadingLogin(true);
-    setError("");
+    setError('');
 
     try {
       await AuthService.login(phoneNumber);
@@ -70,7 +118,7 @@ const App: React.FC = () => {
 
       await loadDocuments();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Login failed");
+      setError(err instanceof Error ? err.message : 'Login failed');
     } finally {
       setIsLoadingLogin(false);
     }
@@ -81,27 +129,33 @@ const App: React.FC = () => {
       setIsLoadingDocuments(true);
       const docs = await DocumentService.getDocuments();
       setDocuments(docs);
-    } catch (err) {
-      setError("Failed to load documents");
+    } catch (_err) {
+      setError('Failed to load documents');
     } finally {
       setIsLoadingDocuments(false);
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    setIsLogoutDialogOpen(false);
+    // Clear document content on logout as requested
+    await DocumentService.clearDocument();
+
     AuthService.logout();
     setIsAuthenticated(false);
     setUser(null);
     setDocuments([]);
-    setError("");
+    setError('');
+    setOpenDocumentId(null);
   };
 
   const handleDocumentOpen = async (document: Document) => {
     try {
       setIsOpeningDocument(document.id);
       await DocumentService.openDocument(document.id);
-    } catch (err) {
-      setError("Failed to open document");
+      setOpenDocumentId(document.id);
+    } catch (_err) {
+      setError('Failed to open document');
     } finally {
       setIsOpeningDocument(null);
     }
@@ -111,15 +165,23 @@ const App: React.FC = () => {
     try {
       setIsClosingDocument(documentId);
       await DocumentService.closeDocument(documentId);
-      setDocuments((prev) => prev.filter((doc) => doc.id !== documentId));
-    } catch (err) {
-      setError("Failed to close document");
+      if (openDocumentId === documentId) {
+        setOpenDocumentId(null);
+      }
+    } catch (_err) {
+      setError('Failed to close document');
     } finally {
       setIsClosingDocument(null);
     }
   };
 
-  const handleDocumentShare = async (shareData: any) => {
+  const handleDocumentShare = async (shareData: {
+    documentId: string;
+    email?: string;
+    countryCode?: string;
+    mobile?: string;
+    message?: string;
+  }) => {
     const response = await DocuIdApiService.shareDocument({
       documentId: Number(shareData.documentId),
       email: shareData.email,
@@ -129,7 +191,7 @@ const App: React.FC = () => {
     });
 
     if (!response.success) {
-      throw new Error(response.message || "Failed to share document");
+      throw new Error(response.message || 'Failed to share document');
     }
 
     return {
@@ -140,38 +202,66 @@ const App: React.FC = () => {
   };
 
   return (
-    <ThemeProvider theme={docuIdTheme}>
+    <ThemeProvider theme={docuIdTheme} style={getHostVars()}>
       <div className="app-container">
         <Header
           user={user}
-          onLogout={handleLogout}
-          onNavigateToProfile={() => setCurrentPage("profile")}
+          onLogout={() => setIsLogoutDialogOpen(true)}
+          onNavigateToProfile={() => setCurrentPage('profile')}
           onToggleDebug={() => setDebugPanelOpen(!debugPanelOpen)}
+          officeHost={officeHost}
         />
 
         {error && (
           <div className="error-banner">
             <span>{error}</span>
-            <button onClick={() => setError("")} className="error-close">×</button>
+            <button onClick={() => setError('')} className="error-close">
+              ×
+            </button>
           </div>
         )}
 
         <main className="app-main">
           {!isAuthenticated ? (
             <LoginForm onLogin={handleLogin} isLoading={isLoadingLogin} />
-          ) : currentPage === "profile" ? (
-            <ProfilePage onBack={() => setCurrentPage("documents")} />
           ) : (
-            <DocumentList
-              documents={documents}
-              onDocumentOpen={handleDocumentOpen}
-              onDocumentShare={handleDocumentShare}
-              onCloseDocument={handleDocumentClose}
-              isLoadingDocuments={isLoadingDocuments}
-              openingDocumentId={isOpeningDocument}
-              closingDocumentId={isClosingDocument}
-              onReload={loadDocuments}
-            />
+            <>
+              {currentPage === 'profile' ? (
+                <ProfilePage onBack={() => setCurrentPage('documents')} />
+              ) : (
+                <DocumentList
+                  documents={documents}
+                  onDocumentOpen={handleDocumentOpen}
+                  onDocumentShare={handleDocumentShare}
+                  onCloseDocument={handleDocumentClose}
+                  isLoadingDocuments={isLoadingDocuments}
+                  openingDocumentId={isOpeningDocument}
+                  closingDocumentId={isClosingDocument}
+                  openDocumentId={openDocumentId}
+                  onReload={loadDocuments}
+                />
+              )}
+              <Dialog
+                hidden={!isLogoutDialogOpen}
+                onDismiss={() => setIsLogoutDialogOpen(false)}
+                dialogContentProps={{
+                  type: DialogType.normal,
+                  title: 'Sign Out',
+                  closeButtonAriaLabel: 'Close',
+                  subText:
+                    'Are you sure you want to sign out? This will also clear the current document content for security.',
+                }}
+                modalProps={{
+                  isBlocking: false,
+                  styles: { main: { maxWidth: 450 } },
+                }}
+              >
+                <DialogFooter>
+                  <PrimaryButton onClick={handleLogout} text="Sign Out" />
+                  <DefaultButton onClick={() => setIsLogoutDialogOpen(false)} text="Cancel" />
+                </DialogFooter>
+              </Dialog>
+            </>
           )}
         </main>
 

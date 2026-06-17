@@ -1,7 +1,7 @@
-import React from "react";
-import { Dialog, DialogType, PrimaryButton, Stack, Text } from "@fluentui/react";
-import { CheckCircle, Copy, ExternalLink, FileText, Mail, Phone, Calendar } from "lucide-react";
-import "./ShareSuccessModal.css";
+import { Dialog, DialogType, Stack, Text } from '@fluentui/react';
+import { Calendar, CheckCircle, Copy, ExternalLink, FileText, Mail, Phone } from 'lucide-react';
+import type React from 'react';
+import './ShareSuccessModal.css';
 
 interface ShareSuccessModalProps {
   isOpen: boolean;
@@ -31,10 +31,10 @@ const ShareSuccessModal: React.FC<ShareSuccessModalProps> = ({
   const getExpiryDate = (): string => {
     const expiryDate = new Date();
     expiryDate.setDate(expiryDate.getDate() + 7);
-    return expiryDate.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
+    return expiryDate.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
     });
   };
 
@@ -46,7 +46,7 @@ const ShareSuccessModal: React.FC<ShareSuccessModalProps> = ({
 
   const handleOpenLink = () => {
     if (shareDetails?.shareLink) {
-      window.open(shareDetails.shareLink, "_blank");
+      window.open(shareDetails.shareLink, '_blank');
     }
   };
 
@@ -56,19 +56,15 @@ const ShareSuccessModal: React.FC<ShareSuccessModalProps> = ({
       onDismiss={onDismiss}
       dialogContentProps={{
         type: DialogType.normal,
-        title: "",
+        title: ' ',
         showCloseButton: true,
-        styles: {
-          title: {
-            display: "none",
-          },
-        },
       }}
       modalProps={{
         isBlocking: false,
         styles: {
           main: {
-            maxWidth: "520px",
+            maxWidth: '400px',
+            minHeight: 'auto',
           },
         },
       }}
@@ -114,10 +110,12 @@ const ShareSuccessModal: React.FC<ShareSuccessModalProps> = ({
         {/* Share Details */}
         {shareDetails && (
           <div className="share-details-section">
-            <div className="section-header">
-              <CheckCircle size={18} />
-              <Text className="section-title">Share Information</Text>
-            </div>
+            {/* <div className="section-header">
+              <div>
+                <CheckCircle size={18} />
+              </div>
+              <Text className="section-title share-information-label">Share Information</Text>
+            </div> */}
             <div className="details-grid">
               {shareDetails.recipientEmail && (
                 <div className="detail-item">
@@ -160,37 +158,26 @@ const ShareSuccessModal: React.FC<ShareSuccessModalProps> = ({
         {shareDetails?.shareLink && (
           <div className="share-link-section">
             <Text className="share-link-label">Share Link</Text>
-            <div className="share-link-container">
-              <Text className="share-link-text" title={shareDetails.shareLink}>
-                {shareDetails.shareLink}
-              </Text>
-              <Stack horizontal tokens={{ childrenGap: 8 }}>
-                <button className="share-link-button" onClick={handleCopyLink}>
-                  <Copy size={14} />
-                  <span>Copy</span>
-                </button>
-                <button className="share-link-button" onClick={handleOpenLink}>
-                  <ExternalLink size={14} />
-                  <span>Open</span>
-                </button>
-              </Stack>
+            <div className="share-link-display">
+              <Text className="share-link-text">{shareDetails.shareLink}</Text>
             </div>
+            <Stack
+              horizontal
+              horizontalAlign="center"
+              tokens={{ childrenGap: 8 }}
+              className="share-link-actions"
+            >
+              <button className="share-link-button" onClick={handleCopyLink}>
+                <Copy size={14} />
+                <span>Copy Link</span>
+              </button>
+              <button className="share-link-button secondary" onClick={handleOpenLink}>
+                <ExternalLink size={14} />
+                <span>Open Link</span>
+              </button>
+            </Stack>
           </div>
         )}
-
-        {/* Action Button */}
-        <Stack horizontal horizontalAlign="center" style={{ marginTop: 24 }}>
-          <PrimaryButton
-            text="Done"
-            onClick={onDismiss}
-            styles={{
-              root: {
-                minWidth: "120px",
-                height: "40px",
-              },
-            }}
-          />
-        </Stack>
       </div>
     </Dialog>
   );

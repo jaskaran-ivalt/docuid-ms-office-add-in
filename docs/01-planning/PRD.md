@@ -25,7 +25,7 @@ To build a Microsoft Office Add-in named **DocuID** that allows users to securel
 ### 🔐 Authentication
 
 *   User logs in using their **mobile number with country code**.
-*   Authentication is handled via **Docuid.net**, which integrates with **iVALT** for biometric verification on the user's registered device.
+*   Authentication is handled via **DocuID.net**, which integrates with **iVALT** for biometric verification on the user's registered device.
 *   The backend verifies if the user exists or needs to be created.
 *   Response includes a session token and user profile.
 
@@ -76,7 +76,7 @@ A high-level overview of the system architecture.
 
 ### Backend
 
-*   **Service:** `Docuid.net`
+*   **Service:** `DocuID.net`
 *   **Functionality:** Provides REST APIs for:
     *   User authentication (integrating with iVALT).
     *   Fetching the document list for authenticated users.
@@ -84,8 +84,8 @@ A high-level overview of the system architecture.
 
 ### Authentication
 
-*   The add-in communicates with `Docuid.net` for authentication.
-*   `Docuid.net` handles the iVALT integration for biometric verification.
+*   The add-in communicates with `DocuID.net` for authentication.
+*   `DocuID.net` handles the iVALT integration for biometric verification.
 *   Session management is token-based.
 
 ### Storage
@@ -99,7 +99,7 @@ A high-level overview of the system architecture.
 | Milestone | Description | ETA | Status |
 | --- | --- | --- | --- |
 | M1 | Project scaffolding with `yo office` & UI design | Week 1 | ✅ **Complete** |
-| M2 | Backend integration for login via `Docuid.net` | Week 2 | 🔄 Ready to Start |
+| M2 | Backend integration for login via `DocuID.net` | Week 2 | 🔄 Ready to Start |
 | M3 | Backend API for document fetching and access | Week 3 | ⏳ Pending |
 | M4 | Full add-in integration and testing in Office apps | Week 4 | ⏳ Pending |
 | M5 | Final testing, optimization and deployment | Week 5 | ⏳ Pending |

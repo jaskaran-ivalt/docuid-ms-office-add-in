@@ -15,7 +15,7 @@
 | Phase | Status | Progress | Start Date | End Date | Notes |
 |-------|--------|----------|------------|----------|-------|
 | Phase 1: Setup & Foundation | ✅ Complete | 100% | 2025-06-28 | 2025-06-29 | Project scaffolding and UI design - COMPLETED |
-| Phase 2: Authentication | Ready to Start | 0% | TBD | TBD | Docuid.net integration |
+| Phase 2: Authentication | Ready to Start | 0% | TBD | TBD | DocuID.net integration |
 | Phase 3: Document Management | Pending | 0% | TBD | TBD | Document listing and viewing |
 | Phase 4: Integration & Testing | Pending | 0% | TBD | TBD | Office.js integration and QA |
 | Phase 5: Deployment | Pending | 0% | TBD | TBD | Production deployment and final testing |
@@ -27,7 +27,7 @@
 ### ✅ Completed Tasks (Phase 1)
 - [x] **1.1.1** - Install development prerequisites
   - [x] Node.js installation and configuration
-  - [x] Package manager setup (pnpm)
+  - [x] Package manager setup (bun)
   - [x] Office Add-in generator installation
   - [x] Git repository initialization
 
@@ -82,7 +82,7 @@
 #### Day 1 - [Date: 2025-06-28]
 **Focus:** Environment Setup and Project Initialization
 - ✅ **Task 1.1.1** - Install development prerequisites
-  - ✅ Node.js installation and pnpm setup
+  - ✅ Node.js installation and bun setup
   - ✅ Office Add-in generator and tools
   - ✅ Git repository initialization
 - ✅ **Task 1.2.1** - Generate Office Add-in project

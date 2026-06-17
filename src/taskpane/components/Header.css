@@ -56,6 +56,23 @@
   opacity: 0.9;
   color: white; /* Ensure white text on blue background */
   margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.host-badge {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.22);
+  color: white;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 1px 6px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .header-user-section {
@@ -89,7 +106,7 @@
   gap: 12px;
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
+  border-radius: 0;
   padding: 8px 12px;
   color: white;
   cursor: pointer;
@@ -106,7 +123,7 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -213,7 +230,7 @@
   top: calc(100% + 8px);
   right: 0;
   background: white;
-  border-radius: 8px;
+  border-radius: 0;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
   border: 1px solid #e9ecef;
   min-width: 280px;
@@ -233,7 +250,7 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -446,4 +463,4 @@
     padding: 8px 10px;
     font-size: 12px;
   }
-} 
+}

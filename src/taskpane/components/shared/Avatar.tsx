@@ -1,5 +1,5 @@
-import React from "react";
-import { Persona, PersonaSize, IPersonaProps } from "@fluentui/react";
+import { type IPersonaProps, Persona, PersonaSize } from '@fluentui/react';
+import type React from 'react';
 
 interface AvatarProps extends Partial<IPersonaProps> {
   name: string;
@@ -7,19 +7,11 @@ interface AvatarProps extends Partial<IPersonaProps> {
   imageUrl?: string;
 }
 
-export const Avatar: React.FC<AvatarProps> = ({ 
-  name, 
-  size = PersonaSize.size32, 
+export const Avatar: React.FC<AvatarProps> = ({
+  name,
+  size = PersonaSize.size32,
   imageUrl,
-  ...props 
+  ...props
 }) => {
-  return (
-    <Persona
-      text={name}
-      size={size}
-      imageUrl={imageUrl}
-      hidePersonaDetails
-      {...props}
-    />
-  );
+  return <Persona text={name} size={size} imageUrl={imageUrl} hidePersonaDetails {...props} />;
 };
