@@ -15,7 +15,7 @@ import LoginForm from '@/taskpane/components/LoginForm';
 import ProfilePage from '@/taskpane/components/profile/ProfilePage';
 import { AuthService } from '@/taskpane/services/AuthService';
 import { DocuIdApiService } from '@/taskpane/services/DocuIdApiService';
-import { DocumentService } from '@/taskpane/services/DocumentService';
+import { DocumentService } from '@/taskpane/services/document';
 import type { OfficeHost } from '@/taskpane/services/OfficeHostService';
 import type { Document, ShareData, ShareResponse } from './common/types';
 import { docuIdTheme } from './theme/fluentTheme';
