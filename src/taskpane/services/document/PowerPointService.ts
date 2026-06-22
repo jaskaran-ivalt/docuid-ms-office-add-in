@@ -26,39 +26,66 @@ export async function insertIntoPowerPoint(documentContent: DocumentContent): Pr
           slides.load('items');
           await context.sync();
 
-          for (let i = slides.items.length - 1; i >= 0; i--) {
-            slides.items[i].delete();
-          }
+          // SlideCollection.add() returns void, not a Slide proxy. Add the three
+          // demo slides first, then reload the collection and address the newly
+          // created slides by index. Adding before deleting also guarantees the
+          // presentation is never momentarily empty (PowerPoint requires >= 1 slide).
+          const originalCount = slides.items.length;
+          context.presentation.slides.add();
+          context.presentation.slides.add();
+          context.presentation.slides.add();
+          await context.sync();
 
-          const slide1 = context.presentation.slides.add();
+          const allSlides = context.presentation.slides;
+          allSlides.load('items');
+          await context.sync();
+
+          const slide1 = allSlides.items[originalCount];
+          const slide2 = allSlides.items[originalCount + 1];
+          const slide3 = allSlides.items[originalCount + 2];
+
+          // New slides inherit the layout's placeholder shapes ("Click to add
+          // title", "Click to add text"). Remove them so only our content shows.
+          const demoSlides = [slide1, slide2, slide3];
+          for (let s = 0; s < demoSlides.length; s++) {
+            demoSlides[s].shapes.load('items');
+          }
+          await context.sync();
+          for (let s = 0; s < demoSlides.length; s++) {
+            const placeholders = demoSlides[s].shapes.items;
+            for (let i = placeholders.length - 1; i >= 0; i--) {
+              placeholders[i].delete();
+            }
+          }
+          await context.sync();
+
           const titleShape = slide1.shapes.addTextBox('Welcome to iVALT DocuID', {
             left: 50, top: 50, width: 600, height: 70,
           });
-          titleShape.textRange.font.size = 40;
-          titleShape.textRange.font.bold = true;
+          titleShape.textFrame.textRange.font.size = 40;
+          titleShape.textFrame.textRange.font.bold = true;
 
           slide1.shapes.addTextBox(
             'Biometric-Secured Document Management\nfor Microsoft Office',
             { left: 50, top: 130, width: 600, height: 60 },
-          ).textRange.font.size = 20;
+          ).textFrame.textRange.font.size = 20;
 
           slide1.shapes.addTextBox(
             'Access, manage, and share your documents securely with\none-tap biometric authentication via the iVALT mobile app.',
             { left: 50, top: 210, width: 600, height: 50 },
-          ).textRange.font.size = 15;
+          ).textFrame.textRange.font.size = 15;
 
           const footerShape = slide1.shapes.addTextBox('iVALT DocuID', {
             left: 50, top: 290, width: 600, height: 30,
           });
-          footerShape.textRange.font.size = 12;
-          footerShape.textRange.font.color = '#888888';
+          footerShape.textFrame.textRange.font.size = 12;
+          footerShape.textFrame.textRange.font.color = '#888888';
 
-          const slide2 = context.presentation.slides.add();
           const featTitle = slide2.shapes.addTextBox('Key Features', {
             left: 50, top: 30, width: 600, height: 60,
           });
-          featTitle.textRange.font.size = 32;
-          featTitle.textRange.font.bold = true;
+          featTitle.textFrame.textRange.font.size = 32;
+          featTitle.textFrame.textRange.font.bold = true;
 
           slide2.shapes.addTextBox(
             '  Biometric document access with one-tap login\n' +
@@ -67,14 +94,13 @@ export async function insertIntoPowerPoint(documentContent: DocumentContent): Pr
             '  Real-time document activity tracking\n' +
             '  End-to-end encrypted file storage',
             { left: 50, top: 110, width: 600, height: 200 },
-          ).textRange.font.size = 18;
+          ).textFrame.textRange.font.size = 18;
 
-          const slide3 = context.presentation.slides.add();
           const howTitle = slide3.shapes.addTextBox('How It Works', {
             left: 50, top: 30, width: 600, height: 60,
           });
-          howTitle.textRange.font.size = 32;
-          howTitle.textRange.font.bold = true;
+          howTitle.textFrame.textRange.font.size = 32;
+          howTitle.textFrame.textRange.font.bold = true;
 
           slide3.shapes.addTextBox(
             '1. Login with your registered mobile number\n' +
@@ -82,7 +108,12 @@ export async function insertIntoPowerPoint(documentContent: DocumentContent): Pr
             '3. Browse and open documents from the task pane\n' +
             '4. Share documents securely with colleagues',
             { left: 50, top: 110, width: 600, height: 180 },
-          ).textRange.font.size = 18;
+          ).textFrame.textRange.font.size = 18;
+
+          // Remove the slides that existed before the demo content was added.
+          for (let i = originalCount - 1; i >= 0; i--) {
+            allSlides.items[i].delete();
+          }
 
           await context.sync();
         });
