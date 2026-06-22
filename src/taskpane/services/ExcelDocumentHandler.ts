@@ -16,13 +16,29 @@ import { logger } from './Logger';
 
 const excelLogger = logger.createContextLogger('ExcelDocumentHandler');
 
+/**
+ * Check if Excel API is available (requires Office host environment)
+ */
+function isExcelApiAvailable(): boolean {
+  return typeof Excel !== 'undefined' && typeof Excel.run === 'function';
+}
+
 export const ExcelDocumentHandler: IDocumentHandler = {
   /**
    * Insert document content into the active Excel worksheet.
    * - Plain-text / CSV content is parsed into a 2-D values array.
    * - Binary XLSX content writes a placeholder message at A1.
+   *
+   * Gracefully returns in browser mode (no Office host available).
    */
   async insert(documentContent: DocumentContent): Promise<void> {
+    if (!isExcelApiAvailable()) {
+      excelLogger.info(
+        'Excel.run not available - running in browser mode without Office integration'
+      );
+      return;
+    }
+
     return Excel.run(async (context) => {
       try {
         if (!documentContent.binaryContent) {
@@ -94,8 +110,14 @@ export const ExcelDocumentHandler: IDocumentHandler = {
 
   /**
    * Clear the used range of the active Excel worksheet.
+   * Gracefully returns in browser mode (no Office host available).
    */
   async clear(): Promise<void> {
+    if (!isExcelApiAvailable()) {
+      excelLogger.info('Excel.run not available for clearing sheet - running in browser mode');
+      return;
+    }
+
     return Excel.run(async (context) => {
       try {
         const sheet = context.workbook.worksheets.getActiveWorksheet();

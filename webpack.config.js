@@ -1,7 +1,10 @@
 /* eslint-disable no-undef */
 
+require('dotenv').config();
+
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { DefinePlugin } = require('webpack');
 
 const urlDev = 'https://localhost:3000/';
 // Use environment variable for production URL (Vercel sets VERCEL_URL)
@@ -138,6 +141,13 @@ module.exports = async (env, options) => {
         template: './src/commands/commands.html',
         chunks: ['polyfill', 'commands'],
       }),
+      // Inject environment variables into the client bundle at build time.
+      // DEMO_PHONE and DEMO_TOKEN are only set in .env for local dev/demo builds.
+      // In production Vercel builds these are unset, so demo mode is disabled.
+      new DefinePlugin({
+        'process.env.DEMO_PHONE': JSON.stringify(process.env.DEMO_PHONE || ''),
+        'process.env.DEMO_TOKEN': JSON.stringify(process.env.DEMO_TOKEN || ''),
+      }),
       new HtmlWebpackPlugin({
         filename: 'privacy-policy.html',
         template: './src/taskpane/privacy-policy.html',
@@ -155,24 +165,32 @@ module.exports = async (env, options) => {
       }),
     ],
     devServer: {
+      historyApiFallback: {
+        index: '/taskpane.html',
+      },
       headers: {
         'Access-Control-Allow-Origin': '*',
       },
       server: {
         type: 'https',
-        options:
-          dev
-            ? (env.WEBPACK_BUILD || options.https !== undefined ? options.https : await getHttpsOptions())
-            : {},
+        options: dev
+          ? env.WEBPACK_BUILD || options.https !== undefined
+            ? options.https
+            : await getHttpsOptions()
+          : {},
       },
       port: process.env.npm_package_config_dev_server_port || 3000,
       proxy: [
         // Biometric auth endpoints: /api/docuid/biometric/* -> /api/biometric/*
+        // x-api-key is injected here (server-side proxy) — never sent from the browser.
         {
           context: ['/api/docuid/biometric'],
           target: apiTarget.url,
           changeOrigin: true,
           secure: apiTarget.secure,
+          headers: {
+            'x-api-key': process.env.BIOMETRIC_API_KEY || '',
+          },
           pathRewrite: {
             '^/api/docuid/biometric': '/api/biometric',
           },

@@ -14,10 +14,6 @@
       "destination": "/taskpane.html"
     },
     {
-      "source": "/api/biometric/:path*",
-      "destination": "https://www.docuid.net/api/biometric/:path*"
-    },
-    {
       "source": "/api/docuid/documents/:id/download",
       "destination": "https://www.docuid.net/api/documents/:id/download"
     },

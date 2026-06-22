@@ -67,6 +67,7 @@ export const API_CONFIG = {
   WITH_CREDENTIALS: false, // Use Bearer token, not cookies
   HEADERS: {
     CONTENT_TYPE: 'application/json',
-    API_KEY: 'PKIqfASvBfaKQxsg6DVn92ANw7bLsWXSalEsg5Bz',
+    // API_KEY is intentionally absent — it is injected server-side by the
+    // Vercel serverless functions in api/biometric/ via BIOMETRIC_API_KEY env var.
   },
 } as const;
