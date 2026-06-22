@@ -69,7 +69,7 @@ export class DocuIdApiService {
       DocuIdApiService.apiLogger.logApiRequest('GET', url);
 
       // --- DEMO MODE CHECK ---
-      if (AuthService.getSessionToken() === 'demo-session-token') {
+      if (AuthService.getSessionToken() === process.env.DEMO_TOKEN) {
         DocuIdApiService.apiLogger.info(`Returning demo documents for host: ${host}`);
         return DocuIdApiService.getDemoDocuments(host);
       }
@@ -196,7 +196,7 @@ export class DocuIdApiService {
       DocuIdApiService.apiLogger.logApiRequest('GET', url);
 
       // --- DEMO MODE CHECK ---
-      if (AuthService.getSessionToken() === 'demo-session-token') {
+      if (AuthService.getSessionToken() === process.env.DEMO_TOKEN) {
         DocuIdApiService.apiLogger.info(`Returning demo document access for doc: ${documentId}`);
 
         // Word demo docs
@@ -295,7 +295,7 @@ export class DocuIdApiService {
     try {
       // --- DEMO MODE CHECK ---
       if (
-        AuthService.getSessionToken() === 'demo-session-token' ||
+        AuthService.getSessionToken() === process.env.DEMO_TOKEN ||
         accessUrl === 'demo-word-content-url' ||
         accessUrl === 'demo-excel-content-url' ||
         accessUrl === 'demo-powerpoint-content-url' ||
@@ -472,7 +472,7 @@ export class DocuIdApiService {
       DocuIdApiService.apiLogger.logApiRequest('POST', url, { documentId: payload.documentId });
 
       // --- DEMO MODE CHECK ---
-      if (AuthService.getSessionToken() === 'demo-session-token') {
+      if (AuthService.getSessionToken() === process.env.DEMO_TOKEN) {
         DocuIdApiService.apiLogger.info('Returning demo share response');
         return {
           success: true,
