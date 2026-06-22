@@ -7,12 +7,13 @@ import {
   ThemeProvider,
 } from '@fluentui/react';
 import type React from 'react';
-import { useEffect, useState } from 'react';
-import DebugPanel from '@/taskpane/components/DebugPanel';
+import { Suspense, lazy, useEffect, useState } from 'react';
 import DocumentList from '@/taskpane/components/DocumentList';
 import Header from '@/taskpane/components/Header';
 import LoginForm from '@/taskpane/components/LoginForm';
-import ProfilePage from '@/taskpane/components/profile/ProfilePage';
+
+const DebugPanel = lazy(() => import('@/taskpane/components/DebugPanel'));
+const ProfilePage = lazy(() => import('@/taskpane/components/profile/ProfilePage'));
 import { AuthService } from '@/taskpane/services/AuthService';
 import { DocuIdApiService } from '@/taskpane/services/DocuIdApiService';
 import { DocumentService } from '@/taskpane/services/document';
@@ -221,7 +222,9 @@ const App: React.FC<AppProps> = ({ officeHost = 'Unknown' }) => {
           ) : (
             <>
               {currentPage === 'profile' ? (
-                <ProfilePage onBack={() => setCurrentPage('documents')} />
+                <Suspense fallback={null}>
+                  <ProfilePage onBack={() => setCurrentPage('documents')} />
+                </Suspense>
               ) : (
                 <DocumentList
                   documents={documents}
@@ -259,7 +262,11 @@ const App: React.FC<AppProps> = ({ officeHost = 'Unknown' }) => {
           )}
         </main>
 
-        <DebugPanel isOpen={debugPanelOpen} onClose={() => setDebugPanelOpen(false)} />
+        {debugPanelOpen && (
+          <Suspense fallback={null}>
+            <DebugPanel isOpen={debugPanelOpen} onClose={() => setDebugPanelOpen(false)} />
+          </Suspense>
+        )}
       </div>
     </ThemeProvider>
   );
