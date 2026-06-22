@@ -36,10 +36,12 @@ export class OfficeHostService {
       } else if (host === Office.HostType.PowerPoint) {
         OfficeHostService.cachedHost = 'PowerPoint';
       } else {
-        OfficeHostService.cachedHost = 'Unknown';
+        // Don't cache Unknown — Office context may not be ready yet,
+        // so retry detection on the next call.
+        return 'Unknown';
       }
     } catch {
-      OfficeHostService.cachedHost = 'Unknown';
+      return 'Unknown';
     }
 
     return OfficeHostService.cachedHost;
