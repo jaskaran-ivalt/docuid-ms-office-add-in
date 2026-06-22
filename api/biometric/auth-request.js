@@ -27,6 +27,17 @@ module.exports = async (req, res) => {
     });
 
     const data = await response.json().catch(() => ({}));
+
+    // Forward any session cookies the backend sets during the auth handshake so
+    // the browser can persist them for the cookie-authenticated dashboard APIs.
+    const setCookie =
+      typeof response.headers.getSetCookie === 'function'
+        ? response.headers.getSetCookie()
+        : response.headers.raw?.()['set-cookie'];
+    if (setCookie && setCookie.length) {
+      res.setHeader('Set-Cookie', setCookie);
+    }
+
     return res.status(response.status).json(data);
   } catch (error) {
     console.error('[auth-request] Failed to reach DocuID backend:', error);

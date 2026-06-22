@@ -64,7 +64,7 @@ export const API_CONFIG = {
   BASE_URL: API_BASE_URL,
   DEV_PREFIX: DEV_PREFIX,
   IS_DEVELOPMENT: false,
-  WITH_CREDENTIALS: false, // Use Bearer token, not cookies
+  WITH_CREDENTIALS: true, // Send the HttpOnly `token` cookie set by biometric auth
   HEADERS: {
     CONTENT_TYPE: 'application/json',
     // API_KEY is intentionally absent — it is injected server-side by the

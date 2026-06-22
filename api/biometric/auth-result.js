@@ -27,6 +27,19 @@ module.exports = async (req, res) => {
     });
 
     const data = await response.json().catch(() => ({}));
+
+    // Forward the backend's session cookies (token, refreshToken) to the browser.
+    // Auth is cookie-based: the dashboard/documents APIs are authenticated by the
+    // HttpOnly `token` cookie on `.docuid.net`. Without forwarding Set-Cookie here
+    // the browser never stores it and every subsequent API call returns 401.
+    const setCookie =
+      typeof response.headers.getSetCookie === 'function'
+        ? response.headers.getSetCookie()
+        : response.headers.raw?.()['set-cookie'];
+    if (setCookie && setCookie.length) {
+      res.setHeader('Set-Cookie', setCookie);
+    }
+
     return res.status(response.status).json(data);
   } catch (error) {
     console.error('[auth-result] Failed to reach DocuID backend:', error);
