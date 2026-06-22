@@ -18,9 +18,11 @@ export class AuthService {
           phoneNumber.substring(0, 3) + '***' + phoneNumber.substring(phoneNumber.length - 3),
       });
 
-      // --- DUMMY CREDENTIALS FOR DEMO ---
-      if (phoneNumber === '+919876543210' || phoneNumber === '9876543210') {
-        AuthService.authLogger.info('Using dummy credentials for demo mode');
+      // --- DEMO MODE (credentials set via environment variables) ---
+      const demoPhone = process.env.DEMO_PHONE;
+      const demoToken = process.env.DEMO_TOKEN;
+      if (demoPhone && demoToken && (phoneNumber === demoPhone || phoneNumber === demoPhone.replace(/^\+\d{1,3}/, ''))) {
+        AuthService.authLogger.info('Using demo credentials');
 
         const dummyUser: User = {
           id: 999999,
@@ -36,8 +38,8 @@ export class AuthService {
 
         const authData: StoredAuth = {
           phone: phoneNumber,
-          sessionToken: 'demo-session-token',
-          expiresAt: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
+          sessionToken: demoToken,
+          expiresAt: Date.now() + 24 * 60 * 60 * 1000,
           user: dummyUser,
         };
 
@@ -51,7 +53,7 @@ export class AuthService {
         AuthService.authLogger.logAuthEvent('LOGIN_SUCCESS', dummyUser.id.toString());
         return;
       }
-      // ----------------------------------
+      // ---------------------------------------------------------------
 
       // Initiate biometric authentication request
       await AuthService.requestBiometricAuth(phoneNumber);
@@ -105,7 +107,6 @@ export class AuthService {
         {
           headers: {
             'Content-Type': API_CONFIG.HEADERS.CONTENT_TYPE,
-            'x-api-key': API_CONFIG.HEADERS.API_KEY,
           },
           withCredentials: API_CONFIG.WITH_CREDENTIALS,
         }
@@ -148,7 +149,6 @@ export class AuthService {
           {
             headers: {
               'Content-Type': API_CONFIG.HEADERS.CONTENT_TYPE,
-              'x-api-key': API_CONFIG.HEADERS.API_KEY,
             },
             withCredentials: API_CONFIG.WITH_CREDENTIALS,
           }
