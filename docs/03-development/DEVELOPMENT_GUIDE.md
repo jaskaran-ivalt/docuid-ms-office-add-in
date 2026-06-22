@@ -2,587 +2,292 @@
 
 ## Overview
 
-This guide provides comprehensive instructions for setting up, developing, and maintaining the DocuID Office Add-in. It covers everything from initial environment setup to advanced development workflows.
+This guide covers setting up the local development environment, the development workflow, and key patterns used in the DocuID Office Add-in codebase. The add-in supports Word, Excel, and PowerPoint and is deployed live at [Microsoft AppSource](https://marketplace.microsoft.com/en-us/product/wa200010668?tab=overview).
 
 ## Prerequisites
 
-### Required Software
-
-- **Node.js**: LTS version (18.x or higher)
-- **Package Manager**: bun (recommended) or npm
-- **IDE**: Visual Studio Code (recommended)
-- **Office Application**: Microsoft Word (Office 365 or Office 2019+)
-- **Operating System**: Windows 10+ or macOS 10.14+
-
-### Development Tools
-
-```bash
-# Install global dependencies
-npm install -g yo generator-office
-npm install -g bun
-
-# Verify installations
-node --version    # Should be 18.x or higher
-bun --version    # Should be 1.x or higher
-yo --version      # Should be 4.x or higher
-```
+- [Bun](https://bun.sh/) — enforced as the exclusive package manager (npm/pnpm/yarn are blocked by a preinstall hook)
+- Microsoft 365 desktop (Word, Excel, or PowerPoint)
+- Node.js LTS (required by Office tooling)
+- A registered iVALT DocuID account for authentication testing
 
 ## Environment Setup
 
-### 1. Clone and Install Dependencies
+### 1. Install dependencies
 
 ```bash
-# Clone the repository
-git clone <repository-url>
-cd DocuID
-
-# Install dependencies
 bun install
-
-# Verify installation
-bun run build:dev
 ```
 
-### 2. Development Certificates
+### 2. Generate HTTPS certificates
 
-The project uses HTTPS for Office Add-in requirements. Certificates are automatically managed by `office-addin-dev-certs`.
+Office Add-ins require HTTPS even locally. Certificates are generated automatically on first dev server start via `office-addin-dev-certs`. If you hit a certificate trust error, install them manually:
 
 ```bash
-# Certificates are auto-generated on first run
-# Trust the certificate when prompted
+npx office-addin-dev-certs install
+```
+
+Trust the certificate when prompted by your OS.
+
+### 3. Start the dev server
+
+```bash
 bun run dev-server
 ```
 
-### 3. Office Configuration
+Starts webpack on `https://localhost:3000` with hot reload. Keep this terminal open.
+
+### 4. Sideload into an Office host
+
+In a second terminal:
 
 ```bash
-# Sign in to M365 account (if using Office 365)
-bun run signin
-
-# Start development with automatic sideloading
-bun start
+bun run dev:word        # Microsoft Word
+bun run dev:excel       # Microsoft Excel
+bun run dev:powerpoint  # Microsoft PowerPoint
 ```
 
-## Project Structure Deep Dive
+These load the corresponding `manifests/*-dev.xml` file which points to `https://localhost:3000`. The ribbon button shows "(DEV)" to confirm local code is active.
 
-### Source Code Organization
+### 5. Stop sideloading
 
-```
-src/
-├── taskpane/                 # Main React application
-│   ├── App.tsx              # Root component with state management
-│   ├── index.tsx            # Entry point and Office.js initialization
-│   ├── components/          # Reusable UI components
-│   │   ├── Header.tsx       # App header with user info
-│   │   ├── LoginForm.tsx    # Authentication form
-│   │   └── DocumentList.tsx # Document listing and management
-│   ├── services/            # Business logic and API integration
-│   │   ├── AuthService.ts   # Authentication and session management
-│   │   └── DocumentService.ts # Document operations and Office.js
-│   ├── taskpane.html        # HTML template
-│   ├── taskpane.css         # Styling
-│   └── taskpane.ts          # Office.js initialization
-└── commands/                # Office ribbon commands
-    ├── commands.html        # Commands HTML template
-    └── commands.ts          # Command implementations
-```
-
-### Configuration Files
-
-```
-├── package.json             # Dependencies and scripts
-├── tsconfig.json           # TypeScript configuration
-├── webpack.config.js       # Build configuration
-├── babel.config.json       # Transpilation settings
-├── manifest.xml            # Office Add-in manifest
-└── .eslintrc.json         # Code quality rules
+```bash
+bun run dev:stop:word
+bun run dev:stop:excel
+bun run dev:stop:powerpoint
 ```
 
 ## Development Workflow
 
-### 1. Starting Development
+### Making changes
+
+Webpack watches for file changes and rebuilds automatically. After a code change, refresh the add-in task pane inside Office to pick up the new build.
+
+### Code quality
+
+Run these before committing:
 
 ```bash
-# Start development server with hot reload
-bun run dev-server
-
-# Start with automatic Office sideloading (recommended)
-bun start
-
-# Build for development (without server)
-bun run build:dev
+bun run lint          # Biome linter (check)
+bun run lint:fix      # Biome linter (auto-fix)
+bun run format        # Format all files
+bun run format:check  # Check formatting without writing
 ```
 
-### 2. Code Development Process
+Biome replaces both ESLint and Prettier. There is no `.eslintrc` or `.prettierrc` — configuration lives in `biome.json`.
 
-#### Component Development
+### Building
+
+```bash
+bun run build         # Production build -> dist/
+bun run build:dev     # Development build -> dist/
+bun run watch         # Webpack watch mode (no server)
+```
+
+## Project Structure
+
+```
+src/
+  taskpane/
+    App.tsx                          # Root component — auth state, host routing
+    index.tsx                        # React DOM entry point
+    taskpane.ts                      # Office.js initialization
+    taskpane.html                    # HTML entry point
+    components/
+      Header.tsx                     # App header, navigation
+      LoginForm.tsx                  # Phone number auth UI
+      DocumentList.tsx               # Document browse, search, insert
+      ShareSidebar.tsx               # Document sharing UI
+      ShareSuccessModal.tsx          # Post-share confirmation
+      DownloadSheet.tsx              # Document download flow
+      DebugPanel.tsx                 # Developer debug overlay (Ctrl+Shift+D)
+      AppDownloadButtons.tsx         # Mobile app download links
+      DesignSystem.tsx               # Design system showcase
+      profile/
+        ProfilePage.tsx
+        ProfileCard.tsx
+        PersonalInfoSection.tsx
+        AccountInfoSection.tsx
+      shared/                        # Reusable primitives
+        Button.tsx
+        Card.tsx
+        Avatar.tsx
+        SearchBox.tsx
+        index.ts
+    services/
+      AuthService.ts                 # Auth state, token management, localStorage
+      DocuIdApiService.ts            # All REST API calls to docuid.net
+      DocumentService.ts             # Document fetch and management logic
+      IDocumentHandler.ts            # Interface for host-specific handlers
+      OfficeHostService.ts           # Detects current host (Word/Excel/PPT)
+      WordDocumentHandler.ts         # Word.run() document insertion
+      ExcelDocumentHandler.ts        # Excel.run() insertion logic
+      PowerPointDocumentHandler.ts   # PowerPoint.run() insertion logic
+      Logger.ts                      # Structured logging utility
+  commands/                          # Office ribbon command handlers
+
+manifests/
+  manifest.xml                       # Word (production -> addon.docuid.net)
+  manifest-excel.xml                 # Excel (production)
+  manifest-powerpoint.xml            # PowerPoint (production)
+  manifest-production.xml            # Used for installer packaging
+  manifest-dev.xml                   # Word (dev -> localhost:3000)
+  manifest-excel-dev.xml             # Excel (dev -> localhost:3000)
+  manifest-powerpoint-dev.xml        # PowerPoint (dev -> localhost:3000)
+```
+
+## Key Architecture Patterns
+
+### Multi-host support
+
+`OfficeHostService` detects the current Office host at runtime. `App.tsx` instantiates the appropriate document handler:
+
+- `WordDocumentHandler` — `Word.run()` with paragraph insertion
+- `ExcelDocumentHandler` — `Excel.run()` with range/cell operations
+- `PowerPointDocumentHandler` — `PowerPoint.run()` with slide shape insertion
+
+All three implement the shared `IDocumentHandler` interface, keeping `App.tsx` host-agnostic.
+
+### Authentication flow
+
+1. User enters phone number with country code in `LoginForm`
+2. `DocuIdApiService` initiates biometric authentication via docuid.net
+3. iVALT sends a push to the user's registered mobile device
+4. `AuthService` polls for verification and, on success, stores the JWT in localStorage with expiration
+5. All subsequent API calls send `Authorization: Bearer <token>`
+
+### State management
+
+- React hooks (`useState`, `useEffect`) only — no external state library
+- Auth state lives in `App.tsx`, hydrated from `AuthService` on mount
+- No Context API or Redux; all state flows via props from `App.tsx`
+
+### Logging
+
+`Logger.ts` provides structured logging. All services use it rather than `console.log` directly.
+
+The in-app debug panel (`DebugPanel.tsx`) surfaces these logs at runtime. Toggle with `Ctrl+Shift+D`.
+
+Log level control via localStorage:
+
+```javascript
+localStorage.setItem("docuid_log_level", "0"); // 0=DEBUG, 1=INFO, 2=WARN, 3=ERROR
+```
+
+## Component Development Patterns
+
+### New component
 
 ```typescript
-// Example: Creating a new component
 import React, { useState, useEffect } from 'react';
 
 interface Props {
-  // Define props interface
+  // define props here
 }
 
-export const NewComponent: React.FC<Props> = ({ prop1, prop2 }) => {
-  const [state, setState] = useState<StateType>(initialState);
+export const NewComponent: React.FC<Props> = ({ prop1 }) => {
+  const [state, setState] = useState<string>('');
 
   useEffect(() => {
-    // Component lifecycle logic
-  }, [dependencies]);
-
-  return (
-    <div className="new-component">
-      {/* JSX content */}
-    </div>
-  );
-};
-
-export default NewComponent;
-```
-
-#### Service Development
-
-```typescript
-// Example: Extending a service
-export class ExtendedService {
-  private static readonly API_BASE = "https://dev.docuid.net";
-
-  static async newMethod(param: string): Promise<Result> {
-    try {
-      const token = AuthService.getSessionToken();
-      if (!token) {
-        throw new Error("Not authenticated");
-      }
-
-      const response = await axios.get(`${this.API_BASE}/endpoint`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      return response.data;
-    } catch (error) {
-      throw new Error("Operation failed");
-    }
-  }
-}
-```
-
-### 3. Testing During Development
-
-#### Manual Testing
-
-```bash
-# Start with specific Office application
-bun start --host word
-
-# Test specific scenarios
-# 1. Authentication flow with various phone numbers
-# 2. Document list loading and display
-# 3. Document opening in Word
-# 4. Error handling and edge cases
-```
-
-#### Phone Number Test Cases
-
-```typescript
-// Test authentication with different scenarios
-const testPhoneNumbers = {
-  valid: "+1234567890", // Success scenario
-  invalid: "+1234567invalid", // Triggers validation error
-  error: "+1234567error", // Triggers server error
-  timeout: "+1234567timeout", // Triggers timeout scenario
-};
-```
-
-### 4. Code Quality and Linting
-
-```bash
-# Run Biome linter
-bun run lint
-
-# Auto-fix Biome issues
-bun run lint:fix
-
-# Format code with Biome
-bun run format
-
-# Check formatting
-bun run format:check
-```
-
-## Advanced Development
-
-### Office.js Integration
-
-#### Word API Usage
-
-```typescript
-// Example: Advanced document manipulation
-export class AdvancedDocumentService {
-  static async insertFormattedContent(content: DocumentContent): Promise<void> {
-    return Word.run(async (context) => {
-      const body = context.document.body;
-
-      // Insert title with custom styling
-      const title = body.insertParagraph(content.title, Word.InsertLocation.start);
-      title.styleBuiltIn = Word.BuiltInStyleName.title;
-      title.font.color = "#2b579a";
-      title.font.size = 18;
-
-      // Insert content with formatting
-      const contentParagraph = body.insertParagraph(content.text, Word.InsertLocation.end);
-      contentParagraph.styleBuiltIn = Word.BuiltInStyleName.normal;
-
-      // Insert table if data available
-      if (content.tableData) {
-        const table = body.insertTable(
-          content.tableData.rows,
-          content.tableData.cols,
-          Word.InsertLocation.end
-        );
-        table.styleBuiltIn = Word.BuiltInStyleName.gridTable4Accent1;
-
-        // Populate table data
-        content.tableData.data.forEach((row, rowIndex) => {
-          row.forEach((cell, colIndex) => {
-            table.getCell(rowIndex, colIndex).body.insertText(cell, Word.InsertLocation.replace);
-          });
-        });
-      }
-
-      await context.sync();
-    });
-  }
-}
-```
-
-#### Error Handling Best Practices
-
-```typescript
-// Robust error handling for Office.js
-class OfficeErrorHandler {
-  static async executeWithErrorHandling<T>(
-    operation: () => Promise<T>,
-    context: string
-  ): Promise<T> {
-    try {
-      return await operation();
-    } catch (error) {
-      if (error instanceof OfficeExtension.Error) {
-        console.error(`Office.js Error in ${context}:`, error.code, error.message);
-        throw new Error(`Office operation failed: ${error.message}`);
-      } else {
-        console.error(`General Error in ${context}:`, error);
-        throw new Error(`Operation failed: ${context}`);
-      }
-    }
-  }
-}
-```
-
-### State Management Patterns
-
-#### React Hooks Pattern
-
-```typescript
-// Custom hook for authentication state
-export const useAuth = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  const login = useCallback(async (phoneNumber: string) => {
-    setLoading(true);
-    try {
-      await AuthService.login(phoneNumber);
-      setIsAuthenticated(true);
-      setUser(AuthService.getCurrentUser());
-    } catch (error) {
-      throw error;
-    } finally {
-      setLoading(false);
-    }
+    // side effects
   }, []);
 
-  const logout = useCallback(() => {
-    AuthService.logout();
-    setIsAuthenticated(false);
-    setUser(null);
-  }, []);
-
-  useEffect(() => {
-    const savedAuth = AuthService.getStoredAuth();
-    if (savedAuth) {
-      setIsAuthenticated(true);
-      setUser(savedAuth.user);
-    }
-  }, []);
-
-  return { isAuthenticated, user, loading, login, logout };
+  return <div>{state}</div>;
 };
 ```
 
-#### Context Pattern for Global State
+Rules:
+- Functional components and hooks only — no class components
+- Define a props interface for every component
+- Show loading and error states for all async operations
+
+### Extending a service
 
 ```typescript
-// Auth context provider
-interface AuthContextType {
-  isAuthenticated: boolean;
-  user: User | null;
-  login: (phoneNumber: string) => Promise<void>;
-  logout: () => void;
-}
+import { AuthService } from './AuthService';
+import { DocuIdApiService } from './DocuIdApiService';
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export class NewFeatureService {
+  static async doSomething(param: string): Promise<ResultType> {
+    const token = AuthService.getSessionToken();
+    if (!token) throw new Error('Not authenticated');
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const authState = useAuth();
-
-  return (
-    <AuthContext.Provider value={authState}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
-
-export const useAuthContext = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuthContext must be used within AuthProvider');
-  }
-  return context;
-};
-```
-
-## API Integration Development
-
-### Development vs Production APIs
-
-```typescript
-// Environment-aware API configuration
-class APIConfig {
-  static getBaseURL(): string {
-    if (process.env.NODE_ENV === "development") {
-      return "http://localhost:3001"; // Mock server
-    }
-    return "https://dev.docuid.net"; // Production API
-  }
-
-  static getEndpoints() {
-    return {
-      auth: {
-        login: `${this.getBaseURL()}/api/auth/login`,
-        verify: `${this.getBaseURL()}/api/auth/verify`,
-        refresh: `${this.getBaseURL()}/api/auth/refresh`,
-        logout: `${this.getBaseURL()}/api/auth/logout`,
-      },
-      documents: {
-        list: `${this.getBaseURL()}/api/documents`,
-        detail: `${this.getBaseURL()}/api/documents/:id`,
-        content: `${this.getBaseURL()}/api/documents/:id/content`,
-        download: `${this.getBaseURL()}/api/documents/:id/download`,
-      },
-    };
+    return DocuIdApiService.someEndpoint(param);
   }
 }
 ```
 
-### Mock Server Setup
+### Office.js calls
+
+Always wrap in the host-specific `run()` method and call `context.sync()` after batched operations:
 
 ```typescript
-// Development mock server
-export class MockAPIServer {
-  static setupMockEndpoints() {
-    // Mock authentication
-    this.mockAuthEndpoints();
-
-    // Mock document endpoints
-    this.mockDocumentEndpoints();
-  }
-
-  private static mockAuthEndpoints() {
-    // Implementation for mock auth endpoints
-  }
-
-  private static mockDocumentEndpoints() {
-    // Implementation for mock document endpoints
-  }
-}
-```
-
-## Debugging and Troubleshooting
-
-### Common Development Issues
-
-#### 1. Add-in Not Loading
-
-```bash
-# Check if certificates are trusted
-bun run dev-server
-
-# Verify manifest syntax
-bun run validate
-
-# Check console for errors
-# Open browser developer tools in Office
-```
-
-#### 2. Authentication Issues
-
-```typescript
-// Debug authentication state
-const debugAuth = () => {
-  console.log("Auth State:", {
-    isAuthenticated: AuthService.isAuthenticated(),
-    storedAuth: AuthService.getStoredAuth(),
-    sessionToken: AuthService.getSessionToken(),
-  });
-};
-```
-
-#### 3. Office.js Issues
-
-```typescript
-// Debug Office.js initialization
-Office.onReady((info) => {
-  console.log("Office.js ready:", {
-    host: info.host,
-    platform: info.platform,
-    isSupported: Office.context !== undefined,
-  });
+// Word example
+await Word.run(async (context) => {
+  const body = context.document.body;
+  body.insertParagraph('Content', Word.InsertLocation.end);
+  await context.sync();
 });
 ```
 
-### Development Tools
+Never call Office.js APIs directly from components. Route through the appropriate handler service.
 
-#### Browser Developer Tools
+## Path Aliases
 
-- **Console**: Error messages and debug logs
-- **Network**: API call monitoring
-- **Application**: localStorage inspection
-- **Sources**: Breakpoint debugging
-
-#### Office Add-in Debugging
+`@/*` resolves to `./src/*` — configured in both `tsconfig.json` and `webpack.config.js`.
 
 ```typescript
-// Enable debug logging
-localStorage.setItem("docuid_debug", "true");
-
-// Office.js debugging
-if (Office.context.diagnostics) {
-  console.log("Office diagnostics:", Office.context.diagnostics);
-}
+import { Button } from '@/taskpane/components/shared';
 ```
 
-## Performance Optimization
+## Dev vs Production
 
-### Bundle Optimization
+| Aspect       | Dev (`dev:*`)                   | Prod (`start:*`)                  |
+|--------------|---------------------------------|-----------------------------------|
+| Manifest     | `manifests/*-dev.xml`           | `manifests/manifest*.xml`         |
+| Source URL   | `https://localhost:3000`        | `https://addon.docuid.net`        |
+| Code served  | Webpack dev server (hot reload) | Vercel-deployed static build      |
+| Ribbon label | "iVALT DocuID (DEV)"           | "iVALT DocuID"                    |
 
-```javascript
-// Webpack configuration for performance
-module.exports = {
-  optimization: {
-    splitChunks: {
-      chunks: "all",
-      cacheGroups: {
-        vendor: {
-          test: /[\\/]node_modules[\\/]/,
-          name: "vendors",
-          chunks: "all",
-        },
-      },
-    },
-  },
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "src"),
-    },
-  },
-};
-```
+Never modify production manifests during local development. Use the `-dev` variants.
 
-### React Performance
-
-```typescript
-// Memoization for expensive operations
-const ExpensiveComponent = React.memo(({ data }) => {
-  const processedData = useMemo(() => {
-    return expensiveCalculation(data);
-  }, [data]);
-
-  return <div>{processedData}</div>;
-});
-
-// Callback memoization
-const DocumentList = () => {
-  const handleDocumentClick = useCallback((docId: string) => {
-    DocumentService.openDocument(docId);
-  }, []);
-
-  return (
-    <div>
-      {documents.map(doc => (
-        <DocumentItem key={doc.id} onClick={handleDocumentClick} />
-      ))}
-    </div>
-  );
-};
-```
-
-## Best Practices
-
-### Code Organization
-
-1. **Single Responsibility**: Each component/service has one clear purpose
-2. **Consistent Naming**: Use descriptive, consistent naming conventions
-3. **Type Safety**: Leverage TypeScript for type safety
-4. **Error Boundaries**: Implement error boundaries for graceful failure handling
-
-### Security Best Practices
-
-1. **Input Validation**: Validate all user inputs
-2. **Secure Storage**: Use secure methods for sensitive data storage
-3. **Error Handling**: Don't expose sensitive information in error messages
-4. **HTTPS**: Always use HTTPS in production
-
-### Performance Best Practices
-
-1. **Lazy Loading**: Load components and data on demand
-2. **Memoization**: Cache expensive calculations
-3. **Bundle Splitting**: Split code for optimal loading
-4. **Image Optimization**: Optimize assets for fast loading
-
-## Deployment Preparation
-
-### Production Build
+## Manifest Validation
 
 ```bash
-# Create production build
-pnpm run build
-
-# Verify build output
-ls -la dist/
-
-# Test production build locally
-# Serve dist/ folder with HTTPS server
+bun run validate:dev
+bun run validate:dev:excel
+bun run validate:dev:powerpoint
+bun run validate:word
+bun run validate:excel
+bun run validate:powerpoint
+bun run validate:prod        # manifest-production.xml (for installer)
 ```
 
-### Pre-deployment Checklist
+## M365 Account Management
 
-- [ ] All tests passing
-- [ ] Code quality checks passed
-- [ ] Security audit completed
-- [ ] Performance optimizations applied
-- [ ] Documentation updated
-- [ ] Manifest configured for production URLs
-- [ ] API endpoints configured for production
-- [ ] SSL certificates configured
-- [ ] CORS settings verified
+```bash
+bun run signin   # Sign in to Microsoft 365 for testing
+bun run signout  # Sign out
+```
 
----
+## Troubleshooting
 
-_This development guide is regularly updated with new patterns and best practices. For questions or improvements, please refer to the project team._
+**Add-in not loading**
+- Confirm `bun run dev-server` is running
+- Check `https://localhost:3000` loads in a browser (trust the certificate if needed)
+- Run `npx office-addin-dev-certs install` if certificate trust fails
+- Validate the manifest: `bun run validate:dev`
+
+**Authentication fails**
+- Open the debug panel (`Ctrl+Shift+D`) and check `AuthService` and `AuthService.API` logs
+- Confirm the phone number is registered in the DocuID system
+- Verify network access to `dev.docuid.net`
+
+**Document insertion fails**
+- Check `DocumentService.Office` logs in the debug panel
+- Confirm the correct dev manifest is loaded for the host you are testing in (Word manifest in Word, etc.)
+- Check for `OfficeExtension.Error` in browser DevTools console
+
+**Wrong Office host detected**
+- `OfficeHostService` reads `Office.context.host` at runtime
+- Ensure the correct manifest variant is sideloaded for the target application
