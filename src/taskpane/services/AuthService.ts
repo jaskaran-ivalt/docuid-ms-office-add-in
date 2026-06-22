@@ -97,7 +97,7 @@ export class AuthService {
   private static async requestBiometricAuth(phoneNumber: string): Promise<void> {
     const startTime = Date.now();
     try {
-      const requestFrom = `Auth Request from DocuID ${OfficeHostService.getHostLabel()} Add-in`;
+      const requestFrom = `DocuID ${OfficeHostService.getHostLabel()} Add-in`;
 
       AuthService.authLogger.logApiRequest('POST', BIOMETRIC_ROUTES.AUTH_REQUEST);
 
