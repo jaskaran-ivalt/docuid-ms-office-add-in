@@ -1,66 +1,83 @@
 # Product Requirements Document (PRD) for DocuID Office Add-in
 
-**Version:** 1.1
-**Date:** 18 June 2025
+**Version:** 1.2
+**Date:** 22 June 2026
+**Status:** Shipped — live on Microsoft AppSource
+
+---
 
 ## 1. Overview
 
 **Goal:**
-To build a Microsoft Office Add-in named **DocuID** that allows users to securely authenticate via the **iVALT biometric system** (through the DocuID backend) and access a personalized panel displaying documents they are authorized to view or open.
+A Microsoft Office Add-in named **DocuID** that allows users to securely authenticate via the **iVALT biometric system** (through the DocuID backend) and access a personalized panel displaying documents they are authorized to view or insert.
 
 **Target Applications:**
 
-*   Microsoft Word
-
+- Microsoft Word
+- Microsoft Excel
+- Microsoft PowerPoint
 
 **Platform Support:**
 
-*   Windows
-*   macOS
+- Windows (Microsoft 365, Office 2019+)
+- macOS (Microsoft 365, Office 2019+)
+
+**Live listing:** [Microsoft AppSource](https://marketplace.microsoft.com/en-us/product/wa200010668?tab=overview)
 
 ---
 
 ## 2. Core Features
 
-### 🔐 Authentication
+### Authentication
 
-*   User logs in using their **mobile number with country code**.
-*   Authentication is handled via **DocuID.net**, which integrates with **iVALT** for biometric verification on the user's registered device.
-*   The backend verifies if the user exists or needs to be created.
-*   Response includes a session token and user profile.
+- User logs in using their mobile number with country code
+- Authentication is handled via DocuID.net, which integrates with iVALT for biometric push verification on the user's registered device
+- The backend verifies the user and returns a session token and user profile
+- JWT token is stored in localStorage with expiration tracking
+- All API calls send `Authorization: Bearer <token>`
 
-### 📁 Document Access Panel
+### Document Access Panel
 
-*   After authentication, the user sees a panel inside the Office Add-in.
-*   The panel fetches and displays a **list of documents** available to the user from the backend.
-*   Each document entry includes:
-    *   Title
-    *   Type (e.g., PDF, DOCX)
-    *   Last modified date
-    *   Open/View button
+- After authentication, the user sees a panel inside the Office Add-in
+- The panel fetches and displays a list of documents available to the user from the backend
+- Each document entry includes title, type, last modified date, and an Open/Insert button
+- Real-time search filters the document list
 
-### 📥 Document Opening
+### Document Insertion
 
-*   Clicking "Open" loads the document either:
-    *   Directly into the Office app (if supported),
-    *   Or triggers a download,
-    *   Or opens in an embedded viewer.
+- Clicking "Open" inserts document content directly into the active Office application
+- Word: inserts via `Word.run()` with paragraph insertion
+- Excel: inserts via `Excel.run()` with range/cell operations
+- PowerPoint: inserts via `PowerPoint.run()` with slide shape insertion
+
+### Sharing and Download
+
+- Users can share documents via `ShareSidebar`
+- Download flow handled by `DownloadSheet`
+- QR code generation available for document links
+
+### Profile
+
+- Authenticated users can view and manage their profile (personal info, account info)
 
 ---
 
 ## 3. User Flow
 
-The user flow is detailed in the diagram below.
-
-[See User Flow Diagram](../04-diagrams/user_flow.mermaid)
+1. User opens the DocuID task pane in Word, Excel, or PowerPoint
+2. User enters their registered phone number with country code
+3. iVALT biometric verification push is sent to the user's mobile device
+4. On successful verification, the user sees their authorized document list
+5. User browses or searches for a document and clicks "Open"
+6. Document content is inserted into the current Office document
 
 ---
 
 ## 4. System Architecture
 
-A high-level overview of the system architecture.
+The add-in is a React + TypeScript single-page application served from `https://addon.docuid.net` (Vercel). It communicates with `DocuID.net` REST APIs for authentication and document operations.
 
-[See System Architecture Diagram](../04-diagrams/system_architecture.mermaid)
+See [Technical Architecture](../02-technical/ARCHITECTURE.md) for detail.
 
 ---
 
@@ -68,62 +85,68 @@ A high-level overview of the system architecture.
 
 ### Frontend (Office Add-in)
 
-*   **Scaffolding:** `yo office` (Office Add-in generator)
-*   **Framework:** React.js
-*   **API:** Office.js (Office JavaScript API) for integration with Host applications.
-*   **Styling:** HTML, CSS.
-*   **Hosting:** Hosted on a public HTTPS server.
+- **Framework:** React 19 with TypeScript, ES5 target for Office compatibility
+- **Build:** Webpack 5 with Babel transpilation
+- **Linter/Formatter:** Biome
+- **Package Manager:** Bun (enforced)
+- **Office Integration:** Office.js API for Word, Excel, and PowerPoint
+- **Hosting:** Vercel (`https://addon.docuid.net`)
 
 ### Backend
 
-*   **Service:** `DocuID.net`
-*   **Functionality:** Provides REST APIs for:
-    *   User authentication (integrating with iVALT).
-    *   Fetching the document list for authenticated users.
-    *   Retrieving document content or a secure URL for viewing/downloading.
+- **Service:** DocuID.net
+- **APIs:** REST endpoints for authentication, document listing, document content, sharing, and download
+- **Auth:** iVALT biometric verification integrated into docuid.net
 
 ### Authentication
 
-*   The add-in communicates with `DocuID.net` for authentication.
-*   `DocuID.net` handles the iVALT integration for biometric verification.
-*   Session management is token-based.
+- Token-based (JWT), stored in localStorage with expiration
+- Biometric push to registered mobile device via iVALT
+- Session cleared on logout or token expiry
 
 ### Storage
 
-*  Cloud storage for user-specific document access (e.g., AWS S3 API), managed by the backend.
+- Document content served via DocuID.net (backed by cloud storage managed by the backend)
 
 ---
 
-## 6. Milestones & Timeline
+## 6. Milestones — Completed
 
-| Milestone | Description | ETA | Status |
-| --- | --- | --- | --- |
-| M1 | Project scaffolding with `yo office` & UI design | Week 1 | ✅ **Complete** |
-| M2 | Backend integration for login via `DocuID.net` | Week 2 | 🔄 Ready to Start |
-| M3 | Backend API for document fetching and access | Week 3 | ⏳ Pending |
-| M4 | Full add-in integration and testing in Office apps | Week 4 | ⏳ Pending |
-| M5 | Final testing, optimization and deployment | Week 5 | ⏳ Pending |
+| Milestone | Description | Status |
+|-----------|-------------|--------|
+| M1 | Project scaffolding, React architecture, UI design | Complete |
+| M2 | Real API integration — login via DocuID.net + iVALT biometric | Complete |
+| M3 | Document listing, search, insertion into Word | Complete |
+| M4 | Excel and PowerPoint host support | Complete |
+| M5 | Sharing, download, QR codes, profile page | Complete |
+| M6 | AppSource submission, certification, and publication | Complete |
 
 ---
 
 ## 7. Current Implementation Status
 
-### ✅ Phase 1 Complete (M1)
-- **React-based Office Add-in** with TypeScript
-- **Authentication UI** with phone number input and validation
-- **Document Management UI** with list display and search capabilities
-- **Office.js Integration** for document insertion into Word
-- **Mock Services** for development and testing
-- **Comprehensive Documentation** including architecture, security, and deployment guides
+The add-in is fully built and published. All milestones are complete.
 
-### 🔄 Ready for Phase 2 (M2)
-- **API Client Setup** for docuid.net integration
-- **Real Authentication Flow** replacing mock implementation
-- **Production Error Handling** for network and API failures
-- **Security Enhancements** for production deployment
+**What is live:**
 
-For detailed technical specifications, see:
+- Biometric authentication via phone number and iVALT push
+- Document listing and real-time search
+- Document insertion in Word, Excel, and PowerPoint
+- Document sharing and download flows
+- User profile page
+- Debug panel for development and support (Ctrl+Shift+D)
+- Windows installer for enterprise distribution
+
+**Current version:** 1.0.2.0
+
+**Live URL:** [https://marketplace.microsoft.com/en-us/product/wa200010668?tab=overview](https://marketplace.microsoft.com/en-us/product/wa200010668?tab=overview)
+
+---
+
+## 8. References
+
 - [Technical Architecture](../02-technical/ARCHITECTURE.md)
 - [API Documentation](../02-technical/API_DOCUMENTATION.md)
 - [Security Documentation](../02-technical/SECURITY.md)
-- [Development Guide](../03-development/DEVELOPMENT_GUIDE.md) 
+- [Development Guide](../03-development/DEVELOPMENT_GUIDE.md)
+- [Deployment Guide](../03-development/DEPLOYMENT_GUIDE.md)

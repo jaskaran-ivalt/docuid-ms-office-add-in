@@ -28,9 +28,8 @@
 
 This documentation is organized to guide developers, project managers, and operators through the various aspects of the DocuID project.
 
-- **[01-planning](./../01-planning/)**: Project requirements, plans, and work tracking.
-- **[02-technical](./../02-technical/)**: In-depth technical architecture, API documentation, security protocols, and design system.
-- **[03-development](./../03-development/)**: Guides for setting up the development environment, coding standards, testing, and deployment.
-- **[04-diagrams](./../04-diagrams/)**: Visual representations of the system architecture and user flows.
+- **[01-planning](./../01-planning/)**: Product requirements document and project plan.
+- **[02-technical](./../02-technical/)**: Technical architecture, API documentation, security protocols, and design system.
+- **[03-development](./../03-development/)**: Development setup, testing, deployment, and AppSource submission guides.
 - **[05-operations](./../05-operations/)**: Procedures for monitoring, logging, and maintaining the system in production.
 - **[06-user](./../06-user/)**: User-facing guides and manuals.
