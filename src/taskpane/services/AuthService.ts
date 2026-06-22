@@ -21,7 +21,11 @@ export class AuthService {
       // --- DEMO MODE (credentials set via environment variables) ---
       const demoPhone = process.env.DEMO_PHONE;
       const demoToken = process.env.DEMO_TOKEN;
-      if (demoPhone && demoToken && (phoneNumber === demoPhone || phoneNumber === demoPhone.replace(/^\+\d{1,3}/, ''))) {
+      if (
+        demoPhone &&
+        demoToken &&
+        (phoneNumber === demoPhone || phoneNumber === demoPhone.replace(/^\+\d{1,3}/, ''))
+      ) {
         AuthService.authLogger.info('Using demo credentials');
 
         const dummyUser: User = {

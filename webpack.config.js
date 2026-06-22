@@ -165,15 +165,19 @@ module.exports = async (env, options) => {
       }),
     ],
     devServer: {
+      historyApiFallback: {
+        index: '/taskpane.html',
+      },
       headers: {
         'Access-Control-Allow-Origin': '*',
       },
       server: {
         type: 'https',
-        options:
-          dev
-            ? (env.WEBPACK_BUILD || options.https !== undefined ? options.https : await getHttpsOptions())
-            : {},
+        options: dev
+          ? env.WEBPACK_BUILD || options.https !== undefined
+            ? options.https
+            : await getHttpsOptions()
+          : {},
       },
       port: process.env.npm_package_config_dev_server_port || 3000,
       proxy: [

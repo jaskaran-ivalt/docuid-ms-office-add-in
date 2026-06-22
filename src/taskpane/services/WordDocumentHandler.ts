@@ -13,13 +13,29 @@ import { logger } from './Logger';
 
 const wordLogger = logger.createContextLogger('WordDocumentHandler');
 
+/**
+ * Check if Word API is available (requires Office host environment)
+ */
+function isWordApiAvailable(): boolean {
+  return typeof Word !== 'undefined' && typeof Word.run === 'function';
+}
+
 export const WordDocumentHandler: IDocumentHandler = {
   /**
    * Insert document content into the active Word document.
    * - Plain-text / demo content is inserted line-by-line as paragraphs.
    * - Binary .docx content is inserted via insertFileFromBase64.
+   *
+   * Gracefully returns in browser mode (no Office host available).
    */
   async insert(documentContent: DocumentContent): Promise<void> {
+    if (!isWordApiAvailable()) {
+      wordLogger.info(
+        'Word.run not available - running in browser mode without Office integration'
+      );
+      return;
+    }
+
     return Word.run(async (context) => {
       try {
         if (!documentContent.binaryContent) {
@@ -70,8 +86,14 @@ export const WordDocumentHandler: IDocumentHandler = {
 
   /**
    * Clear the active Word document body, headers, and footers.
+   * Gracefully returns in browser mode (no Office host available).
    */
   async clear(): Promise<void> {
+    if (!isWordApiAvailable()) {
+      wordLogger.info('Word.run not available for clearing document - running in browser mode');
+      return;
+    }
+
     return Word.run(async (context) => {
       context.document.body.clear();
       await context.sync();
