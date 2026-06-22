@@ -49,6 +49,43 @@ module.exports = async (env, options) => {
 
   const config = {
     devtool: 'source-map',
+    // Office Add-ins run inside a desktop application with reliable caching.
+    // The 244 KB default limit is designed for public web pages; 2 MB is
+    // a reasonable threshold for this context.
+    performance: {
+      maxAssetSize: 2 * 1024 * 1024,
+      maxEntrypointSize: 2 * 1024 * 1024,
+      hints: dev ? false : 'warning',
+    },
+    optimization: {
+      splitChunks: {
+        chunks: 'all',
+        cacheGroups: {
+          // Split @fluentui/react into its own chunk — it's 832 KB and
+          // rarely changes, so it can be cached independently of app code.
+          fluentui: {
+            test: /[\\/]node_modules[\\/]@fluentui[\\/]/,
+            name: 'fluentui',
+            chunks: 'all',
+            priority: 20,
+          },
+          // Split react-dom into its own chunk — 533 KB, never changes.
+          reactdom: {
+            test: /[\\/]node_modules[\\/](react-dom|scheduler)[\\/]/,
+            name: 'react-dom',
+            chunks: 'all',
+            priority: 10,
+          },
+          // Everything else from node_modules.
+          vendors: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendors',
+            chunks: 'all',
+            priority: 5,
+          },
+        },
+      },
+    },
     entry: {
       polyfill: ['core-js/stable', 'regenerator-runtime/runtime'],
       taskpane: ['./src/taskpane/index.tsx'],

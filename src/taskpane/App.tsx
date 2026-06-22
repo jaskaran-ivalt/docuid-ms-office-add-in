@@ -8,10 +8,10 @@ import {
 } from '@fluentui/react';
 import type React from 'react';
 import { Suspense, lazy, useEffect, useState } from 'react';
-import DocumentList from '@/taskpane/components/DocumentList';
 import Header from '@/taskpane/components/Header';
 import LoginForm from '@/taskpane/components/LoginForm';
 
+const DocumentList = lazy(() => import('@/taskpane/components/DocumentList'));
 const DebugPanel = lazy(() => import('@/taskpane/components/DebugPanel'));
 const ProfilePage = lazy(() => import('@/taskpane/components/profile/ProfilePage'));
 import { AuthService } from '@/taskpane/services/AuthService';
@@ -226,17 +226,19 @@ const App: React.FC<AppProps> = ({ officeHost = 'Unknown' }) => {
                   <ProfilePage onBack={() => setCurrentPage('documents')} />
                 </Suspense>
               ) : (
-                <DocumentList
-                  documents={documents}
-                  onDocumentOpen={handleDocumentOpen}
-                  onDocumentShare={handleDocumentShare}
-                  onCloseDocument={handleDocumentClose}
-                  isLoadingDocuments={isLoadingDocuments}
-                  openingDocumentId={isOpeningDocument}
-                  closingDocumentId={isClosingDocument}
-                  openDocumentId={openDocumentId}
-                  onReload={loadDocuments}
-                />
+                <Suspense fallback={null}>
+                  <DocumentList
+                    documents={documents}
+                    onDocumentOpen={handleDocumentOpen}
+                    onDocumentShare={handleDocumentShare}
+                    onCloseDocument={handleDocumentClose}
+                    isLoadingDocuments={isLoadingDocuments}
+                    openingDocumentId={isOpeningDocument}
+                    closingDocumentId={isClosingDocument}
+                    openDocumentId={openDocumentId}
+                    onReload={loadDocuments}
+                  />
+                </Suspense>
               )}
               <Dialog
                 hidden={!isLogoutDialogOpen}
