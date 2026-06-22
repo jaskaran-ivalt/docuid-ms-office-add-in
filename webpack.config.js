@@ -225,6 +225,9 @@ module.exports = async (env, options) => {
           target: apiTarget.url,
           changeOrigin: true,
           secure: apiTarget.secure,
+          // Rewrite the backend's `.docuid.net` cookie domain to host-only so the
+          // browser accepts the session cookie on localhost (cookie-based auth).
+          cookieDomainRewrite: '',
           headers: {
             'x-api-key': process.env.BIOMETRIC_API_KEY || '',
           },
@@ -233,37 +236,30 @@ module.exports = async (env, options) => {
           },
           logLevel: 'debug',
         },
-        // Document endpoints: handles both /api/documents/* and /api/dashboard/documents/*
-        // Download/content endpoints go to /api/documents/
-        // Other endpoints (word-files, access, etc.) go to /api/dashboard/documents/
+        // Dashboard endpoints (document lists, access, shares):
+        // /api/docuid/dashboard/* -> /api/dashboard/*
+        // Mirrors the production Vercel rewrite (/api/dashboard/:path*).
+        {
+          context: ['/api/docuid/dashboard'],
+          target: apiTarget.url,
+          changeOrigin: true,
+          secure: apiTarget.secure,
+          cookieDomainRewrite: '',
+          pathRewrite: {
+            '^/api/docuid/dashboard': '/api/dashboard',
+          },
+          logLevel: 'debug',
+        },
+        // Document download/content endpoints:
+        // /api/docuid/documents/:id/(download|content) -> /api/documents/:id/...
         {
           context: ['/api/docuid/documents'],
           target: apiTarget.url,
           changeOrigin: true,
           secure: apiTarget.secure,
-          pathRewrite: (path, _req) => {
-            console.log(`📡 Proxy pathRewrite: ${path}`);
-            // Check if this is a download or content endpoint
-            if (path.match(/\/api\/docuid\/documents\/\d+\/(download|content)$/)) {
-              const newPath = path.replace('/api/docuid/documents', '/api/documents');
-              console.log(`   → Rewriting to: ${newPath} (download/content)`);
-              return newPath;
-            }
-            // All other document endpoints go to /api/dashboard/documents/
-            const newPath = path.replace('/api/docuid/documents', '/api/dashboard/documents');
-            console.log(`   → Rewriting to: ${newPath} (dashboard)`);
-            return newPath;
-          },
-          logLevel: 'debug',
-        },
-        // Share endpoints: /api/docuid/shares/* -> /api/dashboard/shares/*
-        {
-          context: ['/api/docuid/shares'],
-          target: apiTarget.url,
-          changeOrigin: true,
-          secure: apiTarget.secure,
+          cookieDomainRewrite: '',
           pathRewrite: {
-            '^/api/docuid/shares': '/api/dashboard/shares',
+            '^/api/docuid/documents': '/api/documents',
           },
           logLevel: 'debug',
         },
