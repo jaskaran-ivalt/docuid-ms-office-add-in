@@ -129,6 +129,10 @@ manifest*.xml.copybak
 # Windows junk file (reserved name; sometimes created by mistaken redirects)
 nul
 
+# Poolside configuration
+.poolside/
+codedb.snapshot
+
 # Vendored CLI binaries and archives (large; download locally if needed)
 /tools/innoextract/
 /tools/*.zip
